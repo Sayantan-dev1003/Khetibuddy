@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Menu, X, Zap, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -75,12 +76,16 @@ function Navbar() {
             </div>
             
             <div className="flex items-center gap-6">
-              <button className={`font-[900] text-[11px] uppercase tracking-[0.25em] transition-colors ${
-                isScrolled ? 'text-[#020503]/40 hover:text-[#020503]' : 'text-white/40 hover:text-white'
-              }`}>
+              <Link 
+                to="/login"
+                className={`font-[900] text-[11px] uppercase tracking-[0.25em] transition-colors ${
+                  isScrolled ? 'text-[#020503]/40 hover:text-[#020503]' : 'text-white/40 hover:text-white'
+                }`}
+              >
                 Login
-              </button>
-              <button 
+              </Link>
+              <Link 
+                to="/signup"
                 className={`px-8 py-3.5 rounded-full font-[900] text-[11px] uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 flex items-center gap-2 ${
                   isScrolled 
                     ? 'bg-[#020503] text-white shadow-xl shadow-black/20' 
@@ -88,7 +93,7 @@ function Navbar() {
                 }`}
               >
                 Get Started <ArrowRight size={14} strokeWidth={3} />
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -122,9 +127,12 @@ function Navbar() {
                 {link.name}
               </button>
             ))}
-            <button className="bg-[#020503] text-white px-14 py-6 rounded-full font-[900] text-2xl mt-10 shadow-2xl">
+            <Link 
+              to="/signup"
+              className="bg-[#020503] text-white px-14 py-6 rounded-full font-[900] text-2xl mt-10 shadow-2xl inline-block text-center"
+            >
               Join Free
-            </button>
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>

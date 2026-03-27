@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles, Leaf } from 'lucide-react';
 
@@ -43,10 +44,13 @@ function Hero() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-5">
-            <button className="group bg-emerald-500 hover:bg-emerald-400 text-[#040705] px-10 py-5 rounded-full font-black text-xl transition-all hover:scale-105 flex items-center justify-center gap-3 shadow-2xl shadow-emerald-500/20">
+            <Link 
+              to="/signup"
+              className="group bg-emerald-500 hover:bg-emerald-400 text-[#040705] px-10 py-5 rounded-full font-black text-xl transition-all hover:scale-105 flex items-center justify-center gap-3 shadow-2xl shadow-emerald-500/20"
+            >
               Start Free Trial
               <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-            </button>
+            </Link>
           </div>
         </motion.div>
 

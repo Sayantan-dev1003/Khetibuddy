@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Zap, ArrowUpRight } from 'lucide-react';
 
@@ -36,12 +37,15 @@ function CTA() {
         {/* Action Row (cite: copy.mp4, 0:14) */}
         <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
           {/* Main Action - Dark Button on White Bg */}
-          <button className="group relative bg-[#020503] hover:bg-emerald-600 text-white px-14 py-7 rounded-full font-[900] text-2xl transition-all hover:scale-110 flex items-center gap-4 shadow-[0_25px_60px_-10px_rgba(0,0,0,0.3)]">
+          <Link 
+            to="/login"
+            className="group relative bg-[#020503] hover:bg-emerald-600 text-white px-14 py-7 rounded-full font-[900] text-2xl transition-all hover:scale-110 flex items-center gap-4 shadow-[0_25px_60px_-10px_rgba(0,0,0,0.3)]"
+          >
             Login
             <div className="bg-white/10 p-2 rounded-full group-hover:rotate-45 transition-transform duration-500">
               <ArrowUpRight size={28} strokeWidth={3} />
             </div>
-          </button>
+          </Link>
 
           {/* Secondary Action - Ghost Button */}
           <button className="px-12 py-7 rounded-full font-[900] text-2xl text-[#020503] border-2 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition-all tracking-tight uppercase">
