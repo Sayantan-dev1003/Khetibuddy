@@ -1,94 +1,117 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { ArrowUpRight, Leaf, Sprout, Store, BarChart3 } from 'lucide-react';
 
-function Testimonials() {
-  const testimonials = [
-    {
-      name: 'Sarah Kim',
-      date: 'January 10, 2026',
-      text: 'Setting up the automated disease detection took 5 minutes. Within a week, my yield response rate went from 20% to 90%. Absolutely game-changing.',
-      image: 'https://i.pravatar.cc/150?u=1'
-    },
-    {
-      name: 'Marcus Webb',
-      date: 'February 2, 2026',
-      text: 'The follow-to-unlock funnel alone saved my farm thousands of dollars in a month. KhetiBuddy pays for itself in the first week.',
-      image: 'https://i.pravatar.cc/150?u=2'
-    },
-    {
-      name: 'Elena Rostova',
-      date: 'March 15, 2026',
-      text: 'The Malayalam chatbot is incredible. It understands local farming terms perfectly and gives advice that actually makes sense for our soil.',
-      image: 'https://i.pravatar.cc/150?u=3'
-    }
-  ];
+const gridData = [
+  {
+    category: "For Creators",
+    title: "Rice Farmers",
+    desc: "Automate disease detection and crop monitoring for high-yield paddy fields using our AI-driven visual scanner.",
+    icon: Leaf,
+    img: "https://images.unsplash.com/photo-1530507629858-e4977d30e9e0?q=80&w=1000",
+    span: "md:col-span-2 md:row-span-2"
+  },
+  {
+    category: "For Agencies",
+    title: "Soil Experts",
+    desc: "Manage multiple soil analysis reports and N-P-K data at scale with automated AI processing.",
+    icon: Sprout,
+    img: "https://images.unsplash.com/photo-1595009552535-be753447727e?q=80&w=1000",
+    span: "md:col-span-1 md:row-span-1"
+  },
+  {
+    category: "For E-commerce",
+    title: "Agri-Shops",
+    desc: "Connect seed and fertilizer shops directly to local farmers via our market bridge.",
+    icon: Store,
+    img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1000",
+    span: "md:col-span-1 md:row-span-1"
+  },
+  {
+    category: "For Coaches",
+    title: "Market Insights",
+    desc: "Deliver real-time Mandi price updates and expert coaching to farming communities.",
+    icon: BarChart3,
+    img: "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=1000",
+    span: "md:col-span-3 md:row-span-1"
+  }
+];
 
+function InteractiveBento() {
   return (
-    <section id="testimonials" className="min-h-screen flex items-center py-24 bg-[#062c1c] px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid lg:grid-cols-12 gap-16 items-center">
-          
-          {/* Left Summary */}
-          <div className="lg:col-span-5">
-             <div className="inline-flex items-center gap-2 bg-[#34d399]/10 text-[#34d399] px-5 py-2 rounded-full text-xs font-black mb-8 border border-[#34d399]/20 tracking-[0.2em] uppercase">
-              ★ Testimonials
-            </div>
-            <h2 className="text-5xl lg:text-7xl font-black text-white mb-8 tracking-tighter leading-none">
-              Trusted by <br />
-              <span className="text-[#34d399]">Progressive Farmers.</span>
-            </h2>
-            <p className="text-emerald-100/60 mb-12 text-xl font-medium leading-relaxed max-w-md">
-              Join thousands of agricultural leaders who are transforming their land with KhetiBuddy's intelligent automation.
-            </p>
-            <div className="flex items-center gap-12">
-                <div>
-                   <div className="text-5xl font-black text-white mb-2">2k+</div>
-                   <p className="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em]">Active Users</p>
-                </div>
-                <div className="w-px h-16 bg-white/10"></div>
-                <div>
-                   <div className="text-5xl font-black text-white mb-2">98%</div>
-                   <p className="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em]">Satisfaction</p>
-                </div>
-            </div>
-          </div>
+    <section id="use-cases" className="py-32 px-6 bg-white overflow-hidden">
+      <div className="max-w-7xl mx-auto">
+        
+        {/* Header - Video Style (cite: 1) */}
+        <div className="mb-20">
+          <h2 className="text-6xl md:text-[6.5rem] font-[900] text-[#020503] tracking-tighter leading-[0.85] uppercase">
+            Built for Every <br /> <span className="text-emerald-500 italic">Farmer.</span>
+          </h2>
+        </div>
 
-          {/* Right Grid */}
-          <div className="lg:col-span-7 grid gap-6">
-            {testimonials.map((t, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white/5 backdrop-blur-md p-8 rounded-[2.5rem] border border-white/10 hover:bg-white/10 transition-all duration-500 group"
+        {/* The Grid (cite: 1) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[350px]">
+          {gridData.map((item, i) => (
+            <motion.div
+              key={i}
+              whileHover="hover"
+              initial="initial"
+              className={`relative group overflow-hidden rounded-[3rem] border border-slate-100 cursor-pointer ${item.span}`}
+            >
+              {/* Background Image (Always Visible) (cite: 1) */}
+              <motion.img
+                variants={{
+                  initial: { scale: 1 },
+                  hover: { scale: 1.05 }
+                }}
+                transition={{ duration: 0.6 }}
+                src={item.img}
+                alt={item.title}
+                className="absolute inset-0 w-full h-full object-cover z-0"
+              />
+
+              {/* White Paragraph Box Reveal on Hover (cite: 1) */}
+              <motion.div
+                variants={{
+                  initial: { y: "100%", opacity: 0 },
+                  hover: { y: 0, opacity: 1 }
+                }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute inset-x-4 bottom-4 z-20 bg-white/95 backdrop-blur-md p-8 rounded-[2.5rem] shadow-2xl border border-white/20"
               >
-                <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-5">
-                      <img src={t.image} alt={t.name} className="w-14 h-14 rounded-2xl object-cover ring-2 ring-emerald-500/20" />
-                      <div>
-                        <h4 className="font-bold text-white text-lg">{t.name}</h4>
-                        <p className="text-xs text-emerald-400/60 font-bold">{t.date}</p>
-                      </div>
-                    </div>
-                    <div className="flex text-emerald-400 text-xs gap-1">
-                        {[...Array(5)].map((_, i) => <span key={i}>★</span>)}
-                    </div>
+                <div className="flex justify-between items-start mb-4">
+                  <div className="bg-emerald-500/10 p-3 rounded-2xl text-emerald-600">
+                    <item.icon size={24} strokeWidth={2.5} />
+                  </div>
+                  <div className="bg-emerald-500 p-2 rounded-full text-white shadow-lg shadow-emerald-500/20">
+                    <ArrowUpRight size={20} strokeWidth={3} />
+                  </div>
                 </div>
-                <p className="text-emerald-50/80 text-lg font-medium leading-relaxed italic">
-                  "{t.text}"
+                
+                <h4 className="text-[#020503] font-[900] text-2xl tracking-tighter uppercase mb-2">
+                  {item.title}
+                </h4>
+                <p className="text-slate-500 text-sm font-bold leading-relaxed">
+                  {item.desc}
                 </p>
               </motion.div>
-            ))}
-          </div>
+
+              {/* Initial Category Tag (Invisible on hover) (cite: 1) */}
+              <motion.div 
+                variants={{ initial: { opacity: 1 }, hover: { opacity: 0 } }}
+                className="absolute top-8 left-8 z-10 bg-[#020503]/40 backdrop-blur-md px-5 py-2 rounded-full border border-white/20"
+              >
+                <span className="text-white font-black text-[10px] uppercase tracking-widest">{item.category}</span>
+              </motion.div>
+
+              {/* Subtle dark overlay for initial visibility (cite: 1) */}
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-0" />
+            </motion.div>
+          ))}
         </div>
       </div>
-      
-      {/* Decorative */}
-      <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-[#34d399]/5 to-transparent pointer-events-none"></div>
     </section>
   );
 }
 
-export default Testimonials;
+export default InteractiveBento;

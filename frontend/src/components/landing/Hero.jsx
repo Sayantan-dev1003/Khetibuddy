@@ -1,124 +1,93 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, MessageCircle, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Sparkles, Leaf } from 'lucide-react';
 
 function Hero() {
   return (
-    <section id="hero" className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-[#FAF9F6]">
-      {/* Background Image with Gradient Overlay */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <motion.img 
-          initial={{ scale: 1.1, opacity: 0 }}
-          animate={{ scale: 1, opacity: 0.25 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-          src="file:///C:/Users/HP/.gemini/antigravity/brain/c112e651-9f6e-475d-82f7-635d5a331231/hero_bg_farm_1774641273434.png" 
-          alt="Modern Farm Background" 
-          className="w-full h-full object-cover"
+    <section className="relative min-h-screen pt-32 pb-20 px-6 bg-[#040705] overflow-hidden flex items-center">
+      {/* Background Decor - Video Style Glassmorphism */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-900/30 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-600/10 blur-[100px] rounded-full" />
+        
+        {/* Farm Texture Overlay */}
+        <img 
+          src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2070" 
+          alt="Farmland"
+          className="w-full h-full object-cover opacity-[0.17] grayscale mix-blend-overlay"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#FAF9F6] via-[#FAF9F6]/80 to-transparent"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F6] via-transparent to-transparent"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          
-          {/* Left: Text Content */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex flex-col gap-8 text-left"
-          >
-            <div className="inline-flex items-center gap-2 bg-emerald-100/60 text-emerald-800 px-4 py-2 rounded-full text-sm font-bold w-fit border border-emerald-200/50 uppercase tracking-widest backdrop-blur-sm">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
-              </span>
-              Smart Farming Assistant
-            </div>
+      <div className="max-w-7xl mx-auto relative z-10 grid lg:grid-cols-2 gap-16 items-center w-full">
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          {/* Tagline - Video Style Badge */}
+          <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-full mb-8">
+            <Sparkles className="text-emerald-400" size={18} />
+            <span className="text-emerald-400 font-bold tracking-[0.2em] text-[10px] uppercase">
+              AI Agriculture Automation
+            </span>
+          </div>
 
-            <h1 className="text-6xl lg:text-9xl font-black text-[#064e3b] leading-[0.9] tracking-tight">
-              Grow the <br />
-              <span className="text-[#854d0e] italic font-serif serif-font">Future</span> <br />
-              <span className="bg-gradient-to-r from-emerald-700 to-emerald-900 bg-clip-text text-transparent">Sustainably.</span>
-            </h1>
+          {/* Massive Typography - Video Style (cite: Video 0:01) */}
+          <h1 className="text-6xl md:text-[5.5rem] lg:text-[6.5rem] font-black text-white leading-[0.85] tracking-tighter mb-8">
+            Your Crops <br />
+            Just Got <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-lime-300 italic">Faster.</span>
+          </h1>
 
-            <p className="text-xl text-slate-700 max-w-lg leading-relaxed font-medium">
-              Turn your soil data into gold. We handle the complex analysis—from disease detection to fertilizer plans—rooted in science, grown for results.
-            </p>
+          <p className="text-xl text-emerald-100/50 mb-10 max-w-md leading-relaxed font-medium">
+            Automated advisory and real-time detection, so you focus on harvesting and growth.
+          </p>
 
-            <div className="flex flex-wrap gap-5 items-center mt-4">
-              <button 
-                onClick={() => window.location.href='/dashboard'}
-                className="bg-[#064e3b] hover:bg-[#065f46] text-white px-10 py-5 rounded-2xl font-bold flex items-center gap-3 transition-all shadow-[0_20px_40px_-10px_rgba(6,78,59,0.3)] hover:-translate-y-1 active:scale-95"
-              >
-                Start Free Trial
-                <ArrowRight size={22} />
-              </button>
-              <button className="bg-white/50 backdrop-blur-md hover:bg-white text-[#064e3b] border border-emerald-100 px-10 py-5 rounded-2xl font-bold transition-all shadow-sm hover:border-emerald-200">
-                See How It Works
-              </button>
-            </div>
+          <div className="flex flex-col sm:flex-row gap-5">
+            <button className="group bg-emerald-500 hover:bg-emerald-400 text-[#040705] px-10 py-5 rounded-full font-black text-xl transition-all hover:scale-105 flex items-center justify-center gap-3 shadow-2xl shadow-emerald-500/20">
+              Start Free Trial
+              <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </motion.div>
+
+        {/* Floating Mockup - Exact Video Look (cite: Video 0:01) */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.2 }}
+          className="relative flex justify-center lg:justify-end"
+        >
+          <div className="relative w-full max-w-[450px]">
+            {/* The "I'm Interested" Bubble - Green Version (cite: Video 0:01) */}
+            <motion.div 
+              animate={{ y: [0, -12, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -top-8 -left-6 z-20 bg-white text-[#040705] px-6 py-4 rounded-[2rem] rounded-tr-none shadow-3xl font-black text-sm flex items-center gap-3"
+            >
+              <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">🌿</div>
+              How's my soil?
+            </motion.div>
+
+            {/* AI Response Bubble (cite: Video 0:01) */}
+            <motion.div 
+              animate={{ y: [0, 12, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              className="absolute -bottom-8 -right-6 z-20 bg-emerald-500 text-[#040705] px-6 py-4 rounded-[2rem] rounded-tl-none shadow-3xl font-black text-sm"
+            >
+              Analyzing... Nitrogen is 82% ⚡
+            </motion.div>
             
-            <div className="flex flex-wrap items-center gap-8 mt-6 text-sm font-bold text-slate-500">
-              <span className="flex items-center gap-2.5"><CheckCircle2 size={18} className="text-emerald-600"/> No credit card required</span>
-              <span className="flex items-center gap-2.5"><CheckCircle2 size={18} className="text-emerald-600"/> Set up in 60 seconds</span>
-            </div>
-          </motion.div>
-
-          {/* Right: Visuals */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            className="relative flex items-center justify-center p-4 lg:p-0"
-          >
-            {/* Main Image Container */}
-            <div className="relative w-full max-w-xl aspect-square rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(6,78,59,0.2)] border-8 border-white group">
+            {/* Main Mockup Container - Cinematic Green (cite: Video 0:01) */}
+            <div className="rounded-[3.5rem] overflow-hidden border-[12px] border-white/5 shadow-[0_0_80px_rgba(16,185,129,0.15)] bg-emerald-900/20 backdrop-blur-sm">
               <img 
-                src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1000&auto=format&fit=crop" 
-                alt="Farmer in field" 
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                src="/avatars/image_hero.avif" 
+                alt="Farmer Dashboard" 
+                className="w-full grayscale-[30%] hover:grayscale-0 transition-all duration-700 object-cover min-h-[500px]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#064e3b]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </div>
-
-            {/* Floating UI Element 1 */}
-            <motion.div 
-              animate={{ y: [0, -15, 0] }}
-              transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-              className="absolute -top-6 -left-10 bg-white/70 backdrop-blur-2xl p-6 rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-white/50 flex items-center gap-5 w-80 group hover:bg-white transition-colors duration-500"
-            >
-              <div className="w-14 h-14 bg-emerald-600 rounded-[1.25rem] flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-200 transition-transform group-hover:rotate-12">
-                <MessageCircle size={28} />
-              </div>
-              <div>
-                <p className="text-[10px] text-emerald-600 font-black uppercase tracking-widest mb-1 opacity-60">AI Assistant</p>
-                <p className="text-sm font-bold text-slate-800 leading-tight">"Your soil needs more nitrogen for the next cycle."</p>
-              </div>
-            </motion.div>
-
-            {/* Floating UI Element 2 */}
-            <motion.div 
-              animate={{ y: [0, 15, 0] }}
-              transition={{ repeat: Infinity, duration: 7, ease: "easeInOut", delay: 1 }}
-              className="absolute -bottom-6 -right-10 bg-[#064e3b]/90 backdrop-blur-2xl p-6 rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(6,78,59,0.3)] border border-emerald-400/20 flex items-center gap-5 w-72"
-            >
-              <div className="w-14 h-14 bg-emerald-400/20 rounded-[1.25rem] flex items-center justify-center text-emerald-400 shrink-0 text-3xl shadow-inner backdrop-blur-md">
-                🌿
-              </div>
-              <div>
-                <p className="text-[10px] text-emerald-300 font-black uppercase tracking-widest mb-1 opacity-40">Scan Complete</p>
-                <p className="text-sm font-bold text-white tracking-tight">Healthy Crop Detected</p>
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </div>
-      
-      {/* Decorative background elements */}
-      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-emerald-100/50 rounded-full blur-3xl -z-10 animate-pulse"></div>
-      <div className="absolute top-24 -right-24 w-64 h-64 bg-amber-100/40 rounded-full blur-3xl -z-10"></div>
     </section>
   );
 }
