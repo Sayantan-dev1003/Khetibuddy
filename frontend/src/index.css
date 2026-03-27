@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-800 text-lg;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+}
+
+@layer components {
+  /* Farmer-friendly button styles */
+  .btn-primary {
+    @apply bg-gradient-to-br from-primary to-primary-light text-white px-6 py-4 rounded-lg font-semibold text-lg min-h-[50px] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-600 text-white px-6 py-4 rounded-lg font-semibold text-lg min-h-[50px] transition-all duration-300 hover:bg-gray-700 hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+  
+  /* Input styles */
+  .input-field {
+    @apply w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-lg focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all;
+  }
+  
+  /* Page header */
+  .page-header {
+    @apply text-center mb-8 p-6 bg-gradient-to-br from-primary to-primary-light text-white rounded-xl shadow-lg;
+  }
+  
+  /* Cards */
+  .card {
+    @apply bg-white rounded-xl p-6 shadow-md mb-5;
+  }
+  
+  /* Error message */
+  .error-msg {
+    @apply bg-red-50 text-red-600 p-4 rounded-lg my-4 border-l-4 border-red-600 font-medium;
+  }
+  
+  /* Success message */
+  .success-msg {
+    @apply bg-green-50 text-green-600 p-4 rounded-lg my-4 border-l-4 border-green-600 font-medium;
+  }
+}
+
+/* Leaflet must stay below navbar */
+.leaflet-container {
+  z-index: 0 !important;
+}
+
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom,
+.leaflet-control {
+  z-index: 0 !important;
+}
