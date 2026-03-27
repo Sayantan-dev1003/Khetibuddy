@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Droplets, Sprout, AlertTriangle, Image as ImageIcon, Wind, Beaker, Coins, Shovel } from 'lucide-react';
+import { Droplets, Sprout, AlertTriangle, AlertCircle, Image as ImageIcon, Wind, Beaker, Coins, Shovel } from 'lucide-react';
 import PageHeader from '../components/ui/PageHeader';
 import Card from '../components/ui/Card';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import Select from '../components/ui/Select';
+import InputField from '../components/ui/InputField';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 const UNSPLASH_KEY = import.meta.env.VITE_UNSPLASH_KEY;
@@ -12,7 +13,11 @@ function FertilizerAdvisor() {
   const [formData, setFormData] = useState({
     crop: '',
     budget: '',
-    issues: '',
+    soilType: '',
+    n: '',
+    p: '',
+    k: '',
+    ph: '',
   });
 
   const [result, setResult] = useState(null);
@@ -68,6 +73,13 @@ function FertilizerAdvisor() {
     { value: 'low', label: '💰 Low Budget (₹500-2000/acre)' },
     { value: 'medium', label: '💵 Medium Budget (₹2000-5000/acre)' },
     { value: 'high', label: '💎 Premium (₹5000+/acre)' },
+  ];
+
+  const soilTypeOptions = [
+    { value: 'Sandy', label: '🏖️ Sandy' },
+    { value: 'Loamy', label: '🟤 Loamy' },
+    { value: 'Clay', label: '🧱 Clay' },
+    { value: 'Silt', label: '🌊 Silt' },
   ];
 
   const handleChange = (e) => {
@@ -200,6 +212,55 @@ function FertilizerAdvisor() {
                   options={cropOptions}
                   className="!mb-0"
                 />
+
+                <Select
+                  label="Soil Type"
+                  name="soilType"
+                  value={formData.soilType}
+                  onChange={handleChange}
+                  options={soilTypeOptions}
+                  className="!mb-0"
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <InputField
+                    label="Nitrogen (N)"
+                    name="n"
+                    type="number"
+                    value={formData.n}
+                    onChange={handleChange}
+                    placeholder="e.g. 100"
+                    className="!mb-0"
+                  />
+                  <InputField
+                    label="Phosphorus (P)"
+                    name="p"
+                    type="number"
+                    value={formData.p}
+                    onChange={handleChange}
+                    placeholder="e.g. 50"
+                    className="!mb-0"
+                  />
+                  <InputField
+                    label="Potassium (K)"
+                    name="k"
+                    type="number"
+                    value={formData.k}
+                    onChange={handleChange}
+                    placeholder="e.g. 50"
+                    className="!mb-0"
+                  />
+                  <InputField
+                    label="Soil pH"
+                    name="ph"
+                    type="number"
+                    step="0.1"
+                    value={formData.ph}
+                    onChange={handleChange}
+                    placeholder="e.g. 6.5"
+                    className="!mb-0"
+                  />
+                </div>
 
                 <Select
                   label="What is your budget plan?"
