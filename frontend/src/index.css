@@ -1,11 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary: #34d399; /* Emerald Bright */
+  --primary-dark: #10b981;
+  --secondary: #062c1c; /* Dark Forest Green */
+  --accent: #fbbf24;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --bg-main: #ffffff;
+  --bg-alt: #f8fafc;
+  
+  /* High Fidelity Tokens */
+  --forest-green: #062c1c;
+  --forest-deep: #041e14;
+  --emerald-bright: #34d399;
+  --white-pure: #ffffff;
+}
+
+@tailwind utilities;
+
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-800 text-lg;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    @apply bg-white text-slate-900 text-lg antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/20;
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-green-500;
   }
 }
 

@@ -1,59 +1,55 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Mic, Globe, Zap, Smile } from 'lucide-react';
+import { Target, Monitor, Layers, Shield, Zap, Circle } from 'lucide-react';
 
 function TrustStrip() {
-  const highlights = [
-    { icon: Mic, text: 'Voice Support', color: 'emerald' },
-    { icon: Globe, text: 'Malayalam Ready', color: 'amber' },
-    { icon: Zap, text: 'Instant Advisory', color: 'emerald' },
-    { icon: Smile, text: 'Farmer-Friendly UI', color: 'amber' },
+  const brands = [
+    { icon: Target, name: 'FocalPoint' },
+    { icon: Monitor, name: 'Screentime' },
+    { icon: Layers, name: 'Segment' },
+    { icon: Shield, name: 'Shutterhome' },
+    { icon: Zap, name: 'Lightspeed' },
+    { icon: Circle, name: 'Mastercraft' },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
+  const duplicatedBrands = [...brands, ...brands, ...brands, ...brands];
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-      >
-        {highlights.map((item, index) => {
-          const Icon = item.icon;
-          const colorClass = item.color === 'emerald' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600';
-          const borderClass = item.color === 'emerald' ? 'border-emerald-200' : 'border-amber-200';
-
-          return (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              whileHover={{ y: -5, transition: { duration: 0.2 } }}
-              className={`flex flex-col items-center justify-center p-8 rounded-2xl border-2 ${borderClass} bg-slate-50 shadow-md hover:shadow-lg transition-all`}
-            >
-              <div className={`${colorClass} p-4 rounded-2xl mb-4`}>
-                <Icon size={32} strokeWidth={2.5} />
+    <section className="py-16 bg-[#062c1c] overflow-hidden border-y border-white/5 relative">
+      <div className="flex whitespace-nowrap">
+        <motion.div
+          animate={{
+            x: [0, -100 * duplicatedBrands.length / 4 + '%'],
+          }}
+          transition={{
+            x: {
+              repeat: Infinity,
+              repeatType: "loop",
+              duration: 30,
+              ease: "linear",
+            },
+          }}
+          className="flex gap-20 items-center px-10"
+        >
+          {duplicatedBrands.map((brand, index) => {
+            const Icon = brand.icon;
+            return (
+              <div
+                key={index}
+                className="flex items-center gap-3 text-white/30 hover:text-[#34d399] transition-colors group cursor-default"
+              >
+                <Icon size={24} />
+                <span className="text-xl font-black font-outfit uppercase tracking-tighter">
+                  {brand.name}
+                </span>
               </div>
-              <p className="text-slate-900 font-semibold text-xl text-center">{item.text}</p>
-            </motion.div>
-          );
-        })}
-      </motion.div>
+            );
+          })}
+        </motion.div>
+      </div>
+      {/* Gradients */}
+      <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#062c1c] to-transparent z-10"></div>
+      <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#062c1c] to-transparent z-10"></div>
     </section>
   );
 }

@@ -1,107 +1,115 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Star } from 'lucide-react';
+import { Quote } from 'lucide-react';
 
-function Testimonials() {
-  const testimonials = [
-    {
-      name: 'Raju Kumar',
-      role: 'Rice Farmer, Kerala',
-      image: '👨‍🌾',
-      rating: 5,
-      text: 'KhetiBuddy helped me identify rice blast disease early. The Malayalam voice support made it so easy to use. My yield improved by 30%!',
-    },
-    {
-      name: 'Lakshmi Devi',
-      role: 'Vegetable Farmer, Karnataka',
-      image: '👩‍🌾',
-      rating: 5,
-      text: 'The fertilizer recommendations saved me money and improved my crop quality. Best farming app I have ever used!',
-    },
-    {
-      name: 'Arun Nair',
-      role: 'Agriculture Student',
-      image: '🎓',
-      rating: 5,
-      text: 'As a student, this app is a goldmine of knowledge. The AI chatbot answers all my farming queries instantly. Highly recommended!',
-    },
-  ];
+const testimonials = [
+  {
+    name: 'Thomas Rijan',
+    role: 'Vegetable Grower',
+    image: '/farmer_testimonial_1_1774631975278.png',
+    quote: '"The Smart Irrigation System Has Completely Changed How We Manage Our Fields. It\'s Efficient, Sustainable, And Easy To Use."',
+  },
+  {
+    name: 'Manoi Agra',
+    role: 'Rice Farmer',
+    image: '/farmer_testimonial_2_1774632028283.png',
+    quote: 'KhetiBuddy helped me identify crop path in real-time. My yield increased by 30% while using less water.',
+  },
+  {
+    name: 'Devi Patil',
+    role: 'Orchard Owner',
+    image: '/farmer_testimonial_3_1774632076989.png',
+    quote: '"Thanks to AgriGrow, I can make data-driven decisions that save time and money every season."',
+  },
+  {
+    name: 'Sarah Chen',
+    role: 'Agri-Tech Investor',
+    image: '/farmer_testimonial_1_1774631975278.png',
+    quote: '"The most intuitive agricultural SaaS platform I\'ve seen. It bridges the gap between data and actual field results."',
+  },
+  {
+    name: 'Rajesh Kumar',
+    role: 'Wheat Farmer',
+    image: '/farmer_testimonial_2_1774632028283.png',
+    quote: '"Finally, a tool that speaks the language of farmers while giving us the power of Silicon Valley technology."',
+  },
+];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0 },
-  };
+const Testimonials = () => {
+  // Triple the testimonials for a seamless loop
+  const duplicatedTestimonials = [...testimonials, ...testimonials, ...testimonials];
 
   return (
-    <section id="testimonials" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-emerald-50">
-      <div className="max-w-7xl mx-auto">
+    <section id="testimonials" className="py-32 bg-[#f8fafc] overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 mb-20 text-center lg:text-left">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="flex flex-col lg:flex-row justify-between items-end gap-10"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-4">
-            Loved by Farmers
-          </h2>
-          <p className="text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto">
-            See what farmers are saying about KhetiBuddy
+          <div className="max-w-2xl">
+            <h2 className="text-section-title text-[#062c1c]">
+              What farmers are <br /> 
+              <span className="text-[#34d399]/40 italic">Saying about us</span>
+            </h2>
+          </div>
+          <p className="text-lg text-slate-500 max-w-sm leading-relaxed font-outfit font-medium">
+            Join 50,000+ growers who are transforming their farms with our platform.
           </p>
         </motion.div>
+      </div>
 
+      {/* Infinite Scroll Container */}
+      <div className="relative flex overflow-hidden group">
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          animate={{
+            x: [0, -100 * duplicatedTestimonials.length / 3 + '%'],
+          }}
+          transition={{
+            x: {
+              repeat: Infinity,
+              repeatType: "loop",
+              duration: 40,
+              ease: "linear",
+            },
+          }}
+          className="flex gap-8 whitespace-nowrap py-10 px-8"
         >
-          {testimonials.map((testimonial, index) => (
-            <motion.div
+          {duplicatedTestimonials.map((t, index) => (
+            <div
               key={index}
-              variants={cardVariants}
-              whileHover={{ y: -10, transition: { duration: 0.3 } }}
-              className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all border border-slate-100"
+              className="inline-block w-[450px] bg-white rounded-[3rem] p-6 shadow-xl hover:shadow-2xl transition-all duration-500 border border-slate-100 group/card"
             >
-              {/* Stars */}
-              <div className="flex gap-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} size={20} className="text-amber-400 fill-amber-400" />
-                ))}
-              </div>
-
-              {/* Review Text */}
-              <p className="text-slate-700 text-lg leading-relaxed mb-6">
-                "{testimonial.text}"
-              </p>
-
-              {/* Author */}
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center text-3xl">
-                  {testimonial.image}
+              <div className="flex flex-col md:flex-row gap-6">
+                <div className="w-full md:w-[150px] aspect-square rounded-[2rem] overflow-hidden shrink-0">
+                  <img 
+                    src={t.image} 
+                    alt={t.name} 
+                    className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-700" 
+                  />
                 </div>
-                <div>
-                  <p className="font-bold text-slate-900 text-lg">{testimonial.name}</p>
-                  <p className="text-slate-600">{testimonial.role}</p>
+                <div className="flex flex-col justify-center min-w-0">
+                  <Quote className="text-[#34d399]/20 mb-4" size={32} />
+                  <p className="text-lg text-[#062c1c] leading-relaxed font-bold italic mb-6 break-words whitespace-normal">
+                    {t.quote}
+                  </p>
+                  <div>
+                    <h4 className="text-xl font-black text-[#062c1c] uppercase tracking-tight font-outfit">{t.name}</h4>
+                    <p className="text-[#34d399] font-bold uppercase tracking-widest text-[10px] mt-0.5">{t.role}</p>
+                  </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </motion.div>
+        
+        {/* Gradient Overlays for Fade Effect */}
+        <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#f8fafc] to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#f8fafc] to-transparent z-10 pointer-events-none"></div>
       </div>
     </section>
   );
-}
+};
 
 export default Testimonials;

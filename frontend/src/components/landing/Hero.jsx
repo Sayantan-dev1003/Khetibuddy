@@ -11,120 +11,56 @@ function Hero() {
   };
 
   return (
-    <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-emerald-50 via-white to-amber-50 overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-emerald-200/30 rounded-full blur-3xl"></div>
-        <div className="absolute top-60 -left-40 w-96 h-96 bg-amber-200/20 rounded-full blur-3xl"></div>
+    <section id="hero" className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-[#062c1c]">
+      {/* Background Image with Darker Overlay */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="/agri_hero_bg_v2_1774631918338.png" 
+          alt="Lush agricultural field" 
+          className="w-full h-full object-cover opacity-60"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#062c1c]/80 via-transparent to-[#062c1c]"></div>
+        <div className="absolute inset-0 bg-[#062c1c]/20"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left: Text Content */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-5xl">
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="flex flex-col gap-8"
           >
-            <div className="flex items-center gap-2 mb-6">
-              <Sparkles className="text-amber-500" size={24} />
-              <span className="text-emerald-700 font-semibold text-lg">AI-Powered Farming</span>
+            {/* Feature Pill */}
+            <div className="flex">
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-[#34d399] animate-pulse"></div>
+                <span className="text-white/90 text-xs font-bold uppercase tracking-widest font-outfit">
+                  Investing in Earth
+                </span>
+              </div>
             </div>
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 leading-tight mb-6">
-              Your AI Farming
-              <span className="text-emerald-600"> Companion</span>
+            {/* Heading */}
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] uppercase tracking-tighter font-outfit">
+              Grow the future <br /> 
+              <span className="text-[#34d399]/80">with sustainable</span> <br />
+              agriculture
             </h1>
 
-            <p className="text-xl md:text-2xl text-slate-600 mb-10 leading-relaxed">
-              Ask in <span className="font-semibold text-emerald-700">Malayalam</span> or{' '}
-              <span className="font-semibold text-emerald-700">English</span>. Get instant crop, soil, disease & market guidance.
+            {/* Subtext */}
+            <p className="text-xl md:text-2xl text-white/70 max-w-2xl leading-relaxed font-medium">
+              We discover more with net-zero and low-carbon, market-ready, and tailored solutions driven by data, research, and deep expertise.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={() => (window.location.href = '/dashboard')}
-                className="group bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-5 rounded-2xl font-semibold text-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
-              >
-                Start Asking
-                <ArrowRight className="group-hover:translate-x-1 transition-transform" size={24} />
-              </button>
-              <button
-                onClick={() => scrollToSection('features')}
-                className="bg-white hover:bg-slate-50 text-emerald-700 border-2 border-emerald-600 px-8 py-5 rounded-2xl font-semibold text-xl shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                Explore Features
-              </button>
-            </div>
-          </motion.div>
-
-          {/* Right: Hero Mock UI */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
-          >
-            <div className="relative mx-auto max-w-sm">
-              {/* Phone Frame */}
-              <div className="bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-[3rem] p-6 shadow-2xl">
-                <div className="bg-white rounded-[2.5rem] overflow-hidden shadow-inner">
-                  {/* Top Bar */}
-                  <div className="bg-emerald-600 px-6 py-4 flex items-center justify-between">
-                    <div className="text-white font-bold text-lg">KhetiBuddy</div>
-                    <div className="flex gap-2">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                    </div>
-                  </div>
-
-                  {/* Chat Preview */}
-                  <div className="p-6 space-y-4 bg-slate-50">
-                    <div className="flex justify-end">
-                      <div className="bg-emerald-600 text-white px-4 py-3 rounded-2xl rounded-tr-sm max-w-[80%]">
-                        <p className="text-sm">എന്റെ നെല്ലിന് എന്താണ് സംഭവിച്ചത്?</p>
-                      </div>
-                    </div>
-                    <div className="flex justify-start">
-                      <div className="bg-white text-slate-900 px-4 py-3 rounded-2xl rounded-tl-sm max-w-[80%] shadow">
-                        <p className="text-sm font-medium mb-1">🌾 Rice Blast Disease</p>
-                        <p className="text-xs text-slate-600">Apply Tricyclazole spray...</p>
-                      </div>
-                    </div>
-                    <div className="flex justify-end">
-                      <div className="bg-emerald-600 text-white px-4 py-3 rounded-2xl rounded-tr-sm max-w-[80%]">
-                        <p className="text-sm">Thank you!</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Bottom Nav Preview */}
-                  <div className="bg-white border-t border-slate-200 px-6 py-3 flex justify-around">
-                    {['💬', '🌿', '🌱', '📍'].map((emoji, i) => (
-                      <div key={i} className="text-2xl opacity-60">
-                        {emoji}
-                      </div>
-                    ))}
-                  </div>
+            {/* CTA */}
+            <div className="flex flex-wrap gap-6 items-center mt-4">
+              <button className="bg-[#34d399] hover:bg-[#2bc28a] text-[#062c1c] px-10 py-5 rounded-full font-black flex items-center gap-4 transition-all group text-lg shadow-2xl shadow-emerald-900/40">
+                <span className="uppercase tracking-widest">Explore Our Service</span>
+                <div className="bg-[#062c1c]/10 p-2 rounded-full group-hover:bg-[#062c1c]/20 transition-colors">
+                  <ArrowRight size={24} />
                 </div>
-              </div>
-
-              {/* Floating Elements */}
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="absolute -top-4 -right-4 bg-amber-400 text-white px-4 py-2 rounded-2xl shadow-lg font-semibold"
-              >
-                🎤 Voice Ready
-              </motion.div>
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 2.5, repeat: Infinity }}
-                className="absolute -bottom-4 -left-4 bg-emerald-700 text-white px-4 py-2 rounded-2xl shadow-lg font-semibold"
-              >
-                ✨ AI Powered
-              </motion.div>
+              </button>
             </div>
           </motion.div>
         </div>
