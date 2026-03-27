@@ -23,33 +23,46 @@ function AppLayout({ children }) {
   };
 
   return (
-    <div className="min-h-screen paper-texture text-[var(--text-main)] transition-all duration-500">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-green-50">
       {/* Top Navbar */}
-      <nav className="bg-white/90 backdrop-blur-md border-b-2 border-[var(--primary-light)]/10 shadow-sm sticky top-0 z-50">
+      <nav className="bg-white border-b-2 border-emerald-100 shadow-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-24">
+          <div className="flex justify-between items-center h-20">
             {/* Left: Back button (mobile) or Logo */}
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
               {location.pathname !== '/dashboard' && (
                 <button
                   onClick={() => navigate(-1)}
-                  className="lg:hidden p-3 rounded-2xl bg-[var(--bg-alt)] hover:bg-[var(--primary-light)]/10 text-[var(--primary)] transition-all"
+                  className="lg:hidden p-2 rounded-lg hover:bg-emerald-50 transition-colors"
                   aria-label="Go back"
                 >
-                  <ArrowLeft size={28} />
+                  <ArrowLeft size={28} className="text-emerald-600" />
                 </button>
               )}
-              <Link to="/dashboard" className="flex items-center gap-4 group">
-                <div className="text-5xl transition-transform group-hover:scale-110 drop-shadow-sm">🌾</div>
+              <Link to="/dashboard" className="flex items-center gap-3">
+                <div className="text-4xl">🌾</div>
                 <div>
-                  <h1 className="text-3xl md:text-4xl font-black text-[var(--primary)] tracking-tight">KhetiBuddy</h1>
-                  <p className="text-sm font-bold text-[var(--text-muted)] uppercase tracking-widest hidden sm:block">Earth-Powered Assistant</p>
+                  <h1 className="text-2xl md:text-3xl font-bold text-emerald-700">KhetiBuddy</h1>
+                  <p className="text-sm text-gray-600 hidden sm:block">Smart Farming Assistant</p>
                 </div>
               </Link>
             </div>
 
+            {/* Right: Menu button (mobile) */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 rounded-lg hover:bg-emerald-50 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? (
+                <X size={32} className="text-emerald-600" />
+              ) : (
+                <Menu size={32} className="text-emerald-600" />
+              )}
+            </button>
+
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-2">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
@@ -57,33 +70,24 @@ function AppLayout({ children }) {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold transition-all ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
                       active
-                        ? 'bg-[var(--primary)] text-white shadow-xl -translate-y-1'
-                        : 'text-[var(--text-muted)] hover:bg-[var(--primary-light)]/10 hover:text-[var(--primary)]'
+                        ? 'bg-emerald-600 text-white shadow-md'
+                        : 'text-gray-700 hover:bg-emerald-50'
                     }`}
                   >
-                    <Icon size={22} strokeWidth={active ? 3 : 2} />
-                    <span>{item.label}</span>
+                    <Icon size={20} />
+                    <span className="font-semibold">{item.label}</span>
                   </Link>
                 );
               })}
             </div>
-
-            {/* Right: Menu button (mobile) */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-3 rounded-2xl bg-[var(--primary)] text-white shadow-lg transition-all active:scale-95"
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X size={32} /> : <Menu size={32} />}
-            </button>
           </div>
 
           {/* Mobile Dropdown Menu */}
           {mobileMenuOpen && (
-            <div className="lg:hidden pb-6 pt-4 border-t border-[var(--primary-light)]/10 animate-fade-in-down">
-              <div className="grid grid-cols-2 gap-4">
+            <div className="lg:hidden pb-4 pt-2 border-t border-emerald-100 mt-2">
+              <div className="grid grid-cols-2 gap-3">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.path);
@@ -92,14 +96,14 @@ function AppLayout({ children }) {
                       key={item.path}
                       to={item.path}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`flex flex-col items-center gap-3 p-6 rounded-3xl transition-all ${
+                      className={`flex flex-col items-center gap-2 p-4 rounded-xl transition-all ${
                         active
-                          ? 'bg-[var(--primary)] text-white shadow-2xl scale-105'
-                          : 'bg-white/80 text-[var(--text-muted)] border border-[var(--primary-light)]/10'
+                          ? 'bg-emerald-600 text-white shadow-lg'
+                          : 'bg-emerald-50 text-gray-700 hover:bg-emerald-100'
                       }`}
                     >
-                      <Icon size={36} strokeWidth={active ? 3 : 2} />
-                      <span className="font-bold text-sm tracking-wide">{item.label}</span>
+                      <Icon size={32} />
+                      <span className="font-semibold text-sm">{item.label}</span>
                     </Link>
                   );
                 })}
@@ -110,13 +114,13 @@ function AppLayout({ children }) {
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
       </main>
 
       {/* Bottom Navigation (Mobile Only) */}
-      <nav className="lg:hidden fixed bottom-6 left-6 right-6 bg-[var(--primary)] text-white/90 rounded-[2.5rem] shadow-2xl z-40 border border-white/10 overflow-hidden">
-        <div className="grid grid-cols-5 gap-0 px-2 py-4">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-emerald-100 shadow-lg z-40">
+        <div className="grid grid-cols-6 gap-1 px-2 py-3">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
@@ -124,18 +128,14 @@ function AppLayout({ children }) {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex flex-col items-center gap-1.5 py-1 px-1 transition-all ${
+                className={`flex flex-col items-center gap-1 py-2 px-1 rounded-lg transition-all ${
                   active
-                    ? 'text-white scale-110'
-                    : 'text-white/60'
+                    ? 'bg-emerald-600 text-white'
+                    : 'text-gray-600 hover:bg-emerald-50'
                 }`}
               >
-                <div className={`${active ? 'bg-white/20 p-2 rounded-xl transition-all' : ''}`}>
-                  <Icon size={24} strokeWidth={active ? 3 : 2} />
-                </div>
-                <span className={`text-[10px] font-black uppercase tracking-tighter ${active ? 'opacity-100' : 'opacity-60'}`}>
-                  {item.label}
-                </span>
+                <Icon size={24} />
+                <span className="text-xs font-semibold">{item.label}</span>
               </Link>
             );
           })}
@@ -143,7 +143,7 @@ function AppLayout({ children }) {
       </nav>
 
       {/* Bottom padding to prevent content from being hidden by bottom nav on mobile */}
-      <div className="h-28 lg:hidden"></div>
+      <div className="h-24 lg:hidden"></div>
     </div>
   );
 }

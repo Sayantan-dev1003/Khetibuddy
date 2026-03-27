@@ -1,101 +1,64 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Keep CSS variables for dynamic JS usage if needed, but primary styling now via Tailwind Config */
-  --primary: #5d4037;
-  --secondary: #8da14e;
-  --accent: #bc6c25;
-  --bg-main: #fefae0;
-  --bg-alt: #f1ede1;
-}
-
 @layer base {
   body {
-    @apply bg-harvest text-clay text-lg antialiased transition-colors duration-500 font-sans;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-serif font-bold tracking-tight;
+    @apply bg-gray-50 text-gray-800 text-lg;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
 }
 
 @layer components {
   /* Farmer-friendly button styles */
   .btn-primary {
-    @apply bg-primary text-white px-6 py-4 rounded-xl font-bold text-lg min-h-[50px] transition-all duration-300 hover:bg-primary-dark hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed;
+    @apply bg-gradient-to-br from-primary to-primary-light text-white px-6 py-4 rounded-lg font-semibold text-lg min-h-[50px] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0;
   }
   
   .btn-secondary {
-    @apply bg-secondary text-white px-6 py-4 rounded-xl font-bold text-lg min-h-[50px] transition-all duration-300 hover:bg-opacity-90 hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60;
+    @apply bg-gray-600 text-white px-6 py-4 rounded-lg font-semibold text-lg min-h-[50px] transition-all duration-300 hover:bg-gray-700 hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed;
   }
   
   /* Input styles */
   .input-field {
-    @apply w-full border-2 border-primary-light/30 bg-white/50 rounded-xl px-4 py-3 text-lg focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-clay-muted group-hover:bg-white;
+    @apply w-full border-2 border-gray-300 rounded-lg px-4 py-3 text-lg focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all;
   }
   
   /* Page header */
   .page-header {
-    @apply text-center mb-8 p-8 bg-primary text-white rounded-2xl shadow-2xl relative overflow-hidden;
-  }
-
-  .page-header::after {
-    content: '';
-    @apply absolute inset-0 opacity-10 pointer-events-none;
-    background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+    @apply text-center mb-8 p-6 bg-gradient-to-br from-primary to-primary-light text-white rounded-xl shadow-lg;
   }
   
   /* Cards */
   .card {
-    @apply bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-primary-light/10 transition-all duration-300 hover:shadow-xl hover:border-primary-light/20;
-  }
-}
-
-@layer utilities {
-  .glass {
-    @apply bg-white/40 backdrop-blur-md border border-white/30;
+    @apply bg-white rounded-xl p-6 shadow-md mb-5;
   }
   
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
+  /* Error message */
+  .error-msg {
+    @apply bg-red-50 text-red-600 p-4 rounded-lg my-4 border-l-4 border-red-600 font-medium;
   }
-
-  .paper-texture {
-    @apply bg-harvest;
-    background-image: url("https://www.transparenttextures.com/patterns/felt.png");
-  }
-
-  /* Custom Scrollbar Utility */
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 8px;
-  }
-  .custom-scrollbar::-webkit-scrollbar-track {
-    @apply bg-harvest-alt rounded-full;
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-primary-light rounded-full border-2 border-harvest-alt;
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-primary;
+  
+  /* Success message */
+  .success-msg {
+    @apply bg-green-50 text-green-600 p-4 rounded-lg my-4 border-l-4 border-green-600 font-medium;
   }
 }
 
-/* Global Scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
+/* Add this to your CSS file */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
-::-webkit-scrollbar-track {
-  background: #f1ede1; /* var(--bg-alt) */
-}
-::-webkit-scrollbar-thumb {
-  background: #8d6e63; /* var(--primary-light) */
-  border-radius: 5px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #5d4037; /* var(--primary) */
+/* Leaflet must stay below navbar */
+.leaflet-container {
+  z-index: 0 !important;
 }
 
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom,
+.leaflet-control {
+  z-index: 0 !important;
+}
