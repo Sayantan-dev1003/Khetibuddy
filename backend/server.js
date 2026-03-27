@@ -15,7 +15,8 @@ const newsRoutes = require('./routes/news.routes');
 const authRoutes = require('./routes/auth.routes.js');
 const profileRoutes = require('./routes/profile.routes.js');
 const adminRoutes = require('./routes/admin.routes');
-const { apiLimiter, groqLimiter, authLimiter } = require('./middleware/rateLimiter');
+const { apiLimiter, groqLimiter } = require('./middleware/rateLimiter');
+
 
 
 const app = express();
@@ -68,7 +69,8 @@ app.use('/api/fertilizer', fertilizerRoutes);
 app.use('/api/history', historyRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/news', newsRoutes);
-app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/auth', authRoutes);
+
 app.use('/api/me', profileRoutes);
 app.use('/api/admin', adminRoutes);
 
