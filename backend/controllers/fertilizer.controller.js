@@ -4,7 +4,7 @@ const { generateFertilizerRecommendation } = require('../services/fertilizerML.s
 
 exports.getFertilizerRecommendation = async (req, res) => {
   try {
-    const { crop, n, p, k, ph, budget } = req.body;
+    const { crop, n, p, k, ph, budget, soilType } = req.body;
 
     if (!crop) {
       return res.status(400).json({
@@ -15,7 +15,7 @@ exports.getFertilizerRecommendation = async (req, res) => {
 
     const result = await generateFertilizerRecommendation({
       crop,
-      soil: { n, p, k, ph },
+      soil: { n, p, k, ph, soilType },
       budgetPreference: budget || 'low'
     });
 
