@@ -1,67 +1,102 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, MessageCircle, CheckCircle2 } from 'lucide-react';
 
 function Hero() {
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
   return (
-    <section id="hero" className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-[#062c1c]">
-      {/* Background Image with Darker Overlay */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src="/agri_hero_bg_v2_1774631918338.png" 
-          alt="Lush agricultural field" 
-          className="w-full h-full object-cover opacity-60"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#062c1c]/80 via-transparent to-[#062c1c]"></div>
-        <div className="absolute inset-0 bg-[#062c1c]/20"></div>
-      </div>
+    <section id="hero" className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+          
+          {/* Left: Text Content */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="flex flex-col gap-6 text-left"
+          >
+            <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-full text-sm font-bold w-fit border border-emerald-100 uppercase tracking-wide">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              Smart Farming Assistant
+            </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="max-w-5xl">
+            <h1 className="text-5xl lg:text-7xl font-black text-slate-900 leading-[1.1] tracking-tight">
+              Grow the Future <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-emerald-400">
+                Sustainably.
+              </span>
+            </h1>
+
+            <p className="text-xl text-slate-600 max-w-lg leading-relaxed font-medium">
+              We handle the complex analysis—from disease detection to fertilizer plans—so you can focus on growing better crops.
+            </p>
+
+            <div className="flex flex-wrap gap-4 items-center mt-2">
+              <button 
+                onClick={() => window.location.href='/dashboard'}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-full font-bold flex items-center gap-3 transition-all shadow-xl shadow-emerald-600/20 hover:-translate-y-1"
+              >
+                Start Free Trial
+                <ArrowRight size={20} />
+              </button>
+              <button className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-8 py-4 rounded-full font-bold transition-all">
+                See How It Works
+              </button>
+            </div>
+            
+            <div className="flex items-center gap-6 mt-4 text-sm font-semibold text-slate-500">
+              <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-500"/> No credit card required</span>
+              <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-500"/> Set up in 60 seconds</span>
+            </div>
+          </motion.div>
+
+          {/* Right: Visuals */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex flex-col gap-8"
+            className="relative lg:h-[600px] flex items-center justify-center"
           >
-            {/* Feature Pill */}
-            <div className="flex">
-              <div className="bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-[#34d399] animate-pulse"></div>
-                <span className="text-white/90 text-xs font-bold uppercase tracking-widest font-outfit">
-                  Investing in Earth
-                </span>
+            <div className="relative w-full max-w-lg aspect-[4/3] md:aspect-square rounded-[2rem] overflow-hidden shadow-2xl shadow-emerald-900/10 border border-slate-100">
+              <img 
+                src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1000&auto=format&fit=crop" 
+                alt="Farmer in field" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            {/* Floating UI Element 1 */}
+            <motion.div 
+              animate={{ y: [0, -10, 0] }}
+              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+              className="absolute top-10 -left-6 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-4 w-64"
+            >
+              <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 shrink-0">
+                <MessageCircle size={20} />
               </div>
-            </div>
+              <div>
+                <p className="text-xs text-slate-500 font-medium mb-1">AI Assistant</p>
+                <p className="text-sm font-bold text-slate-800 leading-tight">"Your soil needs more nitrogen for the next cycle."</p>
+              </div>
+            </motion.div>
 
-            {/* Heading */}
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] uppercase tracking-tighter font-outfit">
-              Grow the future <br /> 
-              <span className="text-[#34d399]/80">with sustainable</span> <br />
-              agriculture
-            </h1>
-
-            {/* Subtext */}
-            <p className="text-xl md:text-2xl text-white/70 max-w-2xl leading-relaxed font-medium">
-              We discover more with net-zero and low-carbon, market-ready, and tailored solutions driven by data, research, and deep expertise.
-            </p>
-
-            {/* CTA */}
-            <div className="flex flex-wrap gap-6 items-center mt-4">
-              <button className="bg-[#34d399] hover:bg-[#2bc28a] text-[#062c1c] px-10 py-5 rounded-full font-black flex items-center gap-4 transition-all group text-lg shadow-2xl shadow-emerald-900/40">
-                <span className="uppercase tracking-widest">Explore Our Service</span>
-                <div className="bg-[#062c1c]/10 p-2 rounded-full group-hover:bg-[#062c1c]/20 transition-colors">
-                  <ArrowRight size={24} />
-                </div>
-              </button>
-            </div>
+            {/* Floating UI Element 2 */}
+            <motion.div 
+              animate={{ y: [0, 10, 0] }}
+              transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+              className="absolute bottom-10 -right-6 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-4 w-56"
+            >
+              <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 shrink-0 text-xl">
+                🌿
+              </div>
+              <div>
+                <p className="text-xs text-slate-500 font-medium mb-1">Scan Complete</p>
+                <p className="text-sm font-bold text-slate-800">Healthy Crop Detected</p>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>

@@ -12,7 +12,7 @@ function PrimaryButton({
   fullWidth = false,
   icon
 }) {
-  const baseClasses = 'font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-3 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses = 'font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:outline-none';
   
   const variantClasses = {
     primary: 'bg-emerald-600 hover:bg-emerald-700 text-white',

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import AppLayout from './components/AppLayout.jsx';
+import DashboardLayout from './components/layout/DashboardLayout.jsx';
 import Landing from './pages/Landing.jsx';
 import Home from './pages/Home.jsx';
 import Chatbot from './pages/Chatbot.jsx';
@@ -18,18 +18,14 @@ function App() {
         {/* Landing page without app layout */}
         <Route path="/" element={<Landing />} />
         
-        {/* Main app routes with app layout */}
-        <Route path="/dashboard/*" element={
-          <AppLayout>
-            <Routes>
-              <Route index element={<Home />} />
-              <Route path="chatbot" element={<Chatbot apiUrl={API_URL} />} />
-              <Route path="disease-detection" element={<DiseaseDetection apiUrl={API_URL} />} />
-              <Route path="fertilizer-advisory" element={<FertilizerAdvisor apiUrl={API_URL} />} />
-              <Route path="nearby-market" element={<NearbyMarkets />} />
-            </Routes>
-          </AppLayout>
-        } />
+        {/* Main app routes with modern SaaS layout */}
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route index element={<Home />} />
+          <Route path="chatbot" element={<Chatbot apiUrl={API_URL} />} />
+          <Route path="disease-detection" element={<DiseaseDetection apiUrl={API_URL} />} />
+          <Route path="fertilizer-advisory" element={<FertilizerAdvisor apiUrl={API_URL} />} />
+          <Route path="nearby-market" element={<NearbyMarkets />} />
+        </Route>
       </Routes>
     </Router>
   );

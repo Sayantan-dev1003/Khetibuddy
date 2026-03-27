@@ -28,7 +28,7 @@ function Card({
   
   return (
     <div 
-      className={`bg-white rounded-2xl ${paddingClasses[padding]} ${shadowClasses[shadow]} ${hoverClass} ${borderClass} ${className}`}
+      className={`bg-white rounded-xl border border-slate-200 ${paddingClasses[padding]} ${shadowClasses[shadow]} ${hoverClass} ${className}`}
     >
       {children}
     </div>

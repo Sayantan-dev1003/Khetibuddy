@@ -36,7 +36,7 @@ function InputField({
           placeholder={placeholder}
           required={required}
           disabled={disabled}
-          className={`w-full ${icon ? 'pl-12' : 'pl-4'} pr-4 py-4 text-lg border-2 border-gray-300 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all disabled:bg-gray-100 disabled:cursor-not-allowed ${error ? 'border-red-500' : ''}`}
+          className={`w-full ${icon ? 'pl-12' : 'pl-4'} pr-4 py-3 text-base border border-slate-200 rounded-xl focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 disabled:bg-slate-50 disabled:cursor-not-allowed ${error ? 'border-red-500' : ''}`}
         />
       </div>
       {error && (

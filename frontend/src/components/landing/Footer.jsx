@@ -1,112 +1,68 @@
 import React from 'react';
-import { Github, Twitter, Mail } from 'lucide-react';
 
 const Footer = () => {
-  const footerLinks = [
-    {
-      title: 'Platform',
-      links: ['Features', 'Solutions', 'Integrations', 'Pricing']
-    },
-    {
-      title: 'Company',
-      links: ['About Us', 'Our Mission', 'Careers', 'Contact']
-    },
-    {
-      title: 'Resources',
-      links: ['Documentation', 'Help Center', 'API Reference', 'Community']
-    },
-    {
-      title: 'Legal',
-      links: ['Privacy Policy', 'Terms of Use', 'Cookie Policy', 'Security']
-    }
-  ];
-
   return (
-    <footer className="bg-[#062c1c] pt-32 pb-12 px-6 sm:px-10 lg:px-16 border-t border-white/5 relative overflow-hidden">
-      {/* Decorative Gradient */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#34d399]/5 rounded-full blur-[120px] -z-10 translate-x-1/2 -translate-y-1/2"></div>
-      
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-16 mb-24">
-          {/* Brand & Newsletter Section */}
-          <div className="lg:col-span-2 space-y-8">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#34d399] rounded-xl flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-6 h-6 text-[#062c1c] fill-current">
-                  <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z" />
-                </svg>
-              </div>
-              <span className="text-2xl font-black text-white uppercase tracking-tighter font-outfit">
-                KhetiBuddy
-              </span>
-            </div>
-            <p className="text-white/40 text-sm leading-relaxed max-w-sm font-medium">
-              Empowering the next generation of farmers with data-driven insights and sustainable technology.
-            </p>
-            <div className="space-y-4">
-              <h4 className="text-white font-black uppercase tracking-widest text-[10px]">
-                Subscribe to our newsletter
-              </h4>
-              <div className="flex gap-2 max-w-sm">
-                <input 
-                  type="email" 
-                  placeholder="Enter your email" 
-                  className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm w-full focus:outline-none focus:border-[#34d399]/30"
-                />
-                <button className="bg-[#34d399] hover:bg-white text-[#062c1c] px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all">
-                  Join
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Links Grid */}
-          <div className="lg:col-span-4 grid grid-cols-2 md:grid-cols-4 gap-12">
-            {footerLinks.map((column, idx) => (
-              <div key={idx} className="space-y-6">
-                <h4 className="text-white font-black uppercase tracking-widest text-[11px]">
-                  {column.title}
-                </h4>
-                <ul className="space-y-3">
-                  {column.links.map((link, lIdx) => (
-                    <li key={lIdx}>
-                      <a 
-                        href="#" 
-                        className="text-white/30 hover:text-[#34d399] transition-all text-xs font-bold uppercase tracking-wider inline-block"
-                      >
-                        {link}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Footer Bottom */}
-        <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex gap-6">
-            {[Github, Twitter, Mail].map((Icon, i) => (
-              <a 
-                key={i} 
-                href="#" 
-                className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-white/40 hover:text-[#34d399] hover:bg-[#34d399]/10 transition-all"
-              >
-                <Icon size={18} />
-              </a>
-            ))}
-          </div>
+    <footer className="bg-[#1A1A1A] pt-20 px-6 sm:px-10 lg:px-16 relative overflow-hidden text-slate-300 font-sans">
+      <div className="max-w-7xl mx-auto relative z-10">
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-20">
           
-          <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">
-            © 2024 KhetiBuddy. Agriculture SaaS for the Future.
-          </p>
+          {/* Col 1: Brand & Description */}
+          <div className="lg:pr-8">
+            <div className="flex items-center gap-2 mb-6 text-white">
+               {/* Minimalist Tech Logo Placeholder */}
+              <div className="w-6 h-6 bg-white rounded-r-full rounded-tl-full flex items-center justify-center shrink-0"></div>
+              <span className="text-2xl font-bold tracking-tight lowercase">khetibuddy</span>
+            </div>
+            <p className="text-sm leading-relaxed text-slate-400 font-medium max-w-sm">
+              KhetiBuddy helps businesses simplify farm management with an intuitive, scalable SaaS platform built for growing enterprises.
+            </p>
+          </div>
 
-          <div className="flex gap-8">
-            <a href="#" className="text-white/20 hover:text-white transition-colors text-[10px] font-black uppercase tracking-widest">Privacy</a>
-            <a href="#" className="text-white/20 hover:text-white transition-colors text-[10px] font-black uppercase tracking-widest">Terms</a>
+          {/* Col 2: Useful Links */}
+          <div>
+            <h4 className="text-white text-lg font-semibold mb-6">Useful Link</h4>
+            <ul className="space-y-4 text-sm font-medium">
+              <li><a href="#" className="hover:text-white transition-colors">Home</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+            </ul>
+          </div>
+
+          {/* Col 3: Follow Us */}
+          <div>
+            <h4 className="text-white text-lg font-semibold mb-6">Follow Us</h4>
+            <ul className="space-y-4 text-sm font-medium">
+              <li><a href="#" className="hover:text-white transition-colors">Facebook</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Instagram</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">X</a></li>
+            </ul>
+          </div>
+
+          {/* Col 4: CTA */}
+          <div>
+            <h4 className="text-white text-xl font-medium mb-6 leading-snug">
+              Let's Talk About<br/>Your Growth!
+            </h4>
+            <button className="bg-white hover:bg-slate-100 text-black px-6 py-3 rounded-full text-sm font-bold transition-colors">
+              Book a Call
+            </button>
           </div>
         </div>
+
+        {/* Bottom Bar */}
+        <div className="flex flex-col md:flex-row justify-between items-center text-sm font-medium text-slate-400 pb-8 z-20 relative">
+          <p>Made with <span className="text-pink-500">❤️</span> in India.</p>
+          <p className="mt-4 md:mt-0">Copyright © 2026, All rights reserved.</p>
+        </div>
+      </div>
+
+      {/* Giant Faded Watermark Text */}
+      <div className="absolute bottom-0 left-0 w-full overflow-hidden flex justify-center pointer-events-none select-none translate-y-[20%]">
+        <h1 className="text-[14vw] font-black text-white/[0.03] tracking-tighter uppercase whitespace-nowrap leading-none">
+          KHETIBUDDY
+        </h1>
       </div>
     </footer>
   );

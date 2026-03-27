@@ -2,24 +2,24 @@ import React from 'react';
 import Navbar from '../components/landing/Navbar';
 import Hero from '../components/landing/Hero';
 import TrustStrip from '../components/landing/TrustStrip';
-import StatsSection from '../components/landing/StatsSection';
-import VideoSection from '../components/landing/VideoSection';
-import ArticlesGrid from '../components/landing/ArticlesGrid';
-import FAQSection from '../components/landing/FAQSection';
+import Features from '../components/landing/Features';
+import HowItWorks from '../components/landing/HowItWorks';
 import Testimonials from '../components/landing/Testimonials';
+import FAQSection from '../components/landing/FAQSection';
+import CTA from '../components/landing/CTA';
 import Footer from '../components/landing/Footer';
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-white selection:bg-emerald-100 selection:text-emerald-900">
+    <div className="min-h-screen bg-slate-50 selection:bg-emerald-100 selection:text-emerald-900 font-sans">
       <Navbar />
       <Hero />
       <TrustStrip />
-      <StatsSection />
-      <VideoSection />
-      <ArticlesGrid />
-      <FAQSection />
+      <Features />
+      <HowItWorks />
       <Testimonials />
+      <FAQSection />
+      <CTA />
       <Footer />
     </div>
   );

@@ -1,108 +1,51 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Upload, Cpu, Lightbulb } from 'lucide-react';
 
 function HowItWorks() {
   const steps = [
-    {
-      icon: Upload,
-      title: 'Ask / Upload',
-      description: 'Type your question, use voice input, or upload a photo of your crop issue.',
-      color: 'emerald',
-    },
-    {
-      icon: Cpu,
-      title: 'AI Understands',
-      description: 'Our advanced AI analyzes your query and processes data in seconds.',
-      color: 'amber',
-    },
-    {
-      icon: Lightbulb,
-      title: 'Get Actionable Advice',
-      description: 'Receive clear, practical recommendations you can implement immediately.',
-      color: 'emerald',
-    },
+    { num: '1', title: 'Connect Profile', sub: 'Secure login.' },
+    { num: '2', title: 'Upload Photo', sub: 'Crop or Soil.' },
+    { num: '3', title: 'Set Language', sub: 'Eng or Mal.' },
+    { num: '4', title: 'Get Insights', sub: 'Instant results.' },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const stepVariants = {
-    hidden: { opacity: 0, x: -50 },
-    visible: { opacity: 1, x: 0 },
-  };
-
   return (
-    <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-emerald-50 to-white">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-4">
-            How It Works
-          </h2>
-          <p className="text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto">
-            Get expert farming advice in three simple steps
-          </p>
-        </motion.div>
-
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          className="relative"
-        >
-          {/* Connection Line */}
-          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-emerald-200 via-amber-200 to-emerald-200 transform -translate-y-1/2 z-0"></div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 relative z-10">
-            {steps.map((step, index) => {
-              const Icon = step.icon;
-              const colorClasses = step.color === 'emerald' 
-                ? 'bg-emerald-600 border-emerald-600' 
-                : 'bg-amber-500 border-amber-500';
-
-              return (
-                <motion.div
-                  key={index}
-                  variants={stepVariants}
-                  className="relative"
-                >
-                  <div className="bg-white p-8 rounded-2xl shadow-xl border-2 border-slate-100 hover:shadow-2xl transition-shadow">
-                    {/* Step Number */}
-                    <div className="flex items-center justify-center mb-6">
-                      <div className={`${colorClasses} w-20 h-20 rounded-full flex items-center justify-center shadow-lg`}>
-                        <Icon size={36} className="text-white" strokeWidth={2.5} />
-                      </div>
-                      <div className="absolute -top-4 -right-4 bg-slate-900 text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
-                        {index + 1}
-                      </div>
-                    </div>
-
-                    <h3 className="text-2xl font-bold text-slate-900 mb-3 text-center">
-                      {step.title}
-                    </h3>
-                    <p className="text-lg text-slate-600 leading-relaxed text-center">
-                      {step.description}
-                    </p>
-                  </div>
-                </motion.div>
-              );
-            })}
+    <section id="how-it-works" className="py-24 px-4 sm:px-6 lg:px-8 bg-[#1A1A1A] text-white overflow-hidden">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-20">
+          <div className="inline-flex items-center justify-center gap-2 bg-white/10 text-pink-400 px-4 py-1.5 rounded-full text-sm font-bold mb-6 backdrop-blur-sm border border-white/5">
+            ★ How To Use
           </div>
-        </motion.div>
+          <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight text-white">
+            Get Started in <span className="text-pink-400">60 Seconds</span>
+          </h2>
+          <p className="text-slate-400 text-lg">Once live, every query turns into actionable farming data instantly.</p>
+        </div>
+
+        {/* Steps Diagram */}
+        <div className="relative mb-20">
+          {/* Connecting Horizontal Line (Desktop) */}
+          <div className="hidden md:block absolute top-6 left-16 right-16 h-0.5 bg-slate-800 -z-10"></div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {steps.map((step, index) => (
+              <div key={index} className="flex flex-col items-center text-center relative z-10">
+                <div className="w-12 h-12 bg-[#1A1A1A] border-2 border-pink-400 rounded-full flex items-center justify-center text-xl font-bold mb-6 shadow-[0_0_15px_rgba(244,114,182,0.3)]">
+                  {step.num}
+                </div>
+                <div className="text-xs text-pink-400 font-bold tracking-widest uppercase mb-2">Step</div>
+                <h3 className="text-lg font-bold mb-1 text-white">{step.title}</h3>
+                <p className="text-sm text-slate-400">{step.sub}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Video Placeholder */}
+        <div className="w-full aspect-video bg-slate-800/50 rounded-[2rem] border border-slate-700/50 flex items-center justify-center shadow-2xl relative overflow-hidden group backdrop-blur-sm">
+            <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md cursor-pointer group-hover:scale-110 transition-transform border border-white/10">
+                <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[16px] border-l-white border-b-[10px] border-b-transparent ml-2"></div>
+            </div>
+        </div>
       </div>
     </section>
   );
