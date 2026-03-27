@@ -13,7 +13,6 @@ const SpeechRecognition =
 function Chatbot() {
   const [sessionId, setSessionId] = useState(null);
   const [question, setQuestion] = useState('');
-  const [language, setLanguage] = useState('english');
   const [chatMessages, setChatMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -21,11 +20,6 @@ function Chatbot() {
   const [recognitionSupported, setRecognitionSupported] = useState(true);
   const [historyOpen, setHistoryOpen] = useState(false);
   const messagesEndRef = React.useRef(null);
-
-  const languageOptions = [
-    { value: 'english', label: 'English' },
-    { value: 'malayalam', label: 'Malayalam (മലയാളം)' },
-  ];
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -163,7 +157,8 @@ function Chatbot() {
     }
 
     const recognition = new SpeechRecognition();
-    recognition.lang = language === 'malayalam' ? 'ml-IN' : 'en-IN';
+    // Use browser default language; user speaks in whatever language they want
+    recognition.lang = navigator.language || 'en-IN';
     recognition.interimResults = false;
     recognition.continuous = false;
 
@@ -220,7 +215,7 @@ function Chatbot() {
     
     if (!femaleVoice) {
       console.warn('⚠️ No voice available for', langCode);
-      alert(`No ${langCode === 'hi' ? 'Hindi' : langCode === 'ml' ? 'Malayalam' : 'English'} voice available on this device. Please install language pack or use Chrome browser.`);
+      alert('No voice available for this language on your device. Try using Chrome or install the language pack.');
       return;
     }
   
@@ -314,124 +309,117 @@ function Chatbot() {
       />
 
       <PageHeader
-        title="Eco-Assistant"
-        subtitle="Sow your questions, reap our wisdom. (English & Malayalam)"
-        icon="🌿"
-        className="mb-8"
+        title="Smart Chatbot"
+        subtitle="Ask any farming question in any language — auto-detected & answered accordingly"
+        className="mb-6"
       />
-
-      {/* AI AVATAR - Show when there are messages */}
-      <div className="flex justify-center mb-10">
-        <div
-          className={`w-48 h-48 rounded-[3rem] overflow-hidden border-8 ${
-            isSpeaking ? 'border-[var(--secondary)] ring-8 ring-[var(--secondary)]/20 animate-pulse scale-105' : 'border-[var(--primary)]'
-          } shadow-[0_20px_50px_rgba(93,64,55,0.3)] transition-all duration-500 hover:rotate-2`}
-        >
-          <img
-            src={
-              isSpeaking || loading
-                ? '/avatars/avatar-talking.gif'
-                : '/avatars/avatar-idle.png'
-            }
-            alt="AI Avatar"
-            className="w-full h-full object-cover"
-          />
-        </div>
-      </div>
+{/* AI AVATAR - Show when there are messages */}
+          <div className="flex justify-center mt-4">
+            <div
+              className={`w-44 h-44 rounded-full overflow-hidden border-4 ${
+                isSpeaking ? 'border-emerald-500 ring-4 ring-emerald-300 animate-pulse' : 'border-emerald-400'
+              } shadow-2xl transition-all duration-300`}
+            >
+              <img
+                src={
+                  isSpeaking || loading
+                    ? '/avatars/avatar-talking.gif'
+                    : '/avatars/avatar-idle.png'
+                }
+                alt="AI Avatar"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
         
       {/* Chat Messages Display */}
-      <div className="mb-8">
-        {chatMessages.length > 0 ? (
+ {/* Chat Messages Display */}
+<div className="mb-6">
+  {chatMessages.length > 0 ? (
+    <div
+      className="space-y-6 overflow-y-auto p-6 bg-gradient-to-b from-gray-50 to-white rounded-xl border-2 border-gray-200 shadow-inner scrollbar-thin scrollbar-thumb-emerald-600 scrollbar-track-gray-200 scroll-smooth"
+      style={{ maxHeight: 'calc(100vh - 32rem)', minHeight: '400px' }}
+    >
+      {chatMessages.map((msg, idx) => (
+        <div
+          key={idx}
+          className={`flex items-start gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-slide-up`}
+        >
+          {msg.role === 'assistant' && (
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shadow-sm">
+              <span className="text-2xl">🤖</span>
+            </div>
+          )}
           <div
-            className="space-y-8 overflow-y-auto p-8 bg-[var(--bg-alt)]/50 backdrop-blur-sm rounded-[2.5rem] border-2 border-[var(--primary-light)]/10 shadow-inner custom-scrollbar scroll-smooth"
-            style={{ maxHeight: 'calc(100vh - 35rem)', minHeight: '450px' }}
+            className={`relative max-w-[75%] px-6 py-4 rounded-2xl shadow-lg transition-all duration-200 hover:shadow-xl ${
+              msg.role === 'user'
+                ? 'bg-emerald-600 text-white rounded-br-none'
+                : 'bg-white text-gray-800 rounded-bl-none border border-gray-200'
+            }`}
           >
-            {chatMessages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`flex items-end gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'} animate-slide-up`}
+            {/* Message Header */}
+            <div className="flex justify-between items-center mb-2 ">
+              <span className="text-sm font-semibold">
+                {msg.role === 'user' ? 'You' : 'AI'}
+              </span>
+         
+            </div>
+            <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+            {msg.role === 'assistant' && (
+              <button
+                onClick={() => isSpeaking ? stopSpeaking() : speakText(msg.content)}
+                className="mt-3 flex items-center gap-1 text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors duration-200"
+                aria-label={isSpeaking ? 'Stop reading aloud' : 'Read message aloud'}
               >
-                <div className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg transform transition-transform hover:scale-110 ${msg.role === 'user' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--primary)] text-white'}`}>
-                  <span className="text-2xl">{msg.role === 'user' ? '👨‍🌾' : '🐢'}</span>
-                </div>
-                
-                <div
-                  className={`relative max-w-[80%] px-8 py-5 rounded-[2rem] shadow-xl border transition-all duration-300 hover:shadow-2xl ${
-                    msg.role === 'user'
-                      ? 'bg-[var(--primary)] text-white rounded-br-none border-[var(--earth-deep)]'
-                      : 'bg-white text-[var(--text-main)] rounded-bl-none border-[var(--primary-light)]/10'
-                  }`}
-                >
-                  <p className="text-base font-bold opacity-60 mb-2 uppercase tracking-widest text-[10px]">
-                    {msg.role === 'user' ? 'Your Seeds' : 'Buddy\'s Wisdom'}
-                  </p>
-                  <p className="whitespace-pre-wrap leading-relaxed font-medium text-lg">{msg.content}</p>
-                  
-                  {msg.role === 'assistant' && (
-                    <button
-                      onClick={() => isSpeaking ? stopSpeaking() : speakText(msg.content)}
-                      className="mt-4 flex items-center gap-2 text-sm font-black text-[var(--secondary)] hover:text-[var(--primary)] transition-all group"
-                      aria-label={isSpeaking ? 'Stop reading aloud' : 'Read message aloud'}
-                    >
-                      <div className={`p-2 rounded-full ${isSpeaking ? 'bg-[var(--secondary)] text-white animate-pulse' : 'bg-[var(--secondary)]/10 text-[var(--secondary)]'} group-hover:scale-110 transition-transform`}>
-                        <Volume2 size={18} />
-                      </div>
-                      <span>{isSpeaking ? 'Quiet Buddy' : 'Hear Wisdom'}</span>
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-            {loading && (
-              <div className="flex items-end gap-4 animate-pulse">
-                <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-[var(--primary)]/20 flex items-center justify-center">
-                  <span className="text-2xl opacity-50">🐢</span>
-                </div>
-                <div className="px-8 py-5 rounded-[2rem] bg-white rounded-bl-none shadow-lg border border-[var(--primary-light)]/10">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-[var(--primary)] rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-[var(--primary)] rounded-full animate-bounce [animation-delay:0.2s]"></div>
-                    <div className="w-2 h-2 bg-[var(--primary)] rounded-full animate-bounce [animation-delay:0.4s]"></div>
-                    <span className="text-[var(--text-muted)] font-black uppercase text-xs tracking-widest ml-2">Planting thoughts...</span>
-                  </div>
-                </div>
-              </div>
+                <Volume2 size={16} className="transition-transform duration-200 hover:scale-110" />
+                {isSpeaking ? 'Stop' : 'Read Aloud'}
+              </button>
             )}
-            <div ref={messagesEndRef} />
+            {/* Bubble Tail */}
+            <div
+              className={`absolute bottom-0 w-0 h-0 border-8 border-transparent ${
+                msg.role === 'user'
+                  ? 'right-[-8px] border-l-emerald-600'
+                  : 'left-[-8px] border-r-white'
+              }`}
+            ></div>
           </div>
-        ) : (
-          <div className="text-center py-20 bg-white/30 backdrop-blur-sm rounded-[3rem] border-4 border-dashed border-[var(--primary-light)]/20">
-            <div className="text-7xl mb-6">🌱</div>
-            <h3 className="text-3xl font-black text-[var(--primary)] mb-2">Ready to Grow?</h3>
-            <p className="text-[var(--text-muted)] font-bold text-lg">Ask me anything about your crops, soil, or climate.</p>
+          {msg.role === 'user' && (
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shadow-sm">
+              <span className="text-2xl">👤</span>
+            </div>
+          )}
+        </div>
+      ))}
+      {loading && (
+        <div className="flex justify-start items-start gap-4">
+          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shadow-sm">
+            <span className="text-2xl">🤖</span>
           </div>
-        )}
-      </div>
+          <div className="relative max-w-[75%] px-6 py-4 rounded-2xl bg-white rounded-bl-none shadow-lg border border-gray-200">
+            <div className="flex items-center gap-2">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-emerald-600"></div>
+              <span className="text-gray-600">Thinking...</span>
+            </div>
+          </div>
+        </div>
+      )}
+      <div ref={messagesEndRef} />
+    </div>
+  ) : null}
+</div>
 
       {/* Question Input - Fixed at Bottom */}
-      <Card className="!bg-white/80 backdrop-blur-md !border-t-4 !border-t-[var(--accent)] !rounded-[2.5rem]" padding="lg">
-        <div className="flex items-center justify-between mb-6">
-          <label className="text-[var(--primary)] text-xl font-black tracking-tight flex items-center gap-2">
-            <Mic size={24} className="text-[var(--accent)]" />
-            Sow Your Question
+      <Card className="mb-6 lg:mb-4" padding="md">
+        <div className="flex items-center justify-between mb-4">
+          <label className="block text-gray-700 text-base font-semibold">
+            Your Question
           </label>
-          <div className="flex items-center gap-4">
-            <div className="relative group">
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                className="appearance-none font-black text-xs px-6 py-2 pr-10 border-2 border-[var(--primary-light)]/20 rounded-full focus:outline-none focus:border-[var(--primary)] bg-white text-[var(--primary)] cursor-pointer hover:bg-[var(--bg-alt)] transition-all"
-              >
-                <option value="english">ENGLISH</option>
-                <option value="malayalam">മലയാളം</option>
-              </select>
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--primary)]">
-                <Send size={12} className="rotate-90" />
-              </div>
-            </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-full font-medium">🌐 Any language</span>
             {sessionId && (
-              <span className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-tighter px-3 py-1 bg-[var(--bg-alt)] rounded-full">
-                ID: {sessionId.substring(0, 8)}
+              <span className="text-xs text-gray-400">
+                {sessionId.substring(0, 8)}...
               </span>
             )}
           </div>
@@ -440,37 +428,33 @@ function Chatbot() {
         <textarea
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
-          onKeyDown={handleKeyPress}
-          placeholder={
-            language === 'malayalam'
-              ? 'നിങ്ങളുടെ ചോദ്യം ഇവിടെ ടൈപ്പ് ചെയ്യുക...'
-              : 'What would you like to cultivate today?'
-          }
+          onKeyPress={handleKeyPress}
+          placeholder="Type your farming question in any language... (Press Enter to send, Shift+Enter for new line)"
           rows={3}
-          className="w-full px-6 py-5 text-lg font-bold border-2 border-[var(--primary-light)]/10 bg-[var(--bg-main)]/50 rounded-3xl focus:outline-none focus:border-[var(--primary)] focus:ring-8 focus:ring-[var(--primary)]/5 transition-all resize-none placeholder:text-[var(--text-muted)]/50"
+          className="w-full px-4 py-3 text-base border-2 border-gray-300 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all resize-none"
         />
 
-        <div className="flex flex-col sm:flex-row gap-4 mt-6">
+        <div className="flex flex-col sm:flex-row gap-3 mt-4">
           <PrimaryButton
             onClick={handleVoiceInput}
             variant="outline"
             size="lg"
-            icon={<Mic className={isListening ? 'animate-pulse text-red-500 scale-125' : 'group-hover:rotate-12 transition-transform'} />}
+            icon={<Mic className={isListening ? 'animate-pulse text-red-500' : ''} />}
             disabled={isListening}
-            className="flex-1 !rounded-[2rem] border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white group"
+            className="flex-1"
           >
-            {isListening ? 'LEAFENING...' : 'VOICE SOWING'}
+            {isListening ? 'Listening...' : 'Voice Input'}
           </PrimaryButton>
 
           <PrimaryButton
             onClick={handleAskQuestion}
             variant="primary"
             size="lg"
-            icon={<Send className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />}
+            icon={<Send />}
             loading={loading}
-            className="flex-1 sm:flex-[2] !rounded-[2rem] shadow-[0_15px_30px_rgba(93,64,55,0.3)] group"
+            className="flex-1 sm:flex-[2]"
           >
-            SEND QUESTION
+            Ask Question
           </PrimaryButton>
         </div>
       </Card>
