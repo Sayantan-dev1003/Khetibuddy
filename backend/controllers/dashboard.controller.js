@@ -3,37 +3,59 @@ const DiseaseScan = require('../models/DiseaseScan');
 const SoilReport = require('../models/SoilReport');
 const FertilizerPlan = require('../models/FertilizerPlan');
 
-// GET /api/dashboard/stats - Get dashboard statistics
+// GET /api/dashboard/stats - Get dashboard statistics using MongoDB aggregations
 exports.getDashboardStats = async (req, res) => {
   try {
-    // Get counts from each collection
-    const [
-      totalScans,
-      soilTests,
-      fertilizerPlans,
-      chatSessions
-    ] = await Promise.all([
-      DiseaseScan.countDocuments(),
-      SoilReport.countDocuments(),
-      FertilizerPlan.countDocuments(),
-      ChatQuery.distinct('sessionId').then(sessions => sessions.length)
-    ]);
-
-    // Get healthy vs diseased counts
-    const diseaseScans = await DiseaseScan.find().lean();
-    const healthyScans = diseaseScans.filter(scan => 
-      scan.disease.toLowerCase().includes('healthy') || 
-      scan.confidence > 85
-    ).length;
-    const diseasedScans = totalScans - healthyScans;
-
-    // Get today's stats
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    const scansToday = await DiseaseScan.countDocuments({
-      createdAt: { $gte: today }
-    });
+
+    // Run aggregations in parallel for better performance
+    const [scansAggregation, sessionAggregation, soilReportCount, fertilizerPlanCount] = await Promise.all([
+      // 1. DiseaseScan aggregation with $facet for multiple metrics in one pass
+      DiseaseScan.aggregate([
+        {
+          $facet: {
+            total: [{ $count: "count" }],
+            healthy: [
+              { 
+                $match: { 
+                  $or: [
+                    { disease: { $regex: /healthy/i } },
+                    { confidence: { $gt: 85 } }
+                  ]
+                } 
+              },
+              { $count: "count" }
+            ],
+            today: [
+              { $match: { createdAt: { $gte: today } } },
+              { $count: "count" }
+            ]
+          }
+        }
+      ]),
+
+      // 2. ChatQuery aggregation for unique session count
+      ChatQuery.aggregate([
+        { $group: { _id: "$sessionId" } },
+        { $count: "count" }
+      ]),
+
+      // 3. Simple counts for other collections (using aggregate for consistency if requested)
+      SoilReport.aggregate([{ $count: "count" }]),
+      FertilizerPlan.aggregate([{ $count: "count" }])
+    ]);
+
+    // Extract values from aggregation results (handling empty results)
+    const scanStats = scansAggregation[0];
+    const totalScans = scanStats.total[0]?.count || 0;
+    const healthyScans = scanStats.healthy[0]?.count || 0;
+    const scansToday = scanStats.today[0]?.count || 0;
+    const diseasedScans = totalScans - healthyScans;
+
+    const chatSessions = sessionAggregation[0]?.count || 0;
+    const soilTests = soilReportCount[0]?.count || 0;
+    const fertilizerPlans = fertilizerPlanCount[0]?.count || 0;
 
     res.json({
       success: true,
@@ -41,14 +63,14 @@ exports.getDashboardStats = async (req, res) => {
         totalScans,
         soilTests,
         fertilizerPlans,
-        chatQueries: chatSessions,
+        chatQueries: chatSessions, // Mapped to chatQueries for frontend compatibility
         healthyScans,
         diseasedScans,
         scansToday
       }
     });
   } catch (error) {
-    console.error('Error fetching dashboard stats:', error);
+    console.error('Error fetching dashboard stats with aggregation:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch dashboard statistics',

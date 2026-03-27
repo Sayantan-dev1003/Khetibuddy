@@ -12,10 +12,11 @@ const fertilizerRoutes = require('./routes/fertilizerRoutes');
 const historyRoutes = require('./routes/historyRoutes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 const newsRoutes = require('./routes/news.routes');
-const loginRoutes = require('./routes/login.routes.js');
-const logoutRoutes = require('./routes/logout.routes.js');
+const authRoutes = require('./routes/auth.routes.js');
 const profileRoutes = require('./routes/profile.routes.js');
-const registerRoutes = require('./routes/register.routes.js');
+const adminRoutes = require('./routes/admin.routes');
+const { apiLimiter, groqLimiter, authLimiter } = require('./middleware/rateLimiter');
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -38,32 +39,39 @@ const corsOptions = {
 // Connect to MongoDB
 connectDB();
 
+
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Apply global rate limiter to all API routes
+app.use('/api', apiLimiter);
+
 
 // Serve uploaded images statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Health check route
-app.get('/health', (req, res) => {
+  app.get('/health', (req, res) => {
   res.status(200).json({ 
     status: 'ok', 
     app: 'KhetiBuddy'
   });
 });
 
+
 // API Routes
-app.use('/api/chat', chatRoutes);
-app.use('/api/crop-disease', diseaseRoutes);
+app.use('/api/chat', groqLimiter, chatRoutes);
+app.use('/api/crop-disease', groqLimiter, diseaseRoutes);
 app.use('/api/fertilizer', fertilizerRoutes);
 app.use('/api/history', historyRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/news', newsRoutes);
-app.use('/api/login', loginRoutes);
-app.use('/api/logout', logoutRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/me', profileRoutes);
-app.use('/api/register', registerRoutes);
+app.use('/api/admin', adminRoutes);
+
 
 // 404 handler
 app.use((req, res) => {

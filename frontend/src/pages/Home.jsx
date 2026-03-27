@@ -138,86 +138,89 @@ function Home() {
   return (
     <>
       {/* News Ticker - Positioned outside container for full width, close to navbar */}
-      <div className="-mx-6 -mt-6 mb-6">
+      <div className="-mx-6 -mt-10 mb-8">
         <NewsTicker />
       </div>
       
-      <div className="max-w-7xl mx-auto space-y-8">
+      <div className="max-w-7xl mx-auto space-y-10">
         {/* Loading State */}
         {loading && (
-        <Card className="bg-blue-50 border-2 border-blue-300" padding="lg">
-          <div className="flex items-center gap-3">
-            <Activity className="animate-spin text-blue-600" size={24} />
-            <p className="text-blue-800 font-medium">Loading dashboard data...</p>
+        <Card className="bg-[var(--bg-alt)] border-2 border-[var(--primary-light)]/20" padding="lg">
+          <div className="flex items-center gap-4">
+            <Activity className="animate-spin text-[var(--primary)]" size={28} />
+            <p className="text-[var(--primary)] font-bold text-xl">Nurturing your dashboard data...</p>
           </div>
         </Card>
       )}
 
       {/* Error State */}
       {error && (
-        <Card className="bg-red-50 border-2 border-red-300" padding="lg">
+        <Card className="bg-red-50 border-2 border-red-200" padding="lg">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <AlertCircle className="text-red-600" size={24} />
-              <p className="text-red-800 font-medium">{error}</p>
+            <div className="flex items-center gap-4">
+              <AlertCircle className="text-red-600" size={28} />
+              <p className="text-red-800 font-bold text-lg">{error}</p>
             </div>
-            <button
+            <PrimaryButton
               onClick={loadDashboardData}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors"
+              variant="accent"
+              size="md"
             >
-              Retry
-            </button>
+              Try Again
+            </PrimaryButton>
           </div>
         </Card>
       )}
 
       {/* Welcome Header */}
-      <Card className="bg-gradient-to-br from-emerald-600 to-emerald-700 text-white" padding="xl">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-2 drop-shadow-lg">
-              Welcome to Your Farm Dashboard
+      <div className="page-header !mb-0 !p-12">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
+          <div className="flex-1">
+            <h1 className="text-4xl md:text-6xl font-black mb-4 drop-shadow-xl text-white">
+              Sowing Success, <span className="text-[var(--leaf-bright)]">Farmer!</span>
             </h1>
-            <p className="text-lg md:text-xl opacity-90 flex items-center gap-2">
-              <Activity size={20} />
-              Track, Analyze, and Optimize Your Farming
+            <p className="text-xl md:text-2xl text-white/90 flex items-center gap-3 font-medium">
+              <Sprout size={28} className="text-[var(--leaf-bright)]" />
+              Your farm's digital heartbeat is looking strong today.
             </p>
             {stats.scansToday > 0 && (
-              <p className="text-sm opacity-75 mt-1">
-                {stats.scansToday} scan{stats.scansToday > 1 ? 's' : ''} completed today
-              </p>
+              <div className="inline-block mt-6 px-4 py-2 bg-white/20 rounded-full text-sm font-bold backdrop-blur-sm border border-white/10">
+                🌱 {stats.scansToday} scan{stats.scansToday > 1 ? 's' : ''} completed today
+              </div>
             )}
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col items-end gap-6 text-right">
+            <div className="bg-white/10 p-6 rounded-[2.5rem] backdrop-blur-md border border-white/10 shadow-2xl">
+              <div className="text-sm font-black uppercase tracking-widest text-white/60 mb-1">Today's Harvest Date</div>
+              <div className="text-3xl font-black text-white">{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+            </div>
             <button
               onClick={loadDashboardData}
               disabled={loading}
-              className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg font-semibold transition-colors flex items-center gap-2 disabled:opacity-50"
-              title="Refresh data"
+              className="px-6 py-3 bg-[var(--leaf-bright)] hover:bg-white text-[var(--earth-deep)] rounded-2xl font-black transition-all flex items-center gap-2 shadow-xl hover:scale-105 disabled:opacity-50"
             >
-              <Activity size={18} className={loading ? 'animate-spin' : ''} />
-              Refresh
+              <Activity size={20} className={loading ? 'animate-spin' : ''} />
+              Sync Farm Data
             </button>
-            <div className="text-right">
-              <div className="text-sm opacity-75">Today's Date</div>
-              <div className="text-2xl font-bold">{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
-            </div>
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Quick Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         {quickStats.map((stat, idx) => {
           const Icon = stat.icon;
+          const gradientColors = idx % 3 === 0 ? 'from-[#5d4037] to-[#3e2723]' : 
+                                idx % 3 === 1 ? 'from-[#8da14e] to-[#6b8e23]' : 
+                                'from-[#bc6c25] to-[#a45c1e]';
           return (
             <Link key={idx} to={stat.link} className="no-underline group">
-              <Card hover={true} className="h-full border-2 border-transparent hover:border-emerald-500 group-hover:scale-105" padding="lg">
-                <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${stat.color} text-white mb-3`}>
-                  <Icon size={28} />
+              <Card hover={true} className="h-full border-b-4 border-b-[var(--primary)] group-hover:border-b-[var(--accent)]" padding="lg">
+                <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${gradientColors} text-white mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
+                  <Icon size={32} />
                 </div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
-                <div className="text-sm text-gray-600 font-medium">{stat.label}</div>
+                <div className="text-4xl font-black text-[var(--primary)] mb-1">{stat.value}</div>
+                <div className="text-sm font-bold text-[var(--text-muted)] uppercase tracking-widest">{stat.label}</div>
               </Card>
             </Link>
           );
@@ -225,55 +228,60 @@ function Home() {
       </div>
 
       {/* Health Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {healthMetrics.map((metric, idx) => {
           const Icon = metric.icon;
+          const isHealthy = metric.label.toLowerCase().includes('healthy');
           return (
-            <Card key={idx} className={`${metric.bgColor} border-2 border-gray-200`} padding="lg">
+            <Card key={idx} className={`${isHealthy ? 'bg-[#f1f8e9]' : 'bg-[#fff3e0]'} border-2 ${isHealthy ? 'border-[#c5e1a5]' : 'border-[#ffe0b2]'}`} padding="lg">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm text-gray-600 font-medium mb-1">{metric.label}</div>
-                  <div className="text-4xl font-bold text-gray-900">{metric.value}</div>
+                  <div className="text-sm font-black text-[var(--text-muted)] uppercase tracking-widest mb-2">{metric.label}</div>
+                  <div className={`text-5xl font-black ${isHealthy ? 'text-[#33691e]' : 'text-[#e65100]'}`}>{metric.value}</div>
                 </div>
-                <Icon size={48} className={metric.color} strokeWidth={2} />
+                <div className={`${isHealthy ? 'bg-white/50' : 'bg-white/50'} p-4 rounded-[2.5rem] shadow-sm`}>
+                  <Icon size={56} className={isHealthy ? 'text-[#33691e]' : 'text-[#e65100]'} strokeWidth={3} />
+                </div>
               </div>
             </Card>
           );
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Recent Activity */}
         <div className="lg:col-span-2">
-          <Card padding="lg" shadow="lg">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <Clock size={28} className="text-emerald-600" />
-                Recent Activity
+          <Card padding="lg" shadow="lg" className="h-full">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-3xl font-black text-[var(--primary)] flex items-center gap-3">
+                <Clock size={32} className="text-[var(--accent)]" />
+                Recent Yields & Activity
               </h2>
-              <BarChart3 size={24} className="text-gray-400" />
+              <div className="p-2 bg-[var(--bg-alt)] rounded-xl">
+                <BarChart3 size={24} className="text-[var(--primary)]" />
+              </div>
             </div>
             
             {recentActivity.length === 0 ? (
-              <div className="text-center py-12">
-                <Activity size={64} className="mx-auto text-gray-300 mb-4" />
-                <p className="text-gray-500 text-lg">No recent activity</p>
-                <p className="text-gray-400 text-sm">Start using services to see your activity here</p>
+              <div className="text-center py-16">
+                <div className="text-7xl mb-6 opacity-30">🚜</div>
+                <p className="text-[var(--text-muted)] text-xl font-bold">Your farm is waiting for action!</p>
+                <p className="text-[var(--text-muted)]/60 text-sm mt-2">Services you use will appear here.</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {recentActivity.map((activity, idx) => {
                   const Icon = activity.icon;
                   return (
-                    <div key={idx} className="flex items-start gap-4 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-                      <div className={`p-2 rounded-lg bg-white ${activity.color}`}>
-                        <Icon size={24} />
+                    <div key={idx} className="flex items-start gap-6 p-5 rounded-3xl bg-[var(--bg-alt)]/50 hover:bg-white transition-all border border-transparent hover:border-[var(--primary-light)]/20 hover:shadow-xl group">
+                      <div className={`p-4 rounded-2xl bg-white shadow-sm group-hover:bg-[var(--primary)] group-hover:text-white transition-colors`}>
+                        <Icon size={28} />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900">{activity.title}</h3>
-                        <p className="text-sm text-gray-600">{activity.description}</p>
+                        <h3 className="text-lg font-black text-[var(--primary)]">{activity.title}</h3>
+                        <p className="text-[var(--text-muted)] font-medium">{activity.description}</p>
                       </div>
-                      <div className="text-xs text-gray-500 whitespace-nowrap">
+                      <div className="text-xs font-black text-[var(--accent)] uppercase tracking-tighter self-center px-3 py-1 bg-white rounded-full border border-[var(--primary-light)]/10">
                         {getTimeAgo(activity.time)}
                       </div>
                     </div>
@@ -286,65 +294,85 @@ function Home() {
 
         {/* Farming Tips & Insights */}
         <div className="lg:col-span-1">
-          <Card padding="lg" shadow="lg" className="h-full bg-gradient-to-br from-blue-50 to-emerald-50">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-              <TrendingUp size={28} className="text-emerald-600" />
-              Farming Tips
+          <Card padding="lg" shadow="lg" className="h-full bg-[var(--primary)] border-none relative overflow-hidden group">
+            {/* Texture overlay */}
+            <div className="absolute inset-0 opacity-10 pointer-events-none paper-texture"></div>
+            
+            <h2 className="text-3xl font-black text-white mb-8 flex items-center gap-3 relative z-10">
+              <TrendingUp size={32} className="text-[var(--leaf-bright)]" />
+              Season's Best Tips
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-6 relative z-10">
               {farmingTips.map((tip, idx) => {
                 const Icon = tip.icon;
                 return (
-                  <div key={idx} className={`p-4 rounded-xl bg-white border-l-4 ${tip.priority === 'high' ? 'border-emerald-500' : 'border-blue-400'}`}>
-                    <div className="flex items-start gap-3">
-                      <Icon size={20} className="text-emerald-600 flex-shrink-0 mt-1" />
-                      <p className="text-sm text-gray-700 leading-relaxed">{tip.text}</p>
+                  <div key={idx} className={`p-6 rounded-3xl bg-white/10 backdrop-blur-md border-l-8 transition-transform hover:translate-x-2 ${tip.priority === 'high' ? 'border-[var(--leaf-bright)]' : 'border-[var(--accent)]'}`}>
+                    <div className="flex items-start gap-4">
+                      <div className="p-2 bg-white/10 rounded-lg">
+                        <Icon size={24} className="text-[var(--leaf-bright)]" />
+                      </div>
+                      <p className="text-base text-white font-medium leading-relaxed">{tip.text}</p>
                     </div>
                   </div>
                 );
               })}
+            </div>
+            
+            <div className="mt-10 p-6 bg-white/5 rounded-3xl border border-white/10 relative z-10 text-center">
+              <p className="text-white/60 text-sm font-bold uppercase tracking-widest mb-2">Sustainable Choice</p>
+              <p className="text-white text-lg font-bold">Use organic mulch to retain 30% more soil moisture.</p>
             </div>
           </Card>
         </div>
       </div>
 
       {/* All Services Grid */}
-      <Card padding="xl" shadow="lg">
-        <h2 className="text-3xl font-bold text-emerald-700 mb-6 text-center">
-          All Services
+      <Card padding="xl" shadow="xl" className="!bg-[var(--bg-alt)] border-2 border-[var(--primary-light)]/10">
+        <h2 className="text-4xl font-black text-[var(--primary)] mb-10 text-center tracking-tight">
+          Cultivate Your Excellence
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {features.map((feature, idx) => (
-            <Link 
-              key={idx}
-              to={feature.to} 
-              className="no-underline group"
-            >
-              <Card 
-                hover={true}
-                className="h-full text-center border-2 border-transparent hover:border-emerald-500 group-hover:scale-105"
-                padding="md"
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          {features.map((feature, idx) => {
+             const featureColors = idx === 0 ? 'from-[#5d4037] to-[#8d6e63]' : 
+                                  idx === 1 ? 'from-[#8da14e] to-[#a4be5c]' : 
+                                  idx === 2 ? 'from-[#bc6c25] to-[#d4a373]' : 
+                                  'from-[#3e2723] to-[#5d4037]';
+            return (
+              <Link 
+                key={idx}
+                to={feature.to} 
+                className="no-underline group"
               >
-                <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${feature.color} text-white mb-3`}>
-                  {feature.icon}
-                </div>
-                <h3 className="text-emerald-700 font-bold text-sm mb-1">{feature.title}</h3>
-                <p className="text-gray-600 text-xs leading-relaxed">{feature.desc}</p>
-              </Card>
-            </Link>
-          ))}
+                <Card 
+                  hover={true}
+                  className="h-full text-center group-hover:shadow-[0_20px_50px_rgba(93,64,55,0.2)]"
+                  padding="lg"
+                >
+                  <div className={`inline-flex p-5 rounded-[2rem] bg-gradient-to-br ${featureColors} text-white mb-6 shadow-xl group-hover:scale-110 transition-transform`}>
+                    {React.cloneElement(feature.icon, { size: 48 })}
+                  </div>
+                  <h3 className="text-[var(--primary)] font-black text-xl mb-3 tracking-tight">{feature.title}</h3>
+                  <p className="text-[var(--text-muted)] text-base leading-relaxed font-medium">{feature.desc}</p>
+                </Card>
+              </Link>
+            )
+          })}
         </div>
       </Card>
 
       {/* Quick Actions */}
-      <Card padding="lg" className="bg-gradient-to-r from-emerald-600 to-green-600 text-white">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Need Help with Your Farm?</h2>
-          <p className="text-lg mb-6 opacity-90">Get instant AI-powered guidance in Malayalam or English</p>
+      <Card padding="xl" className="bg-gradient-to-r from-[var(--earth-deep)] to-[var(--primary)] text-white border-none relative overflow-hidden">
+         {/* Texture overlay */}
+         <div className="absolute inset-0 opacity-10 pointer-events-none paper-texture"></div>
+         <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-[var(--leaf-bright)] rounded-full blur-3xl opacity-10"></div>
+         
+        <div className="text-center relative z-10 py-6">
+          <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">Need a Hand on the Farm?</h2>
+          <p className="text-xl md:text-2xl mb-10 opacity-90 font-medium max-w-2xl mx-auto">Get instant AI-powered guidance in Malayalam or English. We're here for you 24/7.</p>
           <Link to="/dashboard/chatbot">
-            <button className="bg-white text-emerald-600 px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center gap-2 mx-auto">
-              <MessageCircle size={24} />
-              Start Chat Now
+            <button className="bg-[var(--leaf-bright)] text-[var(--earth-deep)] px-12 py-5 rounded-[2rem] font-black text-xl shadow-[0_15px_30px_rgba(164,190,92,0.4)] hover:shadow-[0_20px_40px_rgba(164,190,92,0.6)] hover:scale-105 transition-all flex items-center gap-3 mx-auto">
+              <MessageCircle size={32} />
+              Talk to your KhetiBuddy
             </button>
           </Link>
         </div>

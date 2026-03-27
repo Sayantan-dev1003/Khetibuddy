@@ -15,15 +15,15 @@ function InputField({
   className = ''
 }) {
   return (
-    <div className={`mb-6 ${className}`}>
+    <div className={`mb-6 group ${className}`}>
       {label && (
-        <label htmlFor={name} className="block text-gray-700 text-lg font-semibold mb-2">
-          {label} {required && <span className="text-red-500">*</span>}
+        <label htmlFor={name} className="block text-[var(--primary)] text-lg font-bold mb-2 transition-colors group-focus-within:text-[var(--accent)]">
+          {label} {required && <span className="text-[var(--accent)]">*</span>}
         </label>
       )}
       <div className="relative">
         {icon && (
-          <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+          <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] group-focus-within:text-[var(--primary)] transition-colors">
             {icon}
           </div>
         )}
@@ -36,14 +36,14 @@ function InputField({
           placeholder={placeholder}
           required={required}
           disabled={disabled}
-          className={`w-full ${icon ? 'pl-12' : 'pl-4'} pr-4 py-3 text-base border border-slate-200 rounded-xl focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 disabled:bg-slate-50 disabled:cursor-not-allowed ${error ? 'border-red-500' : ''}`}
+          className={`w-full ${icon ? 'pl-12' : 'pl-4'} pr-4 py-4 text-base border-2 border-[var(--primary-light)]/20 bg-white/50 rounded-2xl focus:outline-none focus:border-[var(--primary)] focus:ring-4 focus:ring-[var(--primary)]/10 transition-all duration-300 disabled:bg-[var(--bg-alt)] disabled:cursor-not-allowed ${error ? 'border-red-500' : ''} group-hover:bg-white`}
         />
       </div>
       {error && (
-        <p className="text-red-500 text-sm mt-2">{error}</p>
+        <p className="text-red-600 text-sm mt-2 font-medium">{error}</p>
       )}
       {helperText && !error && (
-        <p className="text-gray-500 text-sm mt-2">{helperText}</p>
+        <p className="text-[var(--text-muted)] text-sm mt-2">{helperText}</p>
       )}
     </div>
   );

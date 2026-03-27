@@ -1,4 +1,6 @@
+const DiseaseScan = require('../models/DiseaseScan');
 const { detectCropDisease } = require('../services/cropDiseaseML.service');
+
 const { detectDiseaseFromImage, detectDiseaseWithLLM } = require('../services/imageDiseaseML.service');
 const { generateChatResponse } = require('../services/llm.service');
 const { validatePlantImage } = require('../services/imageValidation.service');
@@ -117,16 +119,31 @@ exports.detectDiseaseFromImage = async (req, res) => {
         if (err) console.error('Failed to delete uploaded file:', err);
       });
 
+      // Save to database
+      const savedScan = await DiseaseScan.create({
+        userId: req.user.id,
+        crop: finalResult.crop,
+        imagePath: req.file.path,
+        imageUrl: `/uploads/${req.file.filename}`,
+        disease: topPrediction.name,
+        confidence: topPrediction.probability,
+        treatmentTips: finalResult.treatment.organic.concat(finalResult.treatment.chemical),
+        preventionTips: finalResult.prevention
+      });
+
+
       res.status(200).json({
         success: true,
         data: {
-          ...result,
+          ...finalResult,
+          id: savedScan._id,
           validation: {
             isPlantImage: true,
             confidence: validation.confidence
           }
         }
       });
+
 
     } catch (analysisError) {
       console.error('ONNX model error:', analysisError.message);
@@ -143,10 +160,24 @@ exports.detectDiseaseFromImage = async (req, res) => {
           if (err) console.error('Failed to delete uploaded file:', err);
         });
 
+        // Save to database (LLM result)
+        const savedScan = await DiseaseScan.create({
+          userId: req.user.id,
+          crop: result.possibleDiseases[0].name.split('___')[0].replace(/_/g, ' ') || 'Unknown', // Extract crop from name if possible
+          imagePath: req.file.path,
+          imageUrl: `/uploads/${req.file.filename}`,
+          disease: result.possibleDiseases[0].name,
+          confidence: result.possibleDiseases[0].confidence === 'high' ? 90 : (result.possibleDiseases[0].confidence === 'medium' ? 60 : 30),
+          treatmentTips: result.treatment.organic.concat(result.treatment.chemical),
+          preventionTips: result.prevention
+        });
+
+
         res.status(200).json({
           success: true,
           data: {
             ...result,
+            id: savedScan._id,
             validation: {
               isPlantImage: true,
               confidence: validation.confidence

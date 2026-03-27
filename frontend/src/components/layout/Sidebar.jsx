@@ -6,10 +6,16 @@ import {
   ShieldAlert, 
   FlaskConical, 
   Store,
-  UserCircle
+  UserCircle,
+  LayoutDashboard,
+  Users as UsersIcon
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = () => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
+
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: Home, end: true },
     { name: 'AI Chatbot', path: '/dashboard/chatbot', icon: MessageSquare },
@@ -52,6 +58,45 @@ const Sidebar = () => {
               )}
             </NavLink>
           ))}
+
+          {isAdmin && (
+            <>
+              <div className="pt-6 pb-2 px-4">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Admin Panel</p>
+              </div>
+              <NavLink
+                to="/dashboard/admin"
+                end={true}
+                className={({ isActive }) => `
+                  flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group
+                  ${isActive 
+                    ? 'bg-purple-50 text-purple-700' 
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}
+                `}
+              >
+                <LayoutDashboard className="w-5 h-5 mr-3 transition-colors duration-200" />
+                Admin Dashboard
+                {({ isActive }) => isActive && (
+                  <div className="ml-auto w-1.5 h-1.5 rounded-full bg-purple-600" />
+                )}
+              </NavLink>
+              <NavLink
+                to="/dashboard/admin/users"
+                className={({ isActive }) => `
+                  flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group
+                  ${isActive 
+                    ? 'bg-purple-50 text-purple-700' 
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}
+                `}
+              >
+                <UsersIcon className="w-5 h-5 mr-3 transition-colors duration-200" />
+                User Management
+                {({ isActive }) => isActive && (
+                  <div className="ml-auto w-1.5 h-1.5 rounded-full bg-purple-600" />
+                )}
+              </NavLink>
+            </>
+          )}
         </nav>
 
         {/* Footer / User Profile */}
@@ -61,8 +106,12 @@ const Sidebar = () => {
               <UserCircle className="w-6 h-6" />
             </div>
             <div className="ml-3 overflow-hidden">
-              <p className="text-sm font-semibold text-slate-900 truncate">Sayan Das</p>
-              <p className="text-xs text-slate-500 truncate">Farmer Assistant</p>
+              <p className="text-sm font-semibold text-slate-900 truncate">
+                {user?.name || 'User'}
+              </p>
+              <p className="text-xs text-slate-500 truncate capitalize">
+                {user?.role || 'Farmer'} Assistant
+              </p>
             </div>
           </div>
         </div>

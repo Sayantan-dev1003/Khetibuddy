@@ -3,16 +3,16 @@ import React from 'react';
 function Card({ 
   children, 
   className = '', 
-  padding = 'lg',
-  shadow = 'md',
-  hover = false,
-  bordered = false 
+  padding = 'md',
+  shadow = 'sm',
+  hover = true,
+  bordered = true 
 }) {
   const paddingClasses = {
-    sm: 'p-4',
-    md: 'p-6',
-    lg: 'p-8',
-    xl: 'p-10',
+    sm: 'p-3',
+    md: 'p-5',
+    lg: 'p-6',
+    xl: 'p-8',
   };
   
   const shadowClasses = {
@@ -23,12 +23,12 @@ function Card({
     xl: 'shadow-xl',
   };
   
-  const hoverClass = hover ? 'hover:shadow-xl hover:-translate-y-1 transition-all duration-300' : '';
-  const borderClass = bordered ? 'border-2 border-gray-200' : '';
+  const hoverActive = hover ? 'hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 hover:border-[var(--primary-light)]/30' : '';
+  const borderStyle = bordered ? 'border border-[var(--primary-light)]/15' : '';
   
   return (
     <div 
-      className={`bg-white rounded-xl border border-slate-200 ${paddingClasses[padding]} ${shadowClasses[shadow]} ${hoverClass} ${className}`}
+      className={`bg-white/90 backdrop-blur-sm rounded-2xl ${paddingClasses[padding]} ${shadowClasses[shadow]} ${hoverActive} ${borderStyle} ${className}`}
     >
       {children}
     </div>

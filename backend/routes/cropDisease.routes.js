@@ -3,6 +3,8 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const { checkCropDisease, detectDiseaseFromImage } = require('../controllers/cropDisease.controller');
+const { protect } = require('../middlewares/auth.middleware');
+
 
 // Configure multer for image uploads
 const storage = multer.diskStorage({
@@ -32,9 +34,10 @@ const upload = multer({
 });
 
 // Text-based detection (existing)
-router.post('/detect', checkCropDisease);
+router.post('/detect', protect, checkCropDisease);
 
 // Image-based detection (new)
-router.post('/detect-image', upload.single('image'), detectDiseaseFromImage);
+router.post('/detect-image', protect, upload.single('image'), detectDiseaseFromImage);
+
 
 module.exports = router;

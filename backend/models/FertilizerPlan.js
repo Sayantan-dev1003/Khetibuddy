@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 
 const fertilizerPlanSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+
   crop: {
     type: String,
     required: true,

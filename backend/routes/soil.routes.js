@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { checkSoilHealth } = require('../controllers/soil.controller');
-const upload = require('../config/multer');
+const { protect } = require('../middlewares/auth.middleware');
 
-router.post('/health', checkSoilHealth);
+// POST /api/soil/check
+router.post('/check', protect, checkSoilHealth);
 
 // OCR endpoint - temporarily disabled (requires Python OCR service)
 // router.post('/ocr', upload.single('file'), handleOCR);

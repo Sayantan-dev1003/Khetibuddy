@@ -6,8 +6,12 @@ import {
   Search 
 } from 'lucide-react';
 
+import { LogOut, User } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+
 const Header = () => {
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   const getPageTitle = (path) => {
     switch (path) {
@@ -18,6 +22,11 @@ const Header = () => {
       case '/dashboard/nearby-market': return 'Nearby Markets';
       default: return 'Overview';
     }
+  };
+
+  const getInitials = (name) => {
+    if (!name) return 'User';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
   };
 
   return (
@@ -57,10 +66,25 @@ const Header = () => {
 
           <div className="h-8 w-px bg-slate-200 mx-2" />
           
-          <div className="flex items-center space-x-3 cursor-pointer group">
-            <div className="w-9 h-9 bg-green-100 rounded-xl flex items-center justify-center text-green-700 font-bold group-hover:bg-green-600 group-hover:text-white transition-all">
-              SD
+          <div className="flex items-center space-x-3 group relative">
+            <div className="flex items-center space-x-3 cursor-pointer">
+              <div className="text-right hidden sm:block">
+                <p className="text-sm font-bold text-slate-900 leading-tight">{user?.name || 'Guest User'}</p>
+                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider font-sans">{user?.role || 'Farmer'}</p>
+              </div>
+              <div className="w-9 h-9 bg-green-100 rounded-xl flex items-center justify-center text-green-700 font-bold group-hover:bg-green-600 group-hover:text-white transition-all">
+                {getInitials(user?.name)}
+              </div>
             </div>
+
+            {/* Logout Dropdown (Simplified for now - Tooltip style) */}
+            <button 
+              onClick={logout}
+              className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all ml-2"
+              title="Logout"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>

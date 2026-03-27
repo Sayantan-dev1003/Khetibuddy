@@ -26,11 +26,12 @@ exports.getHistory = async (req, res) => {
   try {
     // Fetch last 30 entries from each collection
     const [chatQueries, diseaseScans, soilReports, fertilizerPlans] = await Promise.all([
-      ChatQuery.find().sort({ createdAt: -1 }).limit(30).lean(),
-      DiseaseScan.find().sort({ createdAt: -1 }).limit(30).lean(),
-      SoilReport.find().sort({ createdAt: -1 }).limit(30).lean(),
-      FertilizerPlan.find().sort({ createdAt: -1 }).limit(30).lean()
+      ChatQuery.find({ userId: req.user.id }).sort({ createdAt: -1 }).limit(30).lean(),
+      DiseaseScan.find({ userId: req.user.id }).sort({ createdAt: -1 }).limit(30).lean(),
+      SoilReport.find({ userId: req.user.id }).sort({ createdAt: -1 }).limit(30).lean(),
+      FertilizerPlan.find({ userId: req.user.id }).sort({ createdAt: -1 }).limit(30).lean()
     ]);
+
     
     // Transform and add metadata to each entry
     const history = [

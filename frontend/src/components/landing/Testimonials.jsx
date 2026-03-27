@@ -24,55 +24,69 @@ function Testimonials() {
   ];
 
   return (
-    <section id="testimonials" className="py-24 bg-white px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-12 gap-16 items-start">
+    <section id="testimonials" className="min-h-screen flex items-center py-24 bg-[#062c1c] px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="grid lg:grid-cols-12 gap-16 items-center">
           
           {/* Left Summary */}
-          <div className="lg:col-span-4 sticky top-32">
-             <div className="inline-flex items-center gap-2 bg-pink-100 text-pink-600 px-4 py-1.5 rounded-full text-sm font-bold mb-6">
+          <div className="lg:col-span-5">
+             <div className="inline-flex items-center gap-2 bg-[#34d399]/10 text-[#34d399] px-5 py-2 rounded-full text-xs font-black mb-8 border border-[#34d399]/20 tracking-[0.2em] uppercase">
               ★ Testimonials
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight leading-tight">
-              Why They <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-emerald-400">
-                Love Us.
-              </span>
+            <h2 className="text-5xl lg:text-7xl font-black text-white mb-8 tracking-tighter leading-none">
+              Trusted by <br />
+              <span className="text-[#34d399]">Progressive Farmers.</span>
             </h2>
-            <p className="text-slate-600 mb-8 font-medium leading-relaxed">
-              Thousands of creators, coaches, and brands use KhetiBuddy to automate conversations, capture leads, and drive more sales.
+            <p className="text-emerald-100/60 mb-12 text-xl font-medium leading-relaxed max-w-md">
+              Join thousands of agricultural leaders who are transforming their land with KhetiBuddy's intelligent automation.
             </p>
-            <div className="text-5xl font-black text-slate-900 mb-1">2k+</div>
-            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Trusted by users</p>
+            <div className="flex items-center gap-12">
+                <div>
+                   <div className="text-5xl font-black text-white mb-2">2k+</div>
+                   <p className="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em]">Active Users</p>
+                </div>
+                <div className="w-px h-16 bg-white/10"></div>
+                <div>
+                   <div className="text-5xl font-black text-white mb-2">98%</div>
+                   <p className="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em]">Satisfaction</p>
+                </div>
+            </div>
           </div>
 
           {/* Right Grid */}
-          <div className="lg:col-span-8 grid sm:grid-cols-2 gap-6">
+          <div className="lg:col-span-7 grid gap-6">
             {testimonials.map((t, i) => (
               <motion.div 
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className={`bg-slate-50 p-8 rounded-3xl border border-slate-100 ${i === 1 ? 'sm:mt-12' : ''}`}
+                className="bg-white/5 backdrop-blur-md p-8 rounded-[2.5rem] border border-white/10 hover:bg-white/10 transition-all duration-500 group"
               >
-                <div className="flex items-center gap-4 mb-6">
-                  <img src={t.image} alt={t.name} className="w-12 h-12 rounded-full object-cover" />
-                  <div>
-                    <h4 className="font-bold text-slate-900">{t.name}</h4>
-                    <div className="flex text-amber-400 text-xs mt-1">★★★★★</div>
-                  </div>
+                <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-5">
+                      <img src={t.image} alt={t.name} className="w-14 h-14 rounded-2xl object-cover ring-2 ring-emerald-500/20" />
+                      <div>
+                        <h4 className="font-bold text-white text-lg">{t.name}</h4>
+                        <p className="text-xs text-emerald-400/60 font-bold">{t.date}</p>
+                      </div>
+                    </div>
+                    <div className="flex text-emerald-400 text-xs gap-1">
+                        {[...Array(5)].map((_, i) => <span key={i}>★</span>)}
+                    </div>
                 </div>
-                <p className="text-slate-700 font-medium leading-relaxed mb-6">
-                  {t.text}
+                <p className="text-emerald-50/80 text-lg font-medium leading-relaxed italic">
+                  "{t.text}"
                 </p>
-                <p className="text-xs text-slate-400 font-bold">{t.date}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </div>
+      
+      {/* Decorative */}
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-[#34d399]/5 to-transparent pointer-events-none"></div>
     </section>
   );
 }

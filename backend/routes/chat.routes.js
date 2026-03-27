@@ -8,6 +8,11 @@ const {
   getChatSessions,
   deleteChatSession
 } = require('../controllers/chat.controller');
+const { protect } = require('../middlewares/auth.middleware');
+
+// Apply protection to all chat routes
+router.use(protect);
+
 
 // Create a new chat session
 router.post('/session', createChatSession);

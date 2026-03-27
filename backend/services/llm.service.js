@@ -4,6 +4,8 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+
+
 /**
  * Detect the language of user input
  * @param {string} text - User's message

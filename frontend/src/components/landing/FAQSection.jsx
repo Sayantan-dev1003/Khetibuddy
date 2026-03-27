@@ -13,18 +13,20 @@ const FAQItem = ({ faq }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border border-slate-100 rounded-2xl mb-4 overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow">
+    <div className={`border rounded-[2rem] mb-4 overflow-hidden transition-all duration-500 ${
+        isOpen ? 'bg-white border-emerald-100 shadow-xl shadow-emerald-900/5' : 'bg-white/50 border-slate-100 hover:border-emerald-100 hover:bg-white'
+    }`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-6 text-left"
+        className="w-full flex items-center justify-between p-8 text-left"
       >
-        <span className="text-lg font-semibold text-slate-800">
+        <span className="text-xl font-bold text-[#062c1c] tracking-tight">
           {faq.question}
         </span>
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors ${
-            isOpen ? 'bg-pink-500 text-white' : 'bg-slate-100 text-slate-400'
+        <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-500 ${
+            isOpen ? 'bg-[#064e3b] text-white rotate-180' : 'bg-emerald-50 text-emerald-600'
         }`}>
-          {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+          <ChevronDown size={20} />
         </div>
       </button>
       <AnimatePresence>
@@ -35,7 +37,7 @@ const FAQItem = ({ faq }) => {
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden"
           >
-            <p className="px-6 pb-6 text-slate-600 font-medium leading-relaxed">
+            <p className="px-8 pb-8 text-slate-600 text-lg font-medium leading-relaxed max-w-2xl">
               {faq.answer}
             </p>
           </motion.div>
@@ -47,29 +49,31 @@ const FAQItem = ({ faq }) => {
 
 function FAQSection() {
   return (
-    <section id="faq" className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center gap-2 bg-slate-200/50 text-slate-600 px-4 py-1.5 rounded-full text-sm font-bold mb-6">
-            ★ FAQ
+    <section id="faq" className="py-32 px-4 sm:px-6 lg:px-8 bg-[#FAF9F6] relative overflow-hidden">
+      <div className="max-w-4xl mx-auto relative z-10">
+        <div className="text-center mb-20 lg:mb-24">
+          <div className="inline-flex items-center justify-center gap-2 bg-[#062c1c]/5 text-[#062c1c] px-5 py-2 rounded-full text-xs font-black mb-6 border border-[#062c1c]/10 tracking-[0.2em] uppercase">
+            ★ Common Queries
           </div>
-          <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">
+          <h2 className="text-5xl lg:text-7xl font-black text-[#062c1c] mb-8 tracking-tighter leading-tight">
             Got Questions? <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-emerald-400">
-              We've Got Answers
-            </span>
+            <span className="text-emerald-600">We've Got Answers.</span>
           </h2>
-          <p className="text-slate-600 font-medium">
-            Choose a plan that fits your business needs and budget. No hidden fees, no surprises—just straightforward pricing.
+          <p className="text-slate-600 text-xl font-medium max-w-2xl mx-auto leading-relaxed">
+            Everything you need to know about getting started with KhetiBuddy and how we're revolutionizing farm management.
           </p>
         </div>
 
-        <div>
+        <div className="space-y-2">
           {faqs.map((faq, index) => (
             <FAQItem key={index} faq={faq} />
           ))}
         </div>
       </div>
+      
+      {/* Decorative patterns */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-100/30 rounded-full blur-[100px] -z-10 translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-100/20 rounded-full blur-[120px] -z-10 -translate-x-1/2 translate-y-1/2"></div>
     </section>
   );
 }
