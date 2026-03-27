@@ -1,83 +1,93 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import { Leaf, Twitter, Github, Linkedin, ArrowUpRight, ArrowRight, Heart } from 'lucide-react';
 
-const Footer = () => {
+function Footer() {
   return (
-    <footer className="bg-[#041a11] pt-24 px-6 sm:px-10 lg:px-20 relative overflow-hidden text-emerald-100/40 font-sans">
+    <footer className="bg-[#020503] pb-80 pt-24 px-6 relative overflow-hidden border-t border-white/5">
+      
+      {/* BACKGROUND: Cinematic Mesh Glow (cite: copy.mp4, 0:01) */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-emerald-500/10 blur-[130px] rounded-full" />
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-900/10 blur-[110px] rounded-full" />
+      </div>
+
       <div className="max-w-7xl mx-auto relative z-10">
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-12 mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-32">
           
-          {/* Col 1: Brand & Description */}
-          <div className="lg:pr-12">
-            <div className="flex items-center gap-3 mb-8 text-white">
-              <div className="w-8 h-8 bg-[#34d399] rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/20">
-                  <div className="w-2 h-4 bg-[#041a11] rounded-full"></div>
+          {/* BRAND BLOCK: Luxury Tech Style (cite: s1.png) */}
+          <div className="col-span-1 md:col-span-2">
+            <div className="flex items-center gap-3 mb-8 group cursor-pointer w-fit">
+              <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:rotate-12 transition-transform duration-500">
+                <Leaf className="text-[#020503]" size={28} fill="currentColor" />
               </div>
-              <span className="text-3xl font-black tracking-tighter lowercase">khetibuddy</span>
+              <span className="text-4xl font-[900] text-white tracking-[-0.06em] uppercase">
+                Kheti<span className="text-emerald-500 italic">Buddy.</span>
+              </span>
             </div>
-            <p className="text-base leading-relaxed font-medium max-w-sm">
-              Empowering global agriculture through intelligent data analysis and automated growth strategies. Rooted in soil, grown in the cloud.
+            <p className="text-emerald-100/30 max-w-sm leading-relaxed font-bold text-lg tracking-tight">
+              Scale your farming operations with AI-driven automation. Built for the next generation of global agriculture.
             </p>
+            
+            {/* SOCIALS: Clean Icons (cite: copy.mp4, 0:14) */}
+            <div className="flex gap-6 mt-12">
+              {[Twitter, Github, Linkedin].map((Icon, i) => (
+                <motion.div 
+                  key={i} 
+                  whileHover={{ scale: 1.2, color: "#10b981" }}
+                  className="text-emerald-100/20 cursor-pointer transition-colors"
+                >
+                  <Icon size={24} />
+                </motion.div>
+              ))}
+            </div>
           </div>
-
-          {/* Col 2: Useful Links */}
+          
+          {/* NAVIGATION: Bold & Tight (cite: screen.png) */}
           <div>
-            <h4 className="text-white text-lg font-bold mb-8 uppercase tracking-widest text-xs opacity-60">Company</h4>
-            <ul className="space-y-4 text-base font-semibold">
-              <li><a href="#" className="hover:text-[#34d399] transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-[#34d399] transition-colors">Features</a></li>
-              <li><a href="#" className="hover:text-[#34d399] transition-colors">Pricing Plans</a></li>
-              <li><a href="#" className="hover:text-[#34d399] transition-colors">Career</a></li>
+            <h4 className="text-white font-[900] text-[10px] uppercase tracking-[0.3em] mb-10 opacity-30">Explore</h4>
+            <ul className="text-white/60 space-y-5 font-bold text-xl tracking-tighter">
+              {['Features', 'Case Studies', 'Pricing', 'API Docs'].map((item) => (
+                <li key={item} className="hover:text-emerald-500 cursor-pointer transition-all flex items-center group gap-2">
+                  {item}
+                  <ArrowUpRight size={18} className="opacity-0 group-hover:opacity-100 transition-all -translate-y-1" />
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Col 3: Follow Us */}
-          <div>
-            <h4 className="text-white text-lg font-bold mb-8 uppercase tracking-widest text-xs opacity-60">Connect</h4>
-            <ul className="space-y-4 text-base font-semibold">
-              <li><a href="#" className="hover:text-[#34d399] transition-colors">Twitter (X)</a></li>
-              <li><a href="#" className="hover:text-[#34d399] transition-colors">LinkedIn</a></li>
-              <li><a href="#" className="hover:text-[#34d399] transition-colors">Instagram</a></li>
-              <li><a href="#" className="hover:text-[#34d399] transition-colors">Facebook</a></li>
-            </ul>
-          </div>
-
-          {/* Col 4: Reach Out */}
-          <div>
-            <h4 className="text-white text-2xl font-bold mb-8 leading-tight tracking-tight">
-              Ready to grow your<br/>farm's potential?
-            </h4>
-            <button className="bg-[#34d399] hover:bg-emerald-400 text-[#041a11] px-8 py-4 rounded-2xl text-sm font-black transition-all shadow-xl shadow-emerald-500/10 hover:-translate-y-1 active:scale-95">
-              Get Started Now
+          {/* ACTION BLOCK: High-Contrast Button (cite: copy.mp4, 0:14) */}
+          <div className="flex flex-col">
+            <h4 className="text-white font-[900] text-[10px] uppercase tracking-[0.3em] mb-10 opacity-30">Support</h4>
+            <button className="group w-full bg-white text-[#020503] px-8 py-5 rounded-[1.5rem] font-[900] text-xl hover:bg-emerald-500 transition-all flex items-center justify-between shadow-2xl">
+              Book Demo
+              <ArrowRight size={22} className="group-hover:translate-x-2 transition-transform" />
             </button>
+            <p className="mt-8 text-emerald-100/20 text-sm font-black uppercase tracking-widest">
+              hello@khetibuddy.com
+            </p>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center text-xs font-black uppercase tracking-[0.2em] border-t border-white/5 py-12 z-20 relative">
-          <p>Made with <span className="text-emerald-500">🌿</span> in India.</p>
-          <div className="flex gap-8 mt-6 md:mt-0">
-             <a href="#" className="hover:text-white">Privacy Policy</a>
-             <a href="#" className="hover:text-white">Terms of Service</a>
+        {/* BOTTOM BAR: Minimalist & Clean (cite: s1.png) */}
+        <div className="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-8">
+          <p className="text-emerald-100/10 text-[10px] font-black uppercase tracking-[0.3em]">
+            © 2026 KhetiBuddy AI • Engineered for Growth
+          </p>
+          <div className="flex items-center gap-2 text-emerald-100/20 text-[10px] font-black uppercase tracking-widest">
+            Made with <Heart size={10} className="fill-emerald-500 text-emerald-500 animate-pulse" /> in India
           </div>
-          <p className="mt-6 md:mt-0">© 2026 KhetiBuddy Analytics</p>
         </div>
       </div>
 
-      {/* Giant Interior Branding */}
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden flex justify-center pointer-events-none select-none translate-y-[10%] opacity-40">
-        <h1 
-          className="text-[18vw] font-black text-slate-500/10 tracking-tighter uppercase whitespace-nowrap leading-none"
-          style={{ 
-            maskImage: 'linear-gradient(to bottom, black 40%, transparent 90%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, black 40%, transparent 90%)'
-          }}
-        >
-          KHETIBUDDY
-        </h1>
+      {/* MASSIVE WATERMARK: The Luxury Detail (cite: copy.mp4, 0:24) */}
+      <div className="absolute -bottom-10 left-0 w-full text-center pointer-events-none select-none z-0">
+        <h2 className="text-[17vw]  pb-10 font-[900] text-white/[0.02] tracking-[-0.08em] leading-none uppercase">
+          KhetiBuddy
+        </h2>
       </div>
     </footer>
   );
-};
+}
 
 export default Footer;

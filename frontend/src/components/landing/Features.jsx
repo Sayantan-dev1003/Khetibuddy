@@ -1,79 +1,130 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { MessageCircle, Leaf, Sprout, MapPin } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MessageCircle, Search, Mic, Smartphone, Sparkles, ArrowUpRight } from 'lucide-react';
 
-function Features() {
-  const features = [
-    {
-      icon: MessageCircle,
-      title: 'AI Chatbot Advisory',
-      description: 'Ask farming questions in Malayalam or English. Get instant expert advice powered by AI without lifting a finger.',
-    },
-    {
-      icon: Leaf,
-      title: 'Plant Disease Detection',
-      description: 'Upload crop photos and identify diseases instantly. Receive accurate treatment recommendations to save your yield.',
-    },
-    {
-      icon: Sprout,
-      title: 'Fertilizer Recommendation',
-      description: 'Turn soil data into actionable insights. Get crop-specific fertilizer plans based on current growth stages.',
-    },
-    {
-      icon: MapPin,
-      title: 'Nearby Market Locator',
-      description: 'Locate nearby agricultural markets, seed shops, and mandi locations easily to buy or sell at the best times.',
-    },
-  ];
+const features = [
+  { 
+    title: 'Keyword-Auto DMs', 
+    desc: 'Instantly reply to "price" or "pest" queries with AI-driven automation.', 
+    icon: MessageCircle,
+  },
+  { 
+    title: 'Disease Scanner', 
+    desc: 'Identify crop issues instantly via high-res image uploads and scanning.', 
+    icon: Search,
+  },
+  { 
+    title: 'Voice Support', 
+    desc: 'Malayalam & English voice-to-data automation for every farmer.', 
+    icon: Mic,
+  },
+  { 
+    title: 'Smart Follow-ups', 
+    desc: 'Nudge users who haven\'t checked their soil reports automatically.', 
+    icon: Smartphone,
+  },
+];
+
+const FeatureCard = ({ f, i }) => {
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <section id="features" className="min-h-screen flex items-center py-24 px-4 sm:px-6 lg:px-8 bg-[#062c1c] text-white overflow-hidden relative">
-      {/* Texture/Decoration */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(#34d399_1px,transparent_1px)] [background-size:40px_40px]"></div>
+    <motion.div 
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: i * 0.1, duration: 0.6 }}
+      whileHover={{ y: -15, scale: 1.02 }}
+      className="group relative bg-white/70 backdrop-blur-xl p-12 rounded-[4rem] border border-emerald-500/10 overflow-hidden cursor-pointer transition-all duration-500 hover:bg-white hover:border-emerald-500/40 hover:shadow-[0_40px_80px_-15px_rgba(16,185,129,0.15)]"
+    >
+      {/* Interactive Icon (cite: s1.png) */}
+      <motion.div 
+        animate={isHovered ? { scale: 1.1, rotate: [0, -10, 10, 0] } : { scale: 1, rotate: 0 }}
+        className="relative z-20 w-20 h-20 bg-emerald-500/10 text-emerald-600 rounded-3xl flex items-center justify-center mb-10 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-500 shadow-sm"
+      >
+        <f.icon size={38} strokeWidth={2.5} />
+        <AnimatePresence>
+          {isHovered && (
+            <motion.div 
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1.5, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              className="absolute inset-0 bg-emerald-400/20 rounded-full blur-xl"
+            />
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* Text Content (cite: screen.png) */}
+      <div className="relative z-20">
+        <div className="flex items-center gap-3 mb-4">
+          <h3 className="text-4xl font-[900] text-[#020503] tracking-tighter uppercase leading-none transition-colors group-hover:text-emerald-600">
+            {f.title}
+          </h3>
+          <motion.div animate={isHovered ? { x: 5, opacity: 1 } : { x: -10, opacity: 0 }}>
+            <ArrowUpRight className="text-emerald-500" size={24} />
+          </motion.div>
+        </div>
+        <p className="text-slate-600 text-xl font-bold leading-relaxed max-w-sm group-hover:text-slate-700 transition-colors">
+          {f.desc}
+        </p>
+      </div>
+
+      {/* Card Internal Glow (cite: copy.mp4, 0:02) */}
+      <motion.div 
+        animate={isHovered ? { opacity: 0.4, scale: 1.2 } : { opacity: 0, scale: 0.8 }}
+        className="absolute -bottom-20 -right-20 w-80 h-80 bg-emerald-500/20 blur-[100px] rounded-full transition-all duration-700 pointer-events-none"
+      />
+
+      {/* Luxury Number Decor */}
+      <span className="absolute top-10 right-10 text-emerald-900/5 font-[900] text-8xl select-none pointer-events-none uppercase">
+        0{i + 1}
+      </span>
+    </motion.div>
+  );
+};
+
+function Features() {
+  return (
+    <section id="features" className="py-40 px-6 bg-white overflow-hidden relative">
+      
+      {/* THE MESH GRADIENT BACKGROUND (cite: copy.mp4, 0:01) */}
+      <div className="absolute inset-0 z-0">
+        {/* Main Soft Green Base */}
+        <div className="absolute inset-0 bg-[#f0fff4]" />
+        
+        {/* Moving Mesh Glows */}
+        <div className="absolute top-[-10%] left-[-10%] w-[70%] h-[70%] bg-emerald-100 blur-[120px] rounded-full opacity-60" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-lime-100 blur-[100px] rounded-full opacity-50" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] bg-white blur-[150px] rounded-full" />
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-16 lg:mb-24">
-          <div className="inline-flex items-center justify-center gap-2 bg-[#34d399]/10 text-[#34d399] px-5 py-2 rounded-full text-xs font-black mb-6 border border-[#34d399]/20 tracking-[0.2em] uppercase">
-            ★ Core Innovation
-          </div>
-          <h2 className="text-5xl lg:text-7xl font-black mb-8 tracking-tighter leading-none">
-            Precision Farming <br />
-            <span className="text-[#34d399]">Rooted in AI.</span>
+        
+        {/* Header Section (cite: copy.mp4, 0:02) */}
+        <div className="text-center mb-32">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-6 py-2 rounded-full mb-10 shadow-sm backdrop-blur-md"
+          >
+            <Sparkles size={16} className="text-emerald-600 fill-emerald-600" />
+            <span className="text-emerald-600 font-[900] tracking-[0.3em] text-[11px] uppercase italic">Core Intelligence</span>
+          </motion.div>
+          
+          <h2 className="text-7xl md:text-[7.5rem] font-[900] text-[#020503] tracking-[-0.07em] leading-[0.8] uppercase">
+            Automation That <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-emerald-800 italic px-2">Feels Human.</span>
           </h2>
-          <p className="text-xl text-emerald-100/60 max-w-3xl mx-auto font-medium leading-relaxed">
-            We've distilled decades of agricultural wisdom into smart, digital tools designed to scale with your land and your ambitions.
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {features.map((feature, index) => {
-            const Icon = feature.icon;
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="bg-white/5 backdrop-blur-3xl p-10 rounded-[3rem] border border-white/10 hover:bg-white/[0.08] hover:border-[#34d399]/30 transition-all duration-700 group flex flex-col h-full hover:-translate-y-4 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.4)]"
-              >
-                <div className="w-20 h-20 bg-[#34d399] rounded-[1.75rem] flex items-center justify-center mb-10 shadow-[0_12px_24px_-8px_rgba(52,211,153,0.4)] group-hover:scale-110 transition-transform duration-700 group-hover:rotate-6">
-                  <Icon size={36} className="text-[#062c1c]" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-5 tracking-tight group-hover:text-[#34d399] transition-colors">
-                  {feature.title}
-                </h3>
-                <p className="text-emerald-100/40 leading-relaxed font-semibold mb-8 group-hover:text-emerald-100/60 transition-colors">
-                  {feature.description}
-                </p>
-                <div className="mt-auto">
-                   <div className="w-10 h-1 bg-white/10 group-hover:w-full group-hover:bg-[#34d399] transition-all duration-700 rounded-full"></div>
-                </div>
-              </motion.div>
-            );
-          })}
+        {/* Features Grid */}
+        <div className="grid md:grid-cols-2 gap-10 lg:gap-14">
+          {features.map((f, i) => (
+            <FeatureCard key={i} f={f} i={i} />
+          ))}
         </div>
       </div>
     </section>
