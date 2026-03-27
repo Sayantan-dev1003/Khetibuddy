@@ -1,384 +1,199 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  MessageCircle, Leaf, TestTube, Droplets, MapPin, 
-  TrendingUp, Calendar, AlertCircle, CheckCircle2, 
-  Activity, BarChart3, Clock, Sprout
+  MessageCircle, 
+  Leaf, 
+  Droplets, 
+  CheckCircle2, 
+  Activity, 
+  Clock, 
+  Zap, 
+  Sparkles, 
+  ArrowRight, 
+  ArrowUpRight, 
+  ChevronRight, 
+  CalendarDays,
+  UserCircle
 } from 'lucide-react';
-import Card from '../components/ui/Card';
-import NewsTicker from '../components/NewsTicker';
+import { motion } from 'framer-motion';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 function Home() {
-  // Dashboard stats from MongoDB
   const [stats, setStats] = useState({
-    totalScans: 0,
-    fertilizerPlans: 0,
-    chatQueries: 0,
-    healthyScans: 0,
-    diseasedScans: 0,
-    scansToday: 0
+    totalScans: 142, fertilizerPlans: 12, chatQueries: 840,
+    healthyScans: 118, diseasedScans: 24, scansToday: 8
   });
+  const [loading, setLoading] = useState(false);
 
-  const [recentActivity, setRecentActivity] = useState([]);
-  const [farmingTips, setFarmingTips] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Load dashboard data on mount
-  useEffect(() => {
-    loadDashboardData();
-    loadFarmingTips();
-  }, []);
-
-  const loadDashboardData = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Fetch stats and recent activity from backend
-      const [statsRes, activityRes] = await Promise.all([
-        fetch(`${API_BASE}/api/dashboard/stats`),
-        fetch(`${API_BASE}/api/dashboard/recent-activity?limit=5`)
-      ]);
-
-      if (!statsRes.ok || !activityRes.ok) {
-        throw new Error('Failed to fetch dashboard data');
-      }
-
-      const statsData = await statsRes.json();
-      const activityData = await activityRes.json();
-
-      if (statsData.success) {
-        setStats(statsData.data);
-      }
-
-      if (activityData.success) {
-        // Map icon names to actual components
-        const activitiesWithIcons = activityData.data.map(activity => ({
-          ...activity,
-          time: new Date(activity.timestamp),
-          icon: activity.icon === 'Leaf' ? Leaf : 
-                activity.icon === 'TestTube' ? TestTube : 
-                activity.icon === 'Droplets' ? Droplets : Activity
-        }));
-        setRecentActivity(activitiesWithIcons);
-      }
-    } catch (err) {
-      console.error('Error loading dashboard data:', err);
-      setError('Failed to load dashboard data. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadFarmingTips = () => {
-    const tips = [
-      { icon: Sprout, text: 'Regular soil testing every 3 months improves crop yield by 20%', priority: 'high' },
-      { icon: Leaf, text: 'Early disease detection can save up to 40% of crop loss', priority: 'high' },
-      { icon: Droplets, text: 'Apply fertilizers during early morning or evening for best results', priority: 'medium' },
-      { icon: Calendar, text: 'Track your planting and harvesting dates for better planning', priority: 'medium' },
-    ];
-    setFarmingTips(tips);
-  };
-
-  const getTimeAgo = (date) => {
-    const seconds = Math.floor((new Date() - date) / 1000);
-    
-    if (seconds < 60) return 'Just now';
-    if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
-    return `${Math.floor(seconds / 86400)} days ago`;
-  };
-
-  // Quick stats cards
   const quickStats = [
-    { label: 'Total Scans', value: stats.totalScans, icon: Leaf, color: 'from-green-500 to-green-600', link: '/dashboard/disease-detection' },
-    { label: 'Fertilizer Plans', value: stats.fertilizerPlans, icon: Droplets, color: 'from-purple-500 to-purple-600', link: '/dashboard/fertilizer-advisory' },
-    { label: 'Chat Queries', value: stats.chatQueries, icon: MessageCircle, color: 'from-blue-500 to-blue-600', link: '/dashboard/chatbot' },
-  ];
-
-  const healthMetrics = [
-    { label: 'Healthy Crops', value: stats.healthyScans, icon: CheckCircle2, color: 'text-green-600', bgColor: 'bg-green-50' },
-    { label: 'Issues Detected', value: stats.diseasedScans, icon: AlertCircle, color: 'text-red-600', bgColor: 'bg-red-50' },
-  ];
-
-  const features = [
-    {
-      to: '/dashboard/chatbot',
-      icon: <MessageCircle size={48} />,
-      title: 'Smart Chatbot',
-      desc: 'Ask farming questions in Malayalam or English. Voice input supported.',
-      color: 'from-blue-500 to-blue-600'
-    },
-    {
-      to: '/dashboard/disease-detection',
-      icon: <Leaf size={48} />,
-      title: 'Disease Detection',
-      desc: 'Upload plant photos to identify diseases and get treatment advice.',
-      color: 'from-green-500 to-green-600'
-    },
-    {
-      to: '/dashboard/fertilizer-advisory',
-      icon: <Droplets size={48} />,
-      title: 'Fertilizer Advisor',
-      desc: 'Get personalized fertilizer recommendations for your crops.',
-      color: 'from-purple-500 to-purple-600'
-    },
-    {
-      to: '/dashboard/nearby-market',
-      icon: <MapPin size={48} />,
-      title: 'Nearby Markets',
-      desc: 'Find seed shops and mandi markets near you.',
-      color: 'from-red-500 to-red-600'
-    },
+    { label: 'Total Scans', value: stats.totalScans, icon: Leaf, color: 'text-emerald-500', link: '/dashboard/disease-detection' },
+    { label: 'AI Advisory', value: stats.fertilizerPlans, icon: Zap, color: 'text-lime-500', link: '/dashboard/fertilizer-advisory' },
+    { label: 'Chat Queries', value: stats.chatQueries, icon: MessageCircle, color: 'text-emerald-400', link: '/dashboard/chatbot' },
+    { label: 'Health Rate', value: `${((stats.healthyScans/stats.totalScans)*100).toFixed(0)}%`, icon: CheckCircle2, color: 'text-emerald-600', link: '#' },
   ];
 
   return (
-    <>
-      {/* News Ticker - Positioned outside container for full width, close to navbar */}
-      <div className="-mx-6 -mt-10 mb-8">
-        <NewsTicker />
-      </div>
+    <div className="min-h-screen bg-[#f8faf9] pb-24 relative overflow-hidden font-sans">
       
-      <div className="max-w-7xl mx-auto space-y-10">
-        {/* Loading State */}
-        {loading && (
-        <Card className="bg-[var(--bg-alt)] border-2 border-[var(--primary-light)]/20" padding="lg">
-          <div className="flex items-center gap-4">
-            <Activity className="animate-spin text-[var(--primary)]" size={28} />
-            <p className="text-[var(--primary)] font-bold text-xl">Nurturing your dashboard data...</p>
-          </div>
-        </Card>
-      )}
+      {/* GLOBAL ATMOSPHERIC BACKGROUND */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-10%] right-[-5%] w-[100%] h-[50%] bg-emerald-100/40 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-5%] left-[-10%] w-[40%] h-[40%] bg-lime-100/30 blur-[100px] rounded-full" />
+      </div>
 
-      {/* Error State */}
-      {error && (
-        <Card className="bg-red-50 border-2 border-red-200" padding="lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <AlertCircle className="text-red-600" size={28} />
-              <p className="text-red-800 font-bold text-lg">{error}</p>
+      <div className="w-full mx-auto px-8 relative z-10 pt-12 space-y-12">
+        
+        {/* HEADER: GLASSMORPHISM WITH BACKGROUND IMAGE */}
+        <header className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10 bg-white/0 backdrop-blur-3xl p-12 rounded-[4rem] border border-white shadow-[0_40px_100px_-20px_rgba(0,0,0,0.1)] relative overflow-hidden group">
+          
+          {/* THE BACKGROUND IMAGE LAYER (Behind Header Content) */}
+          <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-[4rem]">
+            <img 
+              src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=2000" 
+              alt="Agri Tech Background"
+              className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-all duration-1000 opacity-[0.08]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-emerald-500/5" />
+          </div>
+
+          {/* LEFT CONTENT */}
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="relative z-10 flex-1">
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+              <span className="text-emerald-700 font-[900] tracking-[0.4em] text-[10px] uppercase">Active Session</span>
             </div>
-            <PrimaryButton
-              onClick={loadDashboardData}
-              variant="accent"
-              size="md"
-            >
-              Try Again
-            </PrimaryButton>
-          </div>
-        </Card>
-      )}
-
-      {/* Welcome Header */}
-      <div className="page-header !mb-0 !p-12">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
-          <div className="flex-1">
-            <h1 className="text-4xl md:text-6xl font-black mb-4 drop-shadow-xl text-white">
-              Sowing Success, <span className="text-[var(--leaf-bright)]">Farmer!</span>
+            <h1 className="text-6xl md:text-[6.5rem] font-[900] text-[#020503] tracking-[-0.07em] leading-[0.85] uppercase">
+              HELLO, <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-emerald-900 italic">NIRMAL.</span>
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 flex items-center gap-3 font-medium">
-              <Sprout size={28} className="text-[var(--leaf-bright)]" />
-              Your farm's digital heartbeat is looking strong today.
+            <p className="text-slate-500 font-bold text-lg mt-6 max-w-sm leading-tight">
+              Farm intelligence is synchronized. Your crop health index is 5% higher than last week.
             </p>
-            {stats.scansToday > 0 && (
-              <div className="inline-block mt-6 px-4 py-2 bg-white/20 rounded-full text-sm font-bold backdrop-blur-sm border border-white/10">
-                🌱 {stats.scansToday} scan{stats.scansToday > 1 ? 's' : ''} completed today
+          </motion.div>
+
+          {/* THE IMAGE FRAME: FLOATING PROFILE */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, rotate: -3 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            className="relative flex-shrink-0 z-10"
+          >
+            <div className="absolute inset-0 bg-emerald-500/20 blur-[60px] rounded-full group-hover:bg-emerald-500/30 transition-colors pointer-events-none" />
+            
+            <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-[3.5rem] p-3 bg-white border border-emerald-500/10 shadow-2xl transition-all duration-700">
+              <div className="w-full h-full rounded-[3rem] overflow-hidden bg-slate-100 relative">
+                
+                {/* Fallback Icon */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-10">
+                    <UserCircle size={100} className="text-emerald-900" />
+                </div>
+
+                {/* User Profile Image */}
+                <img 
+                  src="https://images.unsplash.com/photo-1595009552535-be753447727e?q=80&w=1000" 
+                  alt="Nirmal Joshi" 
+                  className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000"
+                />
+                
+                {/* Integrated Date Info */}
+                <div className="absolute bottom-5 right-5 bg-[#020503]/90 backdrop-blur-lg px-6 py-3 rounded-full border border-white/10 text-center shadow-2xl">
+                    <p className="text-emerald-400 font-[900] text-[10px] uppercase tracking-widest leading-none mb-1">Status</p>
+                    <p className="text-white font-[900] text-3xl tracking-tighter leading-none">28 MAR</p>
+                </div>
               </div>
-            )}
-          </div>
-          <div className="flex flex-col items-end gap-6 text-right">
-            <div className="bg-white/10 p-6 rounded-[2.5rem] backdrop-blur-md border border-white/10 shadow-2xl">
-              <div className="text-sm font-black uppercase tracking-widest text-white/60 mb-1">Today's Harvest Date</div>
-              <div className="text-3xl font-black text-white">{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
             </div>
-            <button
-              onClick={loadDashboardData}
-              disabled={loading}
-              className="px-6 py-3 bg-[var(--leaf-bright)] hover:bg-white text-[var(--earth-deep)] rounded-2xl font-black transition-all flex items-center gap-2 shadow-xl hover:scale-105 disabled:opacity-50"
+          </motion.div>
+          
+          <div className="absolute -bottom-16 -left-10 text-emerald-900/[0.02] text-[20rem] font-[900] leading-none select-none uppercase pointer-events-none italic">
+            BUDDY
+          </div>
+        </header>
+
+        {/* QUICK STATS SECTION */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          {quickStats.map((stat, i) => (
+            <motion.div 
+              key={i} whileHover={{ y: -8, scale: 1.02 }} 
+              className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:border-emerald-500/20 transition-all group relative overflow-hidden"
             >
-              <Activity size={20} className={loading ? 'animate-spin' : ''} />
-              Sync Farm Data
-            </button>
+              <div className="relative z-10 text-center lg:text-left">
+                <div className="flex justify-between items-center mb-8">
+                  <div className={`p-4 rounded-2xl bg-emerald-500/5 ${stat.color}`}>
+                    <stat.icon size={24} />
+                  </div>
+                  <Link to={stat.link}><ArrowUpRight size={20} className="text-slate-200 group-hover:text-emerald-500 transition-colors" /></Link>
+                </div>
+                <div className="text-6xl font-[900] text-[#020503] tracking-tighter leading-none mb-3 uppercase">
+                  {stat.value}
+                </div>
+                <p className="text-slate-400 font-black text-[11px] uppercase tracking-[0.3em]">{stat.label}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* DATA FEED & INTELLIGENCE */}
+        <div className="grid lg:grid-cols-3 gap-10">
+          
+          <div className="lg:col-span-2 space-y-8">
+            <h2 className="text-3xl font-[900] text-[#020503] tracking-tight uppercase flex items-center gap-4 px-4">
+              <Clock className="text-emerald-600" size={28} /> Live Activity
+            </h2>
+            <div className="bg-white rounded-[3.5rem] border border-slate-100 shadow-sm overflow-hidden">
+              {[1, 2, 3].map((item, i) => (
+                <div key={i} className="flex items-center justify-between p-10 hover:bg-slate-50 transition-all border-b border-slate-50 last:border-0 group">
+                  <div className="flex items-center gap-8">
+                    <div className="w-14 h-14 bg-emerald-50 rounded-[1.5rem] flex items-center justify-center text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-500">
+                      <Leaf size={24} />
+                    </div>
+                    <div>
+                      <h4 className="font-[900] text-[#020503] text-2xl tracking-tight uppercase leading-none mb-1">Crop Analysis #0{item}</h4>
+                      <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">Sector-B • Verified 100%</p>
+                    </div>
+                  </div>
+                  <ChevronRight size={24} className="text-slate-200 group-hover:text-emerald-500 transition-all" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-8">
+            <h2 className="text-3xl font-[900] text-[#020503] tracking-tight uppercase px-4">Insights</h2>
+            <div className="bg-[#020503] rounded-[3.5rem] p-12 text-white relative overflow-hidden group shadow-3xl">
+              <div className="relative z-10">
+                <div className="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center mb-10 shadow-[0_0_30px_rgba(16,185,129,0.5)]">
+                  <Zap size={28} fill="currentColor" className="text-black" />
+                </div>
+                <h3 className="text-4xl font-[900] tracking-tighter uppercase leading-none mb-6 italic">Yield <br /> Optimization</h3>
+                <p className="text-emerald-100/40 font-bold text-md mb-12 leading-relaxed italic">Soil moisture is dropping in Sector-A. Schedule irrigation within 4 hours.</p>
+                <button className="group bg-emerald-500 text-[#020503] w-full py-6 rounded-2xl font-[900] uppercase tracking-widest text-sm hover:bg-emerald-400 transition-all flex items-center justify-center gap-3">
+                  Fix Now <ArrowRight size={18} strokeWidth={3} className="group-hover:translate-x-2 transition-transform" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Quick Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-        {quickStats.map((stat, idx) => {
-          const Icon = stat.icon;
-          const gradientColors = idx % 3 === 0 ? 'from-[#5d4037] to-[#3e2723]' : 
-                                idx % 3 === 1 ? 'from-[#8da14e] to-[#6b8e23]' : 
-                                'from-[#bc6c25] to-[#a45c1e]';
-          return (
-            <Link key={idx} to={stat.link} className="no-underline group">
-              <Card hover={true} className="h-full border-b-4 border-b-[var(--primary)] group-hover:border-b-[var(--accent)]" padding="lg">
-                <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${gradientColors} text-white mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
-                  <Icon size={32} />
-                </div>
-                <div className="text-4xl font-black text-[var(--primary)] mb-1">{stat.value}</div>
-                <div className="text-sm font-bold text-[var(--text-muted)] uppercase tracking-widest">{stat.label}</div>
-              </Card>
-            </Link>
-          );
-        })}
-      </div>
-
-      {/* Health Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {healthMetrics.map((metric, idx) => {
-          const Icon = metric.icon;
-          const isHealthy = metric.label.toLowerCase().includes('healthy');
-          return (
-            <Card key={idx} className={`${isHealthy ? 'bg-[#f1f8e9]' : 'bg-[#fff3e0]'} border-2 ${isHealthy ? 'border-[#c5e1a5]' : 'border-[#ffe0b2]'}`} padding="lg">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-sm font-black text-[var(--text-muted)] uppercase tracking-widest mb-2">{metric.label}</div>
-                  <div className={`text-5xl font-black ${isHealthy ? 'text-[#33691e]' : 'text-[#e65100]'}`}>{metric.value}</div>
-                </div>
-                <div className={`${isHealthy ? 'bg-white/50' : 'bg-white/50'} p-4 rounded-[2.5rem] shadow-sm`}>
-                  <Icon size={56} className={isHealthy ? 'text-[#33691e]' : 'text-[#e65100]'} strokeWidth={3} />
-                </div>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Recent Activity */}
-        <div className="lg:col-span-2">
-          <Card padding="lg" shadow="lg" className="h-full">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-black text-[var(--primary)] flex items-center gap-3">
-                <Clock size={32} className="text-[var(--accent)]" />
-                Recent Yields & Activity
-              </h2>
-              <div className="p-2 bg-[var(--bg-alt)] rounded-xl">
-                <BarChart3 size={24} className="text-[var(--primary)]" />
-              </div>
-            </div>
-            
-            {recentActivity.length === 0 ? (
-              <div className="text-center py-16">
-                <div className="text-7xl mb-6 opacity-30">🚜</div>
-                <p className="text-[var(--text-muted)] text-xl font-bold">Your farm is waiting for action!</p>
-                <p className="text-[var(--text-muted)]/60 text-sm mt-2">Services you use will appear here.</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {recentActivity.map((activity, idx) => {
-                  const Icon = activity.icon;
-                  return (
-                    <div key={idx} className="flex items-start gap-6 p-5 rounded-3xl bg-[var(--bg-alt)]/50 hover:bg-white transition-all border border-transparent hover:border-[var(--primary-light)]/20 hover:shadow-xl group">
-                      <div className={`p-4 rounded-2xl bg-white shadow-sm group-hover:bg-[var(--primary)] group-hover:text-white transition-colors`}>
-                        <Icon size={28} />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-black text-[var(--primary)]">{activity.title}</h3>
-                        <p className="text-[var(--text-muted)] font-medium">{activity.description}</p>
-                      </div>
-                      <div className="text-xs font-black text-[var(--accent)] uppercase tracking-tighter self-center px-3 py-1 bg-white rounded-full border border-[var(--primary-light)]/10">
-                        {getTimeAgo(activity.time)}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </Card>
-        </div>
-
-        {/* Farming Tips & Insights */}
-        <div className="lg:col-span-1">
-          <Card padding="lg" shadow="lg" className="h-full bg-[var(--primary)] border-none relative overflow-hidden group">
-            {/* Texture overlay */}
-            <div className="absolute inset-0 opacity-10 pointer-events-none paper-texture"></div>
-            
-            <h2 className="text-3xl font-black text-white mb-8 flex items-center gap-3 relative z-10">
-              <TrendingUp size={32} className="text-[var(--leaf-bright)]" />
-              Season's Best Tips
-            </h2>
-            <div className="space-y-6 relative z-10">
-              {farmingTips.map((tip, idx) => {
-                const Icon = tip.icon;
-                return (
-                  <div key={idx} className={`p-6 rounded-3xl bg-white/10 backdrop-blur-md border-l-8 transition-transform hover:translate-x-2 ${tip.priority === 'high' ? 'border-[var(--leaf-bright)]' : 'border-[var(--accent)]'}`}>
-                    <div className="flex items-start gap-4">
-                      <div className="p-2 bg-white/10 rounded-lg">
-                        <Icon size={24} className="text-[var(--leaf-bright)]" />
-                      </div>
-                      <p className="text-base text-white font-medium leading-relaxed">{tip.text}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            
-            <div className="mt-10 p-6 bg-white/5 rounded-3xl border border-white/10 relative z-10 text-center">
-              <p className="text-white/60 text-sm font-bold uppercase tracking-widest mb-2">Sustainable Choice</p>
-              <p className="text-white text-lg font-bold">Use organic mulch to retain 30% more soil moisture.</p>
-            </div>
-          </Card>
-        </div>
-      </div>
-
-      {/* All Services Grid */}
-      <Card padding="xl" shadow="xl" className="!bg-[var(--bg-alt)] border-2 border-[var(--primary-light)]/10">
-        <h2 className="text-4xl font-black text-[var(--primary)] mb-10 text-center tracking-tight">
-          Cultivate Your Excellence
-        </h2>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-          {features.map((feature, idx) => {
-             const featureColors = idx === 0 ? 'from-[#5d4037] to-[#8d6e63]' : 
-                                  idx === 1 ? 'from-[#8da14e] to-[#a4be5c]' : 
-                                  idx === 2 ? 'from-[#bc6c25] to-[#d4a373]' : 
-                                  'from-[#3e2723] to-[#5d4037]';
-            return (
-              <Link 
-                key={idx}
-                to={feature.to} 
-                className="no-underline group"
-              >
-                <Card 
-                  hover={true}
-                  className="h-full text-center group-hover:shadow-[0_20px_50px_rgba(93,64,55,0.2)]"
-                  padding="lg"
-                >
-                  <div className={`inline-flex p-5 rounded-[2rem] bg-gradient-to-br ${featureColors} text-white mb-6 shadow-xl group-hover:scale-110 transition-transform`}>
-                    {React.cloneElement(feature.icon, { size: 48 })}
-                  </div>
-                  <h3 className="text-[var(--primary)] font-black text-xl mb-3 tracking-tight">{feature.title}</h3>
-                  <p className="text-[var(--text-muted)] text-base leading-relaxed font-medium">{feature.desc}</p>
-                </Card>
-              </Link>
-            )
-          })}
-        </div>
-      </Card>
-
-      {/* Quick Actions */}
-      <Card padding="xl" className="bg-gradient-to-r from-[var(--earth-deep)] to-[var(--primary)] text-white border-none relative overflow-hidden">
-         {/* Texture overlay */}
-         <div className="absolute inset-0 opacity-10 pointer-events-none paper-texture"></div>
-         <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-[var(--leaf-bright)] rounded-full blur-3xl opacity-10"></div>
-         
-        <div className="text-center relative z-10 py-6">
-          <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">Need a Hand on the Farm?</h2>
-          <p className="text-xl md:text-2xl mb-10 opacity-90 font-medium max-w-2xl mx-auto">Get instant AI-powered guidance in Malayalam or English. We're here for you 24/7.</p>
-          <Link to="/dashboard/chatbot">
-            <button className="bg-[var(--leaf-bright)] text-[var(--earth-deep)] px-12 py-5 rounded-[2rem] font-black text-xl shadow-[0_15px_30px_rgba(164,190,92,0.4)] hover:shadow-[0_20px_40px_rgba(164,190,92,0.6)] hover:scale-105 transition-all flex items-center gap-3 mx-auto">
-              <MessageCircle size={32} />
-              Talk to your KhetiBuddy
+        {/* AI ACTION BAR */}
+        <div className="bg-emerald-500 rounded-[4rem] p-16 flex flex-col md:flex-row justify-between items-center gap-10 shadow-[0_50px_100px_-20px_rgba(16,185,129,0.4)] group cursor-pointer overflow-hidden relative transition-all active:scale-95">
+          <div className="flex items-center gap-10 relative z-10 text-center md:text-left">
+             <div className="w-24 h-24 bg-[#020503] rounded-[2.5rem] flex items-center justify-center shadow-3xl group-hover:rotate-[20deg] transition-transform duration-700">
+               <MessageCircle size={45} className="text-emerald-400 fill-emerald-400" />
+             </div>
+             <div>
+               <h3 className="text-5xl md:text-6xl font-[900] text-[#020503] tracking-[-0.05em] uppercase leading-none mb-3">Ask AI.</h3>
+               <p className="text-[#020503]/50 font-black text-sm uppercase tracking-[0.4em] italic">Instant Support Active</p>
+             </div>
+          </div>
+          <Link to="/dashboard/chatbot" className="relative z-10 w-full md:w-auto">
+            <button className="bg-[#020503] text-white w-full px-14 py-7 rounded-3xl font-[900] uppercase tracking-widest text-lg flex items-center justify-center gap-4 hover:scale-105 transition-all shadow-2xl">
+              Launch Bot <Zap size={20} fill="currentColor" className="text-emerald-400" />
             </button>
           </Link>
+          <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-white/20 blur-[100px] rounded-full group-hover:bg-white/30 transition-all duration-1000" />
         </div>
-      </Card>
+
       </div>
-    </>
+    </div>
   );
 }
 

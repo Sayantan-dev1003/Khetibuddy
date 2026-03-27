@@ -12,13 +12,13 @@ function PrimaryButton({
   fullWidth = false,
   icon
 }) {
-  const baseClasses = 'font-bold rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed focus:ring-4 focus:ring-[var(--primary)]/20 focus:outline-none active:scale-[0.98]';
+  const baseClasses = 'font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-3 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variantClasses = {
-    primary: 'bg-[var(--primary)] hover:bg-[var(--earth-deep)] text-white',
-    secondary: 'bg-[var(--secondary)] hover:opacity-90 text-white',
-    outline: 'border-2 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)]/5',
-    accent: 'bg-[var(--accent)] hover:opacity-90 text-white',
+    primary: 'bg-emerald-600 hover:bg-emerald-700 text-white',
+    secondary: 'bg-gray-600 hover:bg-gray-700 text-white',
+    outline: 'border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50',
+    danger: 'bg-red-600 hover:bg-red-700 text-white',
   };
   
   const sizeClasses = {

@@ -1,6 +1,7 @@
 const ChatQuery = require('../models/ChatQuery');
 const { generateChatResponse, detectLanguage } = require('../services/llm.service');
 const { v4: uuidv4 } = require('uuid');
+const mongoose = require('mongoose');
 
 /**
  * Create a new chat session
@@ -40,6 +41,15 @@ exports.sendMessage = async (req, res) => {
 
     console.log(`[Chat] Session ${sessionId}: User asked: ${message.substring(0, 50)}...`);
 
+    const userId = req.user._id || req.user.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Unauthorized: User ID missing from token'
+      });
+    }
+
     // Detect script/language (for logging)
     const detectedScript = detectLanguage(message);
     console.log(`[Chat] Detected script: ${detectedScript}`);
@@ -52,6 +62,7 @@ exports.sendMessage = async (req, res) => {
     // Save user message
     const savedUserMessage = await ChatQuery.create({
       sessionId,
+      userId: userId,
       role: 'user',
       content: message
     });
@@ -66,6 +77,7 @@ exports.sendMessage = async (req, res) => {
     // Save bot response
     const botMessage = await ChatQuery.create({
       sessionId,
+      userId: userId,
       role: 'assistant',
       content: botReply
     });
@@ -99,7 +111,8 @@ exports.getMessages = async (req, res) => {
   try {
     const { sessionId } = req.params;
 
-    const messages = await ChatQuery.find({ sessionId })
+    const userId = req.user._id || req.user.id;
+    const messages = await ChatQuery.find({ sessionId, userId: userId })
       .sort({ createdAt: 1 });
 
     res.status(200).json({
@@ -120,10 +133,11 @@ exports.getMessages = async (req, res) => {
  */
 exports.getChatSessions = async (req, res) => {
   try {
+    const userId = req.user._id || req.user.id;
     // Get all unique sessionIds
     const sessions = await ChatQuery.aggregate([
       {
-        $match: { role: 'user' }
+        $match: { role: 'user', userId: new mongoose.Types.ObjectId(userId) }
       },
       {
         $sort: { createdAt: -1 }
@@ -176,7 +190,8 @@ exports.deleteChatSession = async (req, res) => {
   try {
     const { sessionId } = req.params;
 
-    await ChatQuery.deleteMany({ sessionId });
+    const userId = req.user._id || req.user.id;
+    await ChatQuery.deleteMany({ sessionId, userId: userId });
 
     res.status(200).json({
       success: true,
