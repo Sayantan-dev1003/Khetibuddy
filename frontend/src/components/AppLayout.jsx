@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, MessageCircle, Leaf, Droplets, MapPin, Menu, X, ArrowLeft, Store, ArrowRight } from 'lucide-react';
+import { Home, MessageCircle, Leaf, Droplets, MapPin, Menu, X, ArrowLeft, Store, ArrowRight, LogOut, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 
 function AppLayout({ children }) {
+  const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,12 +36,17 @@ function AppLayout({ children }) {
     return location.pathname.startsWith(path);
   };
 
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen bg-[#F0FAF4]">
       {/* Floating Header Container */}
       <div className="fixed top-0 left-0 right-0 z-[100] px-6 py-6 pointer-events-none">
         <nav
-          className={`max-w-7xl mx-auto transition-all duration-500 pointer-events-auto rounded-[2.5rem] border overflow-hidden ${isScrolled
+          className={`max-w-7xl mx-auto transition-all duration-500 pointer-events-auto rounded-[2.5rem] border ${isScrolled
               ? 'bg-white/95 backdrop-blur-2xl border-emerald-100 py-4 px-8 shadow-[0_20px_50px_rgba(16,185,129,0.1)]'
               : 'bg-white/60 backdrop-blur-md border-emerald-50/20 py-4 px-8 shadow-sm'
             }`}
@@ -95,9 +103,46 @@ function AppLayout({ children }) {
                 {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
 
-              {/* Optional Profile/Settings Button for Dashboard */}
-              <div className="hidden md:block w-11 h-11 rounded-full bg-emerald-100 border-2 border-white shadow-sm overflow-hidden cursor-pointer hover:border-emerald-500 transition-all">
-                <img src="/avatars/default.png" alt="Profile" className="w-full h-full object-cover" onError={(e) => e.target.src = "https://ui-avatars.com/api/?name=Farmer&background=10B981&color=fff"} />
+              {/* Profile/Settings Dropdown */}
+              <div className="relative">
+                <div 
+                  className="w-11 h-11 rounded-full bg-emerald-100 border-2 border-white shadow-sm overflow-hidden cursor-pointer hover:border-emerald-500 transition-all"
+                  onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                >
+                  <img src={`https://ui-avatars.com/api/?name=${user?.name || 'Farmer'}&background=10B981&color=fff`} alt="Profile" className="w-full h-full object-cover" />
+                </div>
+                
+                <AnimatePresence>
+                  {profileMenuOpen && (
+                    <>
+                      <div className="fixed inset-0 z-40 pointer-events-auto" onClick={() => setProfileMenuOpen(false)}></div>
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="absolute right-0 mt-4 w-48 bg-white rounded-3xl shadow-2xl border border-emerald-100 overflow-hidden z-50 pointer-events-auto"
+                      >
+                        <div className="p-2">
+                          <Link 
+                            to="/dashboard/profile" 
+                            className="flex items-center gap-3 px-4 py-3 rounded-2xl text-emerald-900 hover:bg-emerald-50 transition-all font-bold"
+                            onClick={() => setProfileMenuOpen(false)}
+                          >
+                            <User size={18} />
+                            Profile
+                          </Link>
+                          <button 
+                            onClick={handleLogout}
+                            className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-red-600 hover:bg-red-50 transition-all font-bold text-left"
+                          >
+                            <LogOut size={18} />
+                            Logout
+                          </button>
+                        </div>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </div>

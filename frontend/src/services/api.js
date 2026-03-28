@@ -39,3 +39,62 @@ export async function get(url) {
     return { success: false, message: "Network error" };
   }
 }
+
+export async function put(url, body) {
+  try {
+    const res = await fetch(`${API_BASE}${url}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      credentials: "include",
+    });
+
+    if (res.status === 401) {
+      return { success: false, message: "Unauthorized", status: 401 };
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("API PUT error:", error);
+    return { success: false, message: "Network error" };
+  }
+}
+
+export async function patch(url, body) {
+  try {
+    const res = await fetch(`${API_BASE}${url}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      credentials: "include",
+    });
+
+    if (res.status === 401) {
+      return { success: false, message: "Unauthorized", status: 401 };
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("API PATCH error:", error);
+    return { success: false, message: "Network error" };
+  }
+}
+
+export async function del(url) {
+  try {
+    const res = await fetch(`${API_BASE}${url}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+
+    if (res.status === 401) {
+      return { success: false, message: "Unauthorized", status: 401 };
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("API DELETE error:", error);
+    return { success: false, message: "Network error" };
+  }
+}
