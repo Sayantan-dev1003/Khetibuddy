@@ -11,6 +11,7 @@ import NearbyMapPage from './pages/NearbyMapPage.jsx';
 import Login from './pages/Login.jsx';
 import Signup from './pages/Signup.jsx';
 import Profile from './pages/Profile.jsx';
+import PestDetection from './pages/PestDetection.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import './App.css';
@@ -40,6 +41,7 @@ function App() {
                 <Route path="fertilizer-advisory" element={<FertilizerAdvisor apiUrl={API_URL} />} />
                 <Route path="nearby-market" element={<NearbyMarkets />} />
                 <Route path="nearby-map" element={<NearbyMapPage />} />
+                <Route path="pest-detection" element={<PestDetection apiUrl={API_URL} />} />
                 <Route path="profile" element={<Profile />} />
               </Routes>
             </AppLayout>
