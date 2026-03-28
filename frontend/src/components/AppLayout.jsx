@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, MessageCircle, Leaf, Droplets, MapPin, Menu, X, ArrowLeft } from 'lucide-react';
-
+import { Home, MessageCircle, Leaf, Droplets, MapPin, Menu, X, ArrowLeft, Store } from 'lucide-react';
 function AppLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -12,7 +11,8 @@ function AppLayout({ children }) {
     { path: '/dashboard/chatbot', icon: MessageCircle, label: 'Chatbot', color: 'blue' },
     { path: '/dashboard/disease-detection', icon: Leaf, label: 'Disease', color: 'green' },
     { path: '/dashboard/fertilizer-advisory', icon: Droplets, label: 'Fertilizer', color: 'purple' },
-    { path: '/dashboard/nearby-market', icon: MapPin, label: 'Market', color: 'red' },
+    { path: '/dashboard/nearby-market', icon: Store, label: 'Marketplace', color: 'red' },
+    { path: '/dashboard/nearby-map', icon: MapPin, label: 'Map View', color: 'orange' },
   ];
 
   const isActive = (path) => {

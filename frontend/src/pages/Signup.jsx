@@ -9,7 +9,8 @@ const Signup = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'user'
+    role: 'user',
+    userType: 'buyer'
   });
   const [formError, setFormError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,7 +39,8 @@ const Signup = () => {
       name: formData.name,
       email: formData.email,
       password: formData.password,
-      role: formData.role
+      role: formData.role,
+      userType: formData.userType
     });
     
     if (result.success) {
@@ -145,6 +147,43 @@ const Signup = () => {
                   className="w-full bg-zinc-800/50 border border-zinc-700 text-white pl-11 pr-4 py-3 rounded-xl outline-none focus:border-green-500/50 focus:ring-4 focus:ring-green-500/10 transition-all placeholder:text-zinc-600"
                 />
               </div>
+            </div>
+          </div>
+
+          <div className="space-y-3 pt-2">
+            <label className="text-sm font-medium text-zinc-300 ml-1">How will you use KhetiBuddy?</label>
+            <div className="grid grid-cols-2 gap-4">
+              <label className={`flex items-center justify-center p-3 rounded-xl border cursor-pointer transition-all ${
+                formData.userType === 'buyer' 
+                  ? 'bg-green-500/10 border-green-500 text-green-400' 
+                  : 'bg-zinc-800/50 border-zinc-700 text-zinc-400 hover:border-zinc-500'
+              }`}>
+                <input 
+                  type="radio" 
+                  name="userType" 
+                  value="buyer" 
+                  checked={formData.userType === 'buyer'}
+                  onChange={handleChange}
+                  className="hidden"
+                />
+                <span className="font-medium">I am a Buyer (Farmer)</span>
+              </label>
+              
+              <label className={`flex items-center justify-center p-3 rounded-xl border cursor-pointer transition-all ${
+                formData.userType === 'seller' 
+                  ? 'bg-green-500/10 border-green-500 text-green-400' 
+                  : 'bg-zinc-800/50 border-zinc-700 text-zinc-400 hover:border-zinc-500'
+              }`}>
+                <input 
+                  type="radio" 
+                  name="userType" 
+                  value="seller" 
+                  checked={formData.userType === 'seller'}
+                  onChange={handleChange}
+                  className="hidden"
+                />
+                <span className="font-medium">I am a Seller (Shop)</span>
+              </label>
             </div>
           </div>
 

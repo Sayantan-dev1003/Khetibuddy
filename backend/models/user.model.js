@@ -26,6 +26,12 @@ const userSchema = new Schema(
       enum: ["user","admin"],
       default: "user", // role-based auth
     },
+    
+    userType: {
+      type: String,
+      enum: ["buyer", "seller", "both"],
+      default: "buyer",
+    },
   },
   {
     timestamps: true,
