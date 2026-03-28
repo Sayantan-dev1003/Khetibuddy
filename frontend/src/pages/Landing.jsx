@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '../components/landing/Navbar';
 import Hero from '../components/landing/Hero';
+import GovSchemes from '../components/landing/GovSchemes';
 import TrustStrip from '../components/landing/TrustStrip';
 import Features from '../components/landing/Features';
 import HowItWorks from '../components/landing/HowItWorks';
@@ -14,6 +15,7 @@ function Landing() {
     <div className="min-h-screen bg-slate-50">
       <Navbar />
       <Hero />
+      <GovSchemes />
       <Features />
       <HowItWorks />
       <ModulesShowcase />

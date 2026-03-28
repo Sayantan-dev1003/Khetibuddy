@@ -22,6 +22,15 @@ export default {
         'farmer': '18px',
         'farmer-lg': '1.2rem',
         'farmer-xl': '1.5rem',
+      },
+      animation: {
+        'infinite-scroll': 'infinite-scroll 40s linear infinite',
+      },
+      keyframes: {
+        'infinite-scroll': {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-50%)' },
+        }
       }
     },
   },
