@@ -97,6 +97,12 @@ function AppLayout({ children }) {
 
             {/* Right Column - Secondary Actions or Empty to balance */}
             <div className="flex-1 flex justify-end items-center gap-4">
+              <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-emerald-50/50 rounded-xl border border-emerald-100/50">
+                 <Clock size={14} className="text-emerald-600" />
+                 <span className="text-[11px] font-[900] tracking-tight text-emerald-900 uppercase">
+                    {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                 </span>
+              </div>
               <button
                 className="lg:hidden p-3 rounded-2xl transition-all text-emerald-900 bg-emerald-50 hover:bg-emerald-100 shadow-sm"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -201,6 +207,28 @@ function AppLayout({ children }) {
 
       {/* Extra Bottom Padding for safety, although bottom nav is removed */}
       <div className="h-8 lg:hidden"></div>
+
+      {/* FLOATING CHATBOT FAB */}
+      <div className="fixed bottom-10 right-10 z-[200] pointer-events-none">
+        <motion.div
+           initial={{ opacity: 0, scale: 0.8, y: 20 }}
+           animate={{ opacity: 1, scale: 1, y: 0 }}
+           whileHover={{ scale: 1.1, rotate: 5 }}
+           whileTap={{ scale: 0.9 }}
+           className="pointer-events-auto"
+        >
+          <Link
+            to="/dashboard/chatbot"
+            className="w-16 h-16 bg-[#020503] text-emerald-400 rounded-[2rem] flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-emerald-500/20 hover:border-emerald-500/50 transition-all group relative"
+          >
+            <MessageCircle size={28} strokeWidth={2.5} className="group-hover:text-white transition-colors" />
+            
+            {/* Notification Badge */}
+            <span className="absolute top-4 right-4 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping" />
+            <span className="absolute top-4 right-4 w-2.5 h-2.5 bg-emerald-500 rounded-full shadow-[0_0_10px_#10B981]" />
+          </Link>
+        </motion.div>
+      </div>
     </div>
   );
 }
