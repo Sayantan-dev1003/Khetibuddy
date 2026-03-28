@@ -38,11 +38,10 @@ function AppLayout({ children }) {
       {/* Floating Header Container */}
       <div className="fixed top-0 left-0 right-0 z-[100] px-6 py-6 pointer-events-none">
         <nav
-          className={`max-w-7xl mx-auto transition-all duration-500 pointer-events-auto rounded-[2.5rem] border overflow-hidden ${
-            isScrolled 
-              ? 'bg-white/95 backdrop-blur-2xl border-emerald-100 py-4 px-8 shadow-[0_20px_50px_rgba(16,185,129,0.1)]' 
+          className={`max-w-7xl mx-auto transition-all duration-500 pointer-events-auto rounded-[2.5rem] border overflow-hidden ${isScrolled
+              ? 'bg-white/95 backdrop-blur-2xl border-emerald-100 py-4 px-8 shadow-[0_20px_50px_rgba(16,185,129,0.1)]'
               : 'bg-white/60 backdrop-blur-md border-emerald-50/20 py-4 px-8 shadow-sm'
-          }`}
+            }`}
         >
           <div className="flex items-center justify-between w-full">
             {/* Logo Section - Left Column (cite: Video 0:01) */}
@@ -56,8 +55,8 @@ function AppLayout({ children }) {
                   <ArrowLeft size={24} className="text-emerald-700 font-bold" />
                 </button>
               )}
-              <div 
-                className="flex items-center gap-3 cursor-pointer" 
+              <div
+                className="flex items-center gap-3 cursor-pointer"
                 onClick={() => navigate('/dashboard')}
               >
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 text-3xl">
@@ -81,32 +80,30 @@ function AppLayout({ children }) {
                     <Link
                       key={item.path}
                       to={item.path}
-                      className={`font-[900] text-[11px] uppercase tracking-[0.25em] transition-all hover:scale-110 relative group/link whitespace-nowrap ${
-                        active ? 'text-emerald-600' : 'text-emerald-900/60 hover:text-emerald-600'
-                      }`}
+                      className={`font-[900] text-[11px] uppercase tracking-[0.25em] transition-all hover:scale-110 relative group/link whitespace-nowrap ${active ? 'text-emerald-600' : 'text-emerald-900/60 hover:text-emerald-600'
+                        }`}
                     >
                       <span className="flex items-center gap-2">
                         <Icon size={14} strokeWidth={2.5} />
                         {item.label}
                       </span>
-                      <span className={`absolute -bottom-1 left-0 w-0 h-[2px] rounded-full transition-all duration-300 group-hover/link:w-full ${
-                        active ? 'w-full bg-emerald-600' : 'bg-emerald-600'
-                      }`} />
+                      <span className={`absolute -bottom-1 left-0 w-0 h-[2px] rounded-full transition-all duration-300 group-hover/link:w-full ${active ? 'w-full bg-emerald-600' : 'bg-emerald-600'
+                        }`} />
                     </Link>
                   );
                 })}
               </div>
             </div>
-            
+
             {/* Right Column - Secondary Actions or Empty to balance */}
             <div className="flex-1 flex justify-end items-center gap-4">
-              <button 
+              <button
                 className="lg:hidden p-3 rounded-2xl transition-all text-emerald-900 bg-emerald-50 hover:bg-emerald-100 shadow-sm"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
                 {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
-              
+
               {/* Optional Profile/Settings Button for Dashboard */}
               <div className="hidden md:block w-11 h-11 rounded-full bg-emerald-100 border-2 border-white shadow-sm overflow-hidden cursor-pointer hover:border-emerald-500 transition-all">
                 <img src="/avatars/default.png" alt="Profile" className="w-full h-full object-cover" onError={(e) => e.target.src = "https://ui-avatars.com/api/?name=Farmer&background=10B981&color=fff"} />
@@ -133,18 +130,17 @@ function AppLayout({ children }) {
                   key={item.path}
                   to={item.path}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex flex-col items-center gap-4 p-8 rounded-[2.5rem] transition-all w-[80%] max-w-[300px] ${
-                    active
+                  className={`flex flex-col items-center gap-4 p-8 rounded-[2.5rem] transition-all w-[80%] max-w-[300px] ${active
                       ? 'bg-emerald-600 text-white shadow-2xl shadow-emerald-700/20 scale-110'
                       : 'bg-emerald-50/50 text-emerald-900 hover:bg-emerald-100'
-                  }`}
+                    }`}
                 >
                   <Icon size={48} strokeWidth={2} />
                   <span className="text-2xl font-black uppercase tracking-tight">{item.label}</span>
                 </Link>
               );
             })}
-            <button 
+            <button
               onClick={() => setMobileMenuOpen(false)}
               className="mt-8 p-6 rounded-full bg-red-50 text-red-600 shadow-sm"
             >
@@ -155,11 +151,12 @@ function AppLayout({ children }) {
       </AnimatePresence>
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12">
+      <main className={`${location.pathname.includes('/chatbot') ? 'w-full pt-0 pb-0' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12'} h-full transition-all duration-300`}>
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4 }}
+          className="h-full"
         >
           {children}
         </motion.div>

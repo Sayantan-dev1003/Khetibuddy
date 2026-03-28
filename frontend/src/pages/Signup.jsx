@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Sprout, Mail, Lock, User, Loader2, UserPlus, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Sparkles, Mail, Lock, User, Loader2, UserPlus, ArrowRight, ShieldCheck, Tractor, ShoppingCart } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -52,33 +53,53 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a1108] flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Decorative blurry gradients */}
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-green-900/20 rounded-full blur-[120px]" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-emerald-900/20 rounded-full blur-[120px]" />
+    <div className="min-h-screen bg-[#040705] flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Decor - Video Style Glassmorphism */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-emerald-900/20 blur-[130px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-600/5 blur-[100px] rounded-full" />
+        
+        {/* Farm Texture Overlay */}
+        <img 
+          src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2070" 
+          alt="Farmland"
+          className="w-full h-full object-cover opacity-[0.12] grayscale mix-blend-overlay"
+        />
+      </div>
 
-      <div className="w-full max-w-lg bg-zinc-900/50 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl relative z-10">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-2xl bg-white/5 backdrop-blur-2xl border border-white/10 p-10 rounded-[2.5rem] shadow-2xl relative z-10"
+      >
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-700 rounded-2xl mb-4 shadow-lg shadow-green-900/40">
-            <Sprout className="text-white w-8 h-8" />
+          <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-full mb-8">
+            <Sparkles className="text-emerald-400" size={14} />
+            <span className="text-emerald-400 font-bold tracking-[0.2em] text-[10px] uppercase">
+              AI Agriculture Automation 🌾
+            </span>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>
-          <p className="text-zinc-400">Join our community of smart farmers</p>
+          
+          <h1 className="text-4xl font-black text-white mb-2 tracking-tighter leading-none">
+            Join the <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-lime-300 italic">Ecosystem.</span>
+          </h1>
+          <p className="text-emerald-100/40 font-medium">Connect your farm to the future of agriculture.</p>
         </div>
 
         {formError && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm flex items-center gap-3 animate-pulse">
-            <div className="w-2 h-2 rounded-full bg-red-500" />
+          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+            <div className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
             {formError}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-300 ml-1">Full Name</label>
+              <label className="text-xs font-bold uppercase tracking-widest text-emerald-100/30 ml-1">Legal Name</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-green-500 transition-colors">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-emerald-100/20 group-focus-within:text-emerald-400 transition-colors">
                   <User size={18} />
                 </div>
                 <input
@@ -87,16 +108,16 @@ const Signup = () => {
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Rahul Kumar"
-                  className="w-full bg-zinc-800/50 border border-zinc-700 text-white pl-11 pr-4 py-3 rounded-xl outline-none focus:border-green-500/50 focus:ring-4 focus:ring-green-500/10 transition-all placeholder:text-zinc-600"
+                  placeholder="Enter name"
+                  className="w-full bg-white/5 border border-white/5 text-white pl-11 pr-4 py-4 rounded-2xl outline-none focus:border-emerald-500/30 focus:bg-white/10 transition-all placeholder:text-emerald-100/10"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-300 ml-1">Email</label>
+              <label className="text-xs font-bold uppercase tracking-widest text-emerald-100/30 ml-1">Email Node</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-green-500 transition-colors">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-emerald-100/20 group-focus-within:text-emerald-400 transition-colors">
                   <Mail size={18} />
                 </div>
                 <input
@@ -105,18 +126,18 @@ const Signup = () => {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="rahul@example.com"
-                  className="w-full bg-zinc-800/50 border border-zinc-700 text-white pl-11 pr-4 py-3 rounded-xl outline-none focus:border-green-500/50 focus:ring-4 focus:ring-green-500/10 transition-all placeholder:text-zinc-600"
+                  placeholder="Enter email"
+                  className="w-full bg-white/5 border border-white/5 text-white pl-11 pr-4 py-4 rounded-2xl outline-none focus:border-emerald-500/30 focus:bg-white/10 transition-all placeholder:text-emerald-100/10"
                 />
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-300 ml-1">Password</label>
+              <label className="text-xs font-bold uppercase tracking-widest text-emerald-100/30 ml-1">Primary Access Key</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-green-500 transition-colors">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-emerald-100/20 group-focus-within:text-emerald-400 transition-colors">
                   <Lock size={18} />
                 </div>
                 <input
@@ -125,16 +146,16 @@ const Signup = () => {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="••••••••"
-                  className="w-full bg-zinc-800/50 border border-zinc-700 text-white pl-11 pr-4 py-3 rounded-xl outline-none focus:border-green-500/50 focus:ring-4 focus:ring-green-500/10 transition-all placeholder:text-zinc-600"
+                  placeholder="Enter password"
+                  className="w-full bg-white/5 border border-white/5 text-white pl-11 pr-4 py-4 rounded-2xl outline-none focus:border-emerald-500/30 focus:bg-white/10 transition-all placeholder:text-emerald-100/10"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-300 ml-1">Confirm Password</label>
+              <label className="text-xs font-bold uppercase tracking-widest text-emerald-100/30 ml-1">Validate Key</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-green-500 transition-colors">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-emerald-100/20 group-focus-within:text-emerald-400 transition-colors">
                   <ShieldCheck size={18} />
                 </div>
                 <input
@@ -143,87 +164,92 @@ const Signup = () => {
                   required
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  placeholder="••••••••"
-                  className="w-full bg-zinc-800/50 border border-zinc-700 text-white pl-11 pr-4 py-3 rounded-xl outline-none focus:border-green-500/50 focus:ring-4 focus:ring-green-500/10 transition-all placeholder:text-zinc-600"
+                  placeholder="Enter confirm password"
+                  className="w-full bg-white/5 border border-white/5 text-white pl-11 pr-4 py-4 rounded-2xl outline-none focus:border-emerald-500/30 focus:bg-white/10 transition-all placeholder:text-emerald-100/10"
                 />
               </div>
             </div>
           </div>
 
-          <div className="space-y-3 pt-2">
-            <label className="text-sm font-medium text-zinc-300 ml-1">How will you use KhetiBuddy?</label>
+          <div className="space-y-4 pt-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-emerald-100/30 ml-1">Platform Role Assignment</label>
             <div className="grid grid-cols-2 gap-4">
-              <label className={`flex items-center justify-center p-3 rounded-xl border cursor-pointer transition-all ${
-                formData.userType === 'buyer' 
-                  ? 'bg-green-500/10 border-green-500 text-green-400' 
-                  : 'bg-zinc-800/50 border-zinc-700 text-zinc-400 hover:border-zinc-500'
-              }`}>
-                <input 
-                  type="radio" 
-                  name="userType" 
-                  value="buyer" 
-                  checked={formData.userType === 'buyer'}
-                  onChange={handleChange}
-                  className="hidden"
-                />
-                <span className="font-medium">I am a Buyer (Farmer)</span>
-              </label>
+              <button 
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, userType: 'buyer' }))}
+                className={`flex flex-col items-center justify-center gap-3 p-6 rounded-3xl border transition-all ${
+                  formData.userType === 'buyer' 
+                    ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.1)]' 
+                    : 'bg-white/5 border-white/5 text-emerald-100/30 hover:border-emerald-500/20'
+                }`}
+              >
+                <div className={`p-3 rounded-full ${formData.userType === 'buyer' ? 'bg-emerald-500 text-[#040705]' : 'bg-white/5 text-emerald-100/40'}`}>
+                  <Tractor size={20} />
+                </div>
+                <div className="text-center">
+                  <span className="block font-bold text-sm">Agriculture Operator</span>
+                  <span className="text-xs opacity-60 uppercase tracking-wide">(Farmer / Buyer)</span>
+                </div>
+              </button>
               
-              <label className={`flex items-center justify-center p-3 rounded-xl border cursor-pointer transition-all ${
-                formData.userType === 'seller' 
-                  ? 'bg-green-500/10 border-green-500 text-green-400' 
-                  : 'bg-zinc-800/50 border-zinc-700 text-zinc-400 hover:border-zinc-500'
-              }`}>
-                <input 
-                  type="radio" 
-                  name="userType" 
-                  value="seller" 
-                  checked={formData.userType === 'seller'}
-                  onChange={handleChange}
-                  className="hidden"
-                />
-                <span className="font-medium">I am a Seller (Shop)</span>
-              </label>
+              <button 
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, userType: 'seller' }))}
+                className={`flex flex-col items-center justify-center gap-3 p-6 rounded-3xl border transition-all ${
+                  formData.userType === 'seller' 
+                    ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.1)]' 
+                    : 'bg-white/5 border-white/5 text-emerald-100/30 hover:border-emerald-500/20'
+                }`}
+              >
+                <div className={`p-3 rounded-full ${formData.userType === 'seller' ? 'bg-emerald-500 text-[#040705]' : 'bg-white/5 text-emerald-100/40'}`}>
+                  <ShoppingCart size={20} />
+                </div>
+                <div className="text-center">
+                  <span className="block font-bold text-sm">Supply Provider</span>
+                  <span className="text-xs opacity-60 uppercase tracking-wide">(Shop / Seller)</span>
+                </div>
+              </button>
             </div>
           </div>
 
-          <div className="pt-2">
+          <div className="pt-4">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-500 hover:to-emerald-600 text-white font-semibold py-4 rounded-xl shadow-lg shadow-green-900/20 flex items-center justify-center gap-2 transition-all transform active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none"
+              className="w-full bg-emerald-500 hover:bg-emerald-400 text-[#040705] font-black py-5 rounded-2xl shadow-2xl shadow-emerald-500/20 flex items-center justify-center gap-3 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70 disabled:pointer-events-none group"
             >
               {isSubmitting ? (
                 <>
                   <Loader2 className="animate-spin" size={20} />
-                  <span>Creating Account...</span>
+                  <span>Calibrating Metadata...</span>
                 </>
               ) : (
                 <>
-                  <UserPlus size={20} />
-                  <span>Join KhetiBuddy</span>
+                  <UserPlus size={20} className="group-hover:rotate-12 transition-transform" />
+                  <span>Initialize Registration</span>
                 </>
               )}
             </button>
           </div>
         </form>
 
-        <div className="mt-8 pt-8 border-t border-zinc-800 text-center">
-          <p className="text-zinc-500 text-sm">
-            Already have an account?{' '}
-            <Link to="/login" className="text-green-500 font-semibold hover:text-green-400 transition-colors inline-flex items-center gap-1">
-              Sign In <ArrowRight size={14} />
+        <div className="mt-10 pt-8 border-t border-white/5 text-center">
+          <p className="text-emerald-100/30 text-sm font-medium">
+            Already verified?{' '}
+            <Link to="/login" className="text-emerald-400 font-bold hover:text-emerald-300 transition-colors inline-flex items-center gap-1 group">
+              Access Dashboard <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </p>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="absolute bottom-6 left-0 right-0 text-center flex items-center justify-center gap-2 text-zinc-600 text-xs">
-        <Sprout size={14} />
-        <span>Secure registration powered by KhetiBuddy Auth</span>
+      {/* Footer Branding */}
+      <div className="absolute bottom-6 left-0 right-0 text-center flex items-center justify-center gap-2 text-emerald-100/20 text-[10px] uppercase font-bold tracking-[0.2em] z-10">
+        <span>Global Agricultural Network 🌾 Powered by KhetiBuddy</span>
       </div>
     </div>
   );
 };
 
 export default Signup;
+

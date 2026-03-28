@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Trash2, MessageSquare, X, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
+import { Clock, Trash2, MessageSquare, X, RefreshCw, PlusCircle, Search } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -7,6 +8,7 @@ function ChatHistory({ currentSessionId, onLoadSession, onNewChat, isOpen, onTog
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Fetch chat sessions
   const fetchSessions = async () => {
@@ -60,10 +62,8 @@ function ChatHistory({ currentSessionId, onLoadSession, onNewChat, isOpen, onTog
 
   // Load on mount
   useEffect(() => {
-    if (isOpen) {
-      fetchSessions();
-    }
-  }, [isOpen]);
+    fetchSessions();
+  }, []);
 
   // Format date
   const formatDate = (dateString) => {
@@ -86,96 +86,130 @@ function ChatHistory({ currentSessionId, onLoadSession, onNewChat, isOpen, onTog
     });
   };
 
+  const filteredSessions = sessions.filter(s => 
+    s.preview.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <>
-      {/* Toggle Button - Moves with sidebar */}
-      <button
-        onClick={onToggle}
-        className={`fixed top-32 z-50 bg-emerald-600 text-white p-3 rounded-r-xl shadow-lg hover:bg-emerald-700 transition-all duration-300 ${
-          isOpen ? 'left-80' : 'left-0'
-        }`}
-        title={isOpen ? "Close History" : "Open History"}
-      >
-        {isOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-      </button>
+      {/* Mobile Sidebar Overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onToggle}
+            className="fixed inset-0 bg-emerald-950/20 backdrop-blur-sm z-[110] lg:hidden"
+          />
+        )}
+      </AnimatePresence>
 
       {/* Sidebar Panel */}
-      <div
-        className={`fixed left-0 top-20 h-[calc(100vh-5rem)] w-80 bg-white shadow-2xl transform transition-transform duration-300 z-40 ${
+      <aside
+        className={`fixed inset-y-0 left-0 z-[120] w-[320px] bg-white border-r border-emerald-100/50 shadow-2xl transition-all duration-500 transform lg:static lg:z-0 lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full bg-[#fdfdfd] pt-24 lg:pt-28">
           {/* Header */}
-          <div className="bg-gradient-to-r from-emerald-600 to-green-600 text-white p-4">
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-xl font-bold flex items-center gap-2">
-                <MessageSquare size={24} />
-                Chat History
-              </h2>
+          <div className="p-6 pb-2">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-lg shadow-emerald-200">
+                  <MessageSquare size={22} />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-emerald-950 leading-none">History</h2>
+                  <span className="text-xs text-emerald-600 font-medium">{sessions.length} conversations</span>
+                </div>
+              </div>
               <button
                 onClick={fetchSessions}
                 disabled={loading}
-                className="p-2 hover:bg-emerald-500 rounded-lg transition-colors disabled:opacity-50"
-                title="Refresh history"
+                className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all active:scale-95 disabled:opacity-50"
               >
                 <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
               </button>
             </div>
             
-            {/* New Chat Button */}
             <button
               onClick={() => {
                 onNewChat();
-                onToggle();
+                if (window.innerWidth < 1024) onToggle();
               }}
-              className="w-full mt-2 bg-white text-emerald-600 px-4 py-2 rounded-lg font-semibold hover:bg-emerald-50 transition-colors shadow-sm"
+              className="w-full group flex items-center justify-center gap-2 bg-emerald-600 text-white px-4 py-3.5 rounded-2xl font-bold hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-200 hover:shadow-emerald-300 hover:-translate-y-0.5"
             >
-              + New Chat
+              <PlusCircle size={20} className="group-hover:rotate-90 transition-transform duration-300" />
+              New Chat
             </button>
           </div>
 
+          {/* Search Bar */}
+          <div className="px-6 py-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-400" size={16} />
+              <input
+                type="text"
+                placeholder="Search history..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-emerald-50/50 border border-emerald-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 transition-all placeholder:text-emerald-300"
+              />
+            </div>
+          </div>
+
           {/* Sessions List */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-2">
+          <div className="flex-1 overflow-y-auto px-4 pb-6 custom-scrollbar space-y-2">
             {loading ? (
-              <div className="flex items-center justify-center py-8">
+              <div className="flex flex-col items-center justify-center py-12 gap-3">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+                <p className="text-sm text-emerald-600 font-medium">Loading history...</p>
               </div>
-            ) : sessions.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <MessageSquare size={48} className="mx-auto mb-2 opacity-30" />
-                <p>No chat history yet</p>
-                <p className="text-sm">Start chatting to see history</p>
+            ) : filteredSessions.length === 0 ? (
+              <div className="text-center py-12 px-6">
+                <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MessageSquare size={32} className="text-emerald-200" />
+                </div>
+                <h3 className="text-emerald-900 font-bold mb-1">No chats found</h3>
+                <p className="text-xs text-emerald-600/70">Start a new conversation to get growing!</p>
               </div>
             ) : (
-              sessions.map((session) => (
-                <div
+              filteredSessions.map((session) => (
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
                   key={session.sessionId}
-                  onClick={() => onLoadSession(session.sessionId)}
-                  className={`group relative p-3 rounded-lg cursor-pointer transition-all ${
+                  onClick={() => {
+                    onLoadSession(session.sessionId);
+                    if (window.innerWidth < 1024) onToggle();
+                  }}
+                  className={`group relative p-4 rounded-2xl cursor-pointer transition-all border ${
                     session.sessionId === currentSessionId
-                      ? 'bg-emerald-100 border-2 border-emerald-500'
-                      : 'bg-gray-50 hover:bg-gray-100 border-2 border-transparent'
+                      ? 'bg-emerald-50 border-emerald-200 shadow-sm shadow-emerald-100'
+                      : 'bg-transparent border-transparent hover:bg-emerald-50/50'
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-800 truncate">
-                        {session.preview}
-                        {session.preview.length >= 60 && '...'}
+                      <p className={`text-sm font-bold line-clamp-1 mb-1 ${
+                        session.sessionId === currentSessionId ? 'text-emerald-900' : 'text-slate-700'
+                      }`}>
+                        {session.preview || "Untitled Chat"}
                       </p>
-                      <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
-                        <Clock size={12} />
+                      <div className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-wider text-slate-400">
+                        <Clock size={10} strokeWidth={2.5} />
                         <span>{formatDate(session.lastMessageDate)}</span>
                         <span>•</span>
-                        <span>{session.messageCount} msg{session.messageCount !== 1 ? 's' : ''}</span>
+                        <span>{session.messageCount} messages</span>
                       </div>
                     </div>
                     
                     <button
                       onClick={(e) => handleDeleteSession(session.sessionId, e)}
                       disabled={deleting === session.sessionId}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-100 rounded text-red-600 disabled:opacity-50"
+                      className="opacity-0 group-hover:opacity-100 transition-all p-1.5 hover:bg-red-50 rounded-lg text-red-400 hover:text-red-500 disabled:opacity-50"
                       title="Delete chat"
                     >
                       {deleting === session.sessionId ? (
@@ -185,27 +219,22 @@ function ChatHistory({ currentSessionId, onLoadSession, onNewChat, isOpen, onTog
                       )}
                     </button>
                   </div>
-                </div>
+                </motion.div>
               ))
             )}
           </div>
 
-          {/* Footer */}
-          <div className="border-t border-gray-200 p-3 bg-gray-50">
-            <p className="text-xs text-gray-500 text-center">
-              Showing {sessions.length} recent conversation{sessions.length !== 1 ? 's' : ''}
-            </p>
+          {/* Footer Card */}
+          <div className="p-6 border-t border-emerald-100/50 bg-white/50">
+            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-100">
+              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-800 mb-1">KhetiBuddy Tip</p>
+              <p className="text-[11px] text-emerald-700 leading-relaxed font-medium">
+                Keep your history organized to track crop performance over seasons.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* Overlay - Click to close */}
-      {isOpen && (
-        <div
-          onClick={onToggle}
-          className="fixed inset-0 bg-black bg-opacity-30 z-30 transition-opacity"
-        ></div>
-      )}
+      </aside>
     </>
   );
 }

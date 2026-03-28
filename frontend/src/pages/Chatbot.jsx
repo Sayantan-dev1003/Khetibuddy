@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Mic, Send, Volume2 } from 'lucide-react';
-import PageHeader from '../components/ui/PageHeader';
-import Card from '../components/ui/Card';
-import PrimaryButton from '../components/ui/PrimaryButton';
+import React, { useEffect, useState, useRef } from 'react';
+import { Mic, Send, Volume2, Sparkles, ChevronLeft, ChevronRight, StopCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import ChatHistory from '../components/ChatHistory';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -17,290 +15,147 @@ function Chatbot() {
   const [loading, setLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [recognitionSupported, setRecognitionSupported] = useState(true);
-  const [historyOpen, setHistoryOpen] = useState(false);
-  const messagesEndRef = React.useRef(null);
+  const [historyOpen, setHistoryOpen] = useState(true); // Default open on desktop
+  const messagesEndRef = useRef(null);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages, loading]);
 
-  /* ---------------- FEMALE VOICE ---------------- */
+  /* ---------------- VOICE HELPERS ---------------- */
   const getFemaleVoice = (langCode) => {
     const voices = window.speechSynthesis.getVoices();
-    
-    console.log('🔍 Available voices:', voices.map(v => ({ name: v.name, lang: v.lang })));
-    console.log('🎯 Looking for language:', langCode);
-  
-    // Try to find female voices for the specified language
     let femaleVoices = voices.filter(v => {
       const voiceLang = v.lang.toLowerCase();
       const voiceName = v.name.toLowerCase();
       const targetLang = langCode.toLowerCase();
-      
-      // Check if voice matches the language
       const langMatch = voiceLang.startsWith(targetLang) || voiceLang.includes(targetLang);
-      
-      // Check if it's likely a female voice
-      const isFemale = 
-        voiceName.includes('female') ||
-        voiceName.includes('zira') ||      // Windows (en-US)
-        voiceName.includes('samantha') ||  // macOS (en-US)
-        voiceName.includes('natasha') ||   // Windows (en-GB)
-        voiceName.includes('heera') ||     // Windows (hi-IN)
-        voiceName.includes('kalpana') ||   // Windows (hi-IN)
-        voiceName.includes('hemant') ||    // Windows (hi-IN) - actually male, exclude
-        voiceName.includes('swara') ||     // Google (hi-IN)
-        voiceName.includes('neerja') ||    // Google (hi-IN)
-        voiceName.includes('google') ||    // Google voices (usually better quality)
-        voiceName.includes('microsoft') ||
-        // Malayalam
-        voiceName.includes('veena');       // Windows (ml-IN)
-      
+      const isFemale = voiceName.includes('female') || voiceName.includes('zira') || 
+                       voiceName.includes('samantha') || voiceName.includes('natasha') || 
+                       voiceName.includes('heera') || voiceName.includes('kalpana') || 
+                       voiceName.includes('swara') || voiceName.includes('neerja') || 
+                       voiceName.includes('google') || voiceName.includes('veena');
       return langMatch && isFemale && !voiceName.includes('hemant');
     });
 
-    console.log(`✅ Found ${femaleVoices.length} female voices for ${langCode}:`, 
-      femaleVoices.map(v => v.name));
-  
-    // If no female voice found, try any voice for that language
     if (femaleVoices.length === 0) {
-      console.log('⚠️ No female voice found, trying any voice for language');
-      femaleVoices = voices.filter(v => 
-        v.lang.toLowerCase().startsWith(langCode.toLowerCase())
-      );
-      console.log(`📢 Found ${femaleVoices.length} total voices:`, 
-        femaleVoices.map(v => v.name));
+      femaleVoices = voices.filter(v => v.lang.toLowerCase().startsWith(langCode.toLowerCase()));
     }
     
-    // Prefer Google voices first (better quality)
-    const googleVoice = femaleVoices.find(v => v.name.toLowerCase().includes('google'));
-    if (googleVoice) {
-      console.log('🎉 Using Google voice:', googleVoice.name);
-      return googleVoice;
-    }
-  
-    const selectedVoice = femaleVoices.length > 0 ? femaleVoices[0] : null;
-    if (selectedVoice) {
-      console.log('🎤 Selected voice:', selectedVoice.name);
-    } else {
-      console.log('❌ No voice found for language:', langCode);
-    }
-    
-    return selectedVoice;
+    return femaleVoices.find(v => v.name.toLowerCase().includes('google')) || femaleVoices[0] || null;
   };
-  
 
-  /* ---------------- CREATE SESSION ---------------- */
+  /* ---------------- SESSION MANAGEMENT ---------------- */
   useEffect(() => {
-    createNewSession();
-    
-    // Load voices on component mount
-    if ('speechSynthesis' in window) {
-      // Load voices
-      window.speechSynthesis.getVoices();
-      
-      // Some browsers need this event to load voices
-      window.speechSynthesis.onvoiceschanged = () => {
-        const voices = window.speechSynthesis.getVoices();
-        console.log('✅ Voices loaded:', voices.length);
-        console.log('Available languages:', [...new Set(voices.map(v => v.lang))].sort());
-      };
+    const savedSessionId = localStorage.getItem('chatSessionId');
+    if (savedSessionId) {
+      loadSession(savedSessionId);
+    } else {
+      createNewSession();
     }
+    
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+    }
+
+    // Handle initial sidebar state for mobile
+    if (window.innerWidth < 1024) setHistoryOpen(false);
   }, []);
 
-  // Create a new chat session
   const createNewSession = async () => {
     try {
-      console.log('[Chatbot] Creating new session...');
+      setLoading(true);
       const res = await fetch(`${API_BASE}/api/chat/session`, { method: 'POST', credentials: 'include' });
       const data = await res.json();
-      
       if (data.success) {
-        console.log('[Chatbot] New session created:', data.sessionId);
         setSessionId(data.sessionId);
         localStorage.setItem('chatSessionId', data.sessionId);
         setChatMessages([]);
       }
     } catch (error) {
-      console.error('[Chatbot] Failed to create session:', error);
-      alert('Failed to start chat session');
+      console.error('Failed to create session:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Load an existing session
   const loadSession = async (loadSessionId) => {
     try {
-      console.log('[Chatbot] Loading session:', loadSessionId);
+      setLoading(true);
       const res = await fetch(`${API_BASE}/api/chat/messages/${loadSessionId}`, { credentials: 'include' });
       const data = await res.json();
-      
       if (data.success) {
-        console.log('[Chatbot] Loaded', data.data.length, 'messages');
         setSessionId(loadSessionId);
         localStorage.setItem('chatSessionId', loadSessionId);
         setChatMessages(data.data);
-        setHistoryOpen(false);
+      } else {
+        createNewSession();
       }
     } catch (error) {
-      console.error('[Chatbot] Failed to load session:', error);
-      alert('Failed to load chat session');
+      console.error('Failed to load session:', error);
+      createNewSession();
+    } finally {
+      setLoading(false);
     }
   };
 
   /* ---------------- VOICE INPUT ---------------- */
   const handleVoiceInput = () => {
-    if (!SpeechRecognition) {
-      alert('Voice input is not supported in this browser.');
-      return;
-    }
-
+    if (!SpeechRecognition) return alert('Voice input not supported');
     const recognition = new SpeechRecognition();
-    // Use browser default language; user speaks in whatever language they want
     recognition.lang = navigator.language || 'en-IN';
-    recognition.interimResults = false;
-    recognition.continuous = false;
-
     setIsListening(true);
     recognition.start();
-
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      setQuestion(prev => (prev ? `${prev} ${transcript}` : transcript));
-    };
-
-    recognition.onerror = () => {
-      alert('Voice recognition failed.');
-      setIsListening(false);
-    };
-
+    recognition.onresult = (e) => setQuestion(prev => (prev ? `${prev} ${e.results[0][0].transcript}` : e.results[0][0].transcript));
+    recognition.onerror = () => setIsListening(false);
     recognition.onend = () => setIsListening(false);
   };
 
-  /* ---------------- TEXT TO SPEECH + GIF SYNC ---------------- */
-  const stopSpeaking = () => {
-    window.speechSynthesis.cancel();
-    setIsSpeaking(false);
-  };
-
+  /* ---------------- TTS ---------------- */
+  const stopSpeaking = () => { window.speechSynthesis.cancel(); setIsSpeaking(false); };
   const speakText = (text) => {
-    window.speechSynthesis.cancel(); // stop previous
-  
+    window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    
-    // Auto-detect language from text
     const hindiPattern = /[\u0900-\u097F]/;
     const malayalamPattern = /[\u0D00-\u0D7F]/;
-    
-    let detectedLang = 'en-IN';
-    let langCode = 'en';
-    
-    if (hindiPattern.test(text)) {
-      detectedLang = 'hi-IN';
-      langCode = 'hi';
-      console.log('🗣️ Detected Hindi text');
-    } else if (malayalamPattern.test(text)) {
-      detectedLang = 'ml-IN';
-      langCode = 'ml';
-      console.log('🗣️ Detected Malayalam text');
-    } else {
-      console.log('🗣️ Using English');
-    }
-    
-    utterance.lang = detectedLang;
-  
-    // Get female voice for the detected language
-    const femaleVoice = getFemaleVoice(langCode);
-    
-    if (!femaleVoice) {
-      console.warn('⚠️ No voice available for', langCode);
-      alert('No voice available for this language on your device. Try using Chrome or install the language pack.');
-      return;
-    }
-  
-    utterance.voice = femaleVoice;
-    utterance.rate = 0.95;
-    utterance.pitch = 1.1;
-  
-    utterance.onstart = () => {
-      console.log('🎤 Speaking started with voice:', femaleVoice.name);
-      setIsSpeaking(true);
-    };
-    utterance.onend = () => {
-      console.log('✅ Speaking ended');
-      setIsSpeaking(false);
-    };
-    utterance.onerror = (e) => {
-      console.error('❌ Speech error:', e);
-      setIsSpeaking(false);
-    };
-  
+    let langCode = hindiPattern.test(text) ? 'hi' : malayalamPattern.test(text) ? 'ml' : 'en';
+    utterance.lang = langCode === 'hi' ? 'hi-IN' : langCode === 'ml' ? 'ml-IN' : 'en-IN';
+    utterance.voice = getFemaleVoice(langCode);
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
     window.speechSynthesis.speak(utterance);
   };
-  
 
-  /* ---------------- ASK QUESTION ---------------- */
+  /* ---------------- MESSAGE HANDLING ---------------- */
   const handleAskQuestion = async () => {
-    if (!question.trim()) return alert('Please enter a question');
-    if (!sessionId) return alert('Session not ready');
-
-    setLoading(true);
-
-    // Add user message immediately to UI
-    const userMessage = {
-      role: 'user',
-      content: question,
-      createdAt: new Date().toISOString()
-    };
-    setChatMessages(prev => [...prev, userMessage]);
+    if (!question.trim() || !sessionId || loading) return;
     const currentQuestion = question;
     setQuestion('');
+    setChatMessages(prev => [...prev, { role: 'user', content: currentQuestion, createdAt: new Date().toISOString() }]);
+    setLoading(true);
 
     try {
-      console.log('[Chatbot] Sending message to session:', sessionId);
       const res = await fetch(`${API_BASE}/api/chat/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ sessionId, message: currentQuestion }),
       });
-
       const data = await res.json();
-      console.log('[Chatbot] Response received:', data);
-      if (!data.success) throw new Error(data.message);
-
-      // Add assistant response to UI
-      const assistantMessage = {
-        role: 'assistant',
-        content: data.data.assistant,
-        createdAt: new Date().toISOString()
-      };
-      setChatMessages(prev => [...prev, assistantMessage]);
+      if (data.success) {
+        setChatMessages(prev => [...prev, { role: 'assistant', content: data.data.assistant, createdAt: new Date().toISOString() }]);
+      }
     } catch (error) {
-      // Add error message
-      const errorMessage = {
-        role: 'assistant',
-        content: '⚠️ Something went wrong. Please try again.',
-        createdAt: new Date().toISOString()
-      };
-      setChatMessages(prev => [...prev, errorMessage]);
+      setChatMessages(prev => [...prev, { role: 'assistant', content: '⚠️ Request failed. Try again!' }]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle Enter key for sending messages
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleAskQuestion();
-    }
-  };
-
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Chat History Sidebar */}
+    <div className="flex h-screen bg-white shadow-2xl overflow-hidden relative">
       <ChatHistory
         currentSessionId={sessionId}
         onLoadSession={loadSession}
@@ -309,159 +164,136 @@ function Chatbot() {
         onToggle={() => setHistoryOpen(!historyOpen)}
       />
 
-      <PageHeader
-        title="Smart Chatbot"
-        subtitle="Ask any farming question in any language — auto-detected & answered accordingly"
-        className="mb-6"
-      />
-{/* AI AVATAR - Show when there are messages */}
-          <div className="flex justify-center mt-4">
-            <div
-              className={`w-44 h-44 rounded-full overflow-hidden border-4 ${
-                isSpeaking ? 'border-emerald-500 ring-4 ring-emerald-300 animate-pulse' : 'border-emerald-400'
-              } shadow-2xl transition-all duration-300`}
-            >
-              <img
-                src={
-                  isSpeaking || loading
-                    ? '/avatars/avatar-talking.gif'
-                    : '/avatars/avatar-idle.png'
-                }
-                alt="AI Avatar"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-        
-      {/* Chat Messages Display */}
- {/* Chat Messages Display */}
-<div className="mb-6">
-  {chatMessages.length > 0 ? (
-    <div
-      className="space-y-6 overflow-y-auto p-6 bg-gradient-to-b from-gray-50 to-white rounded-xl border-2 border-gray-200 shadow-inner scrollbar-thin scrollbar-thumb-emerald-600 scrollbar-track-gray-200 scroll-smooth"
-      style={{ maxHeight: 'calc(100vh - 32rem)', minHeight: '400px' }}
-    >
-      {chatMessages.map((msg, idx) => (
-        <div
-          key={idx}
-          className={`flex items-start gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-slide-up`}
+      {/* Main Chat Content */}
+      <div className="flex-1 flex flex-col min-w-0 bg-[#F8FDFB] relative pt-24">
+        {/* Toggle Button for mobile/desktop */}
+        <button
+          onClick={() => setHistoryOpen(!historyOpen)}
+          className={`absolute left-4 top-6 z-10 p-2 bg-white border border-emerald-100 text-emerald-600 rounded-xl shadow-sm hover:bg-emerald-50 transition-all ${
+            historyOpen ? 'hidden lg:flex' : 'flex'
+          }`}
         >
-          {msg.role === 'assistant' && (
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shadow-sm">
-              <span className="text-2xl">🤖</span>
+          {historyOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+        </button>
+
+        {/* Chat Header */}
+        <div className="p-6 border-b border-emerald-100/50 flex items-center justify-between bg-white/30">
+          <div className="flex items-center gap-4 pl-10 lg:pl-12">
+            <div className="relative">
+              <div className={`w-12 h-12 rounded-full border-2 transition-all p-0.5 ${isSpeaking || loading ? 'border-emerald-500 animate-pulse' : 'border-emerald-200'}`}>
+                <img 
+                  src={isSpeaking || loading ? '/avatars/avatar-talking.gif' : '/avatars/avatar-idle.png'} 
+                  className="w-full h-full rounded-full object-cover" 
+                  alt="Assistant"
+                />
+              </div>
+              <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></div>
+            </div>
+            <div>
+              <h1 className="text-xl font-black text-emerald-950 flex items-center gap-2">
+                Smart Assistant <Sparkles size={16} className="text-emerald-500" />
+              </h1>
+              <p className="text-xs text-emerald-600 font-bold uppercase tracking-wider">AI Powered Farming Expert</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Messages Feed */}
+        <div className="flex-1 overflow-y-auto px-6 py-8 space-y-8 scrollbar-hide custom-scrollbar">
+          {chatMessages.length === 0 && !loading && (
+            <div className="h-full flex flex-col items-center justify-center text-center max-w-md mx-auto opacity-80">
+              <div className="w-24 h-24 mb-6 rounded-[2rem] bg-emerald-50 flex items-center justify-center text-emerald-500 shadow-inner">
+                 <Sparkles size={48} />
+              </div>
+              <h2 className="text-2xl font-black text-emerald-950 mb-3">Green Thinking Mode</h2>
+              <p className="text-emerald-700/70 font-medium">Ask me about crop diseases, fertilizers, or local market prices. I'm here to help you grow!</p>
             </div>
           )}
-          <div
-            className={`relative max-w-[75%] px-6 py-4 rounded-2xl shadow-lg transition-all duration-200 hover:shadow-xl ${
-              msg.role === 'user'
-                ? 'bg-emerald-600 text-white rounded-br-none'
-                : 'bg-white text-gray-800 rounded-bl-none border border-gray-200'
-            }`}
-          >
-            {/* Message Header */}
-            <div className="flex justify-between items-center mb-2 ">
-              <span className="text-sm font-semibold">
-                {msg.role === 'user' ? 'You' : 'AI'}
-              </span>
-         
-            </div>
-            <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
-            {msg.role === 'assistant' && (
+
+          {chatMessages.map((msg, idx) => (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              key={idx}
+              className={`flex items-start gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+            >
+              <div className={`flex-shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center text-xl shadow-lg ${msg.role === 'user' ? 'bg-blue-600' : 'bg-emerald-600'}`}>
+                {msg.role === 'user' ? '👤' : '🌾'}
+              </div>
+              <div className={`relative max-w-[80%] group ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
+                <div className={`px-6 py-4 rounded-[2rem] shadow-xl shadow-emerald-900/5 inline-block border ${
+                  msg.role === 'user' 
+                    ? 'bg-gradient-to-br from-blue-600 to-emerald-700 text-white border-blue-400/20 rounded-tr-none' 
+                    : 'bg-white text-slate-800 border-emerald-50 rounded-tl-none'
+                }`}>
+                  <p className="whitespace-pre-wrap leading-relaxed text-[15px] font-medium">{msg.content}</p>
+                  
+                  {msg.role === 'assistant' && (
+                    <div className="mt-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => isSpeaking ? stopSpeaking() : speakText(msg.content)}
+                        className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold hover:bg-emerald-100 transition-colors"
+                      >
+                        {isSpeaking ? <StopCircle size={14} /> : <Volume2 size={14} />}
+                        {isSpeaking ? 'Stop' : 'Listen'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div className="text-[10px] mt-2 font-bold uppercase tracking-widest text-slate-400 px-2">
+                  {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+          
+          {loading && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center bg-emerald-100 shadow-inner">
+                <div className="animate-spin h-5 w-5 border-2 border-emerald-600 border-t-transparent rounded-full"></div>
+              </div>
+              <div className="px-6 py-4 rounded-[2rem] bg-white border border-emerald-50 text-emerald-600 font-bold italic shadow-lg">
+                Seeding knowledge...
+              </div>
+            </motion.div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Floating Input Area */}
+        <div className="p-6 lg:p-10 pt-0">
+          <div className="max-w-4xl mx-auto relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-[2.5rem] opacity-20 blur-lg group-focus-within:opacity-40 transition-opacity duration-500"></div>
+            <div className="relative bg-white/90 backdrop-blur-2xl border border-emerald-100 rounded-[2.5rem] shadow-2xl overflow-hidden flex items-end p-2 pr-4 transition-all focus-within:ring-2 focus-within:ring-emerald-200">
               <button
-                onClick={() => isSpeaking ? stopSpeaking() : speakText(msg.content)}
-                className="mt-3 flex items-center gap-1 text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors duration-200"
-                aria-label={isSpeaking ? 'Stop reading aloud' : 'Read message aloud'}
+                onClick={handleVoiceInput}
+                disabled={loading}
+                className={`p-4 rounded-3xl transition-all ${isListening ? 'bg-red-50 text-red-500 animate-pulse' : 'text-emerald-500 hover:bg-emerald-50'}`}
               >
-                <Volume2 size={16} className="transition-transform duration-200 hover:scale-110" />
-                {isSpeaking ? 'Stop' : 'Read Aloud'}
+                <Mic size={24} strokeWidth={2.5} />
               </button>
-            )}
-            {/* Bubble Tail */}
-            <div
-              className={`absolute bottom-0 w-0 h-0 border-8 border-transparent ${
-                msg.role === 'user'
-                  ? 'right-[-8px] border-l-emerald-600'
-                  : 'left-[-8px] border-r-white'
-              }`}
-            ></div>
-          </div>
-          {msg.role === 'user' && (
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shadow-sm">
-              <span className="text-2xl">👤</span>
-            </div>
-          )}
-        </div>
-      ))}
-      {loading && (
-        <div className="flex justify-start items-start gap-4">
-          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shadow-sm">
-            <span className="text-2xl">🤖</span>
-          </div>
-          <div className="relative max-w-[75%] px-6 py-4 rounded-2xl bg-white rounded-bl-none shadow-lg border border-gray-200">
-            <div className="flex items-center gap-2">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-emerald-600"></div>
-              <span className="text-gray-600">Thinking...</span>
+              <textarea
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                onKeyDown={(e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleAskQuestion(); } }}
+                placeholder="Ask your farming query..."
+                className="flex-1 bg-transparent border-none focus:ring-0 py-4 px-2 text-slate-800 font-medium placeholder:text-emerald-300 resize-none max-h-32"
+                rows={1}
+              />
+              <button
+                onClick={handleAskQuestion}
+                disabled={!question.trim() || loading}
+                className="mb-1.5 p-4 bg-emerald-600 text-white rounded-[1.5rem] shadow-lg shadow-emerald-200 hover:bg-emerald-700 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 disabled:opacity-30 disabled:translate-y-0 transition-all font-bold"
+              >
+                <Send size={20} strokeWidth={2.5} />
+              </button>
             </div>
           </div>
+          <p className="text-center mt-4 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-900/30">
+            Powered by Khetibuddy AI Core v2.0
+          </p>
         </div>
-      )}
-      <div ref={messagesEndRef} />
-    </div>
-  ) : null}
-</div>
-
-      {/* Question Input - Fixed at Bottom */}
-      <Card className="mb-6 lg:mb-4" padding="md">
-        <div className="flex items-center justify-between mb-4">
-          <label className="block text-gray-700 text-base font-semibold">
-            Your Question
-          </label>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-full font-medium">🌐 Any language</span>
-            {sessionId && (
-              <span className="text-xs text-gray-400">
-                {sessionId.substring(0, 8)}...
-              </span>
-            )}
-          </div>
-        </div>
-
-        <textarea
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="Type your farming question in any language... (Press Enter to send, Shift+Enter for new line)"
-          rows={3}
-          className="w-full px-4 py-3 text-base border-2 border-gray-300 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all resize-none"
-        />
-
-        <div className="flex flex-col sm:flex-row gap-3 mt-4">
-          <PrimaryButton
-            onClick={handleVoiceInput}
-            variant="outline"
-            size="lg"
-            icon={<Mic className={isListening ? 'animate-pulse text-red-500' : ''} />}
-            disabled={isListening}
-            className="flex-1"
-          >
-            {isListening ? 'Listening...' : 'Voice Input'}
-          </PrimaryButton>
-
-          <PrimaryButton
-            onClick={handleAskQuestion}
-            variant="primary"
-            size="lg"
-            icon={<Send />}
-            loading={loading}
-            className="flex-1 sm:flex-[2]"
-          >
-            Ask Question
-          </PrimaryButton>
-        </div>
-      </Card>
-
-      {/* Extra padding for mobile bottom navigation */}
-      <div className="h-4 lg:hidden"></div>
+      </div>
     </div>
   );
 }
