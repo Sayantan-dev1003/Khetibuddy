@@ -27,6 +27,24 @@ const userSchema = new Schema(
       default: "user", // role-based auth
     },
     
+    phone: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    
+    address: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    bio: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    
     userType: {
       type: String,
       enum: ["buyer", "seller", "both"],
