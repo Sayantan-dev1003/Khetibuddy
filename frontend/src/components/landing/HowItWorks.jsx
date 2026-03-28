@@ -1,8 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, Cpu, Lightbulb, CheckCircle2, Sparkles } from 'lucide-react';
 
 function HowItWorks() {
+  const [activeStep, setActiveStep] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % 4);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
   const steps = [
     {
       icon: Upload,
@@ -53,20 +62,19 @@ function HowItWorks() {
             <span className="text-emerald-400 font-[900] tracking-[0.2em] text-[10px] uppercase italic">The Process</span>
           </motion.div>
           
-          <h2 className="text-6xl md:text-[6.5rem] font-[900] text-white tracking-[-0.06em] leading-[0.85] uppercase">
-            Simple 4-Step <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-lime-300 italic px-2">Automation.</span>
+          <h2 className="text-4xl md:text-[5rem] font-[900] text-white tracking-[-0.04em] leading-[1] uppercase">
+            Your Smart Farming <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-lime-300 italic px-2">Path Simplified.</span>
           </h2>
         </div>
 
         {/* Steps Connection Bar (cite: copy.mp4, 0:24) */}
         <div className="relative mb-32 max-w-5xl mx-auto">
           {/* Progress Line - Glowing Emerald */}
-          <div className="absolute top-[28px] left-0 w-full h-[2px] bg-white/5 hidden md:block">
+          <div className="absolute top-[28px] left-0 w-full h-[2px] bg-white/5 hidden md:block z-0">
             <motion.div 
               initial={{ width: 0 }}
-              whileInView={{ width: '100%' }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.5, ease: "easeInOut" }}
+              animate={{ width: `${((activeStep + 1) / 4) * 100}%` }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
               className="h-full bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.6)]"
             />
           </div>
@@ -82,20 +90,23 @@ function HowItWorks() {
                 className="flex flex-col items-center group"
               >
                 {/* Step Number Circle */}
-                <div className="relative mb-8">
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center font-[900] text-xl transition-all duration-500 z-20 relative
-                    ${index === 0 
-                      ? 'bg-emerald-500 text-[#020503] scale-125 shadow-[0_0_30px_rgba(16,185,129,0.4)] ring-4 ring-[#020503]' 
-                      : 'bg-[#020503] text-emerald-100/20 border border-white/10 group-hover:border-emerald-500 group-hover:text-emerald-400'}
+                <div className="relative mb-12">
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center font-[900] text-xl transition-all duration-500 relative
+                    ${index <= activeStep 
+                      ? 'bg-emerald-500 text-[#020503] shadow-[0_0_30px_rgba(16,185,129,0.2)]' 
+                      : 'bg-[#020503] text-emerald-100/20 border border-white/10'}
+                    ${index === activeStep 
+                      ? 'scale-125 shadow-[0_0_40px_rgba(16,185,129,0.4)] ring-8 ring-[#020503] z-30' 
+                      : 'z-20'}
                   `}>
                     {index + 1}
                   </div>
                 </div>
                 
-                <h3 className="text-white font-[900] text-xl tracking-tighter mb-2 uppercase text-center group-hover:text-emerald-400 transition-colors">
+                <h3 className={`text-white font-[900] text-xl tracking-tighter mb-2 uppercase text-center transition-all duration-500 ${index === activeStep ? 'text-emerald-400 scale-110' : 'opacity-60'}`}>
                   {step.title}
                 </h3>
-                <p className="text-emerald-100/30 text-xs font-black text-center uppercase tracking-widest leading-relaxed px-4">
+                <p className={`text-emerald-100/30 text-xs font-black text-center uppercase tracking-widest leading-relaxed px-4 transition-all duration-500 ${index === activeStep ? 'opacity-100' : 'opacity-40'}`}>
                   {step.description}
                 </p>
               </motion.div>

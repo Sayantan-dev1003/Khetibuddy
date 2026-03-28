@@ -34,31 +34,25 @@ function CTA() {
           </h2>
         </div>
         
-        {/* Action Row (cite: copy.mp4, 0:14) */}
+        {/* Action Row */}
         <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
           {/* Main Action - Dark Button on White Bg */}
           <Link 
             to="/login"
-            className="group relative bg-[#020503] hover:bg-emerald-600 text-white px-14 py-7 rounded-full font-[900] text-2xl transition-all hover:scale-110 flex items-center gap-4 shadow-[0_25px_60px_-10px_rgba(0,0,0,0.3)]"
+            className="group relative bg-[#020503] hover:bg-emerald-600 text-white px-10 py-5 rounded-full font-[900] text-xl transition-all hover:scale-110 flex items-center gap-4 shadow-xl shadow-black/10"
           >
             Login
-            <div className="bg-white/10 p-2 rounded-full group-hover:rotate-45 transition-transform duration-500">
-              <ArrowUpRight size={28} strokeWidth={3} />
+            <div className="bg-white/10 p-1.5 rounded-full group-hover:rotate-45 transition-transform duration-500">
+              <ArrowUpRight size={22} strokeWidth={3} />
             </div>
           </Link>
 
           {/* Secondary Action - Ghost Button */}
-          <button className="px-12 py-7 rounded-full font-[900] text-2xl text-[#020503] border-2 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition-all tracking-tight uppercase">
+          <button className="px-10 py-5 rounded-full font-[900] text-xl text-[#020503] border-2 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition-all tracking-tight uppercase">
             See More
           </button>
         </div>
 
-        {/* Faded Background Text for Luxury Branding (cite: screen.png) */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none select-none z-[-1] whitespace-nowrap">
-          <p className="text-[15rem] font-[900] text-[#020503] tracking-tighter uppercase leading-none">
-            KHETIBUDDY
-          </p>
-        </div>
       </motion.div>
     </section>
   );

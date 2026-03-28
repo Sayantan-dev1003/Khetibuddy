@@ -4,7 +4,6 @@ import { ArrowUpRight, Leaf, Sprout, Store, BarChart3 } from 'lucide-react';
 
 const gridData = [
   {
-    category: "For Creators",
     title: "Rice Farmers",
     desc: "Automate disease detection and crop monitoring for high-yield paddy fields using our AI-driven visual scanner.",
     icon: Leaf,
@@ -12,7 +11,6 @@ const gridData = [
     span: "md:col-span-2 md:row-span-2"
   },
   {
-    category: "For Agencies",
     title: "Soil Experts",
     desc: "Manage multiple soil analysis reports and N-P-K data at scale with automated AI processing.",
     icon: Sprout,
@@ -20,7 +18,6 @@ const gridData = [
     span: "md:col-span-1 md:row-span-1"
   },
   {
-    category: "For E-commerce",
     title: "Agri-Shops",
     desc: "Connect seed and fertilizer shops directly to local farmers via our market bridge.",
     icon: Store,
@@ -28,7 +25,6 @@ const gridData = [
     span: "md:col-span-1 md:row-span-1"
   },
   {
-    category: "For Coaches",
     title: "Market Insights",
     desc: "Deliver real-time Mandi price updates and expert coaching to farming communities.",
     icon: BarChart3,
@@ -44,7 +40,7 @@ function InteractiveBento() {
         
         {/* Header - Video Style (cite: 1) */}
         <div className="mb-20">
-          <h2 className="text-6xl md:text-[6.5rem] font-[900] text-[#020503] tracking-tighter leading-[0.85] uppercase">
+          <h2 className="text-4xl md:text-[4.2rem] font-[900] text-[#020503] tracking-[-0.05em] leading-[1] uppercase">
             Built for Every <br /> <span className="text-emerald-500 italic">Farmer.</span>
           </h2>
         </div>
@@ -94,14 +90,6 @@ function InteractiveBento() {
                 <p className="text-slate-500 text-sm font-bold leading-relaxed">
                   {item.desc}
                 </p>
-              </motion.div>
-
-              {/* Initial Category Tag (Invisible on hover) (cite: 1) */}
-              <motion.div 
-                variants={{ initial: { opacity: 1 }, hover: { opacity: 0 } }}
-                className="absolute top-8 left-8 z-10 bg-[#020503]/40 backdrop-blur-md px-5 py-2 rounded-full border border-white/20"
-              >
-                <span className="text-white font-black text-[10px] uppercase tracking-widest">{item.category}</span>
               </motion.div>
 
               {/* Subtle dark overlay for initial visibility (cite: 1) */}

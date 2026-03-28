@@ -1,10 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, MessageCircle, Leaf, Droplets, MapPin, Menu, X, ArrowLeft, Store } from 'lucide-react';
+import { Home, MessageCircle, Leaf, Droplets, MapPin, Menu, X, ArrowLeft, Store, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
 function AppLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navItems = [
     { path: '/dashboard', icon: Home, label: 'Home', color: 'emerald' },
@@ -23,71 +34,46 @@ function AppLayout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-green-50">
-      {/* Top Navbar */}
-      <nav className="bg-white border-b-2 border-emerald-100 shadow-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            {/* Left: Back button (mobile) or Logo */}
-            <div className="flex items-center gap-4">
+    <div className="min-h-screen bg-[#F0FAF4]">
+      {/* Floating Header Container */}
+      <div className="fixed top-0 left-0 right-0 z-[100] px-6 py-6 pointer-events-none">
+        <nav
+          className={`max-w-7xl mx-auto transition-all duration-500 pointer-events-auto rounded-[2.5rem] border overflow-hidden ${
+            isScrolled 
+              ? 'bg-white/95 backdrop-blur-2xl border-emerald-100 py-4 px-8 shadow-[0_20px_50px_rgba(16,185,129,0.1)]' 
+              : 'bg-white/60 backdrop-blur-md border-emerald-50/20 py-4 px-8 shadow-sm'
+          }`}
+        >
+          <div className="flex items-center justify-between w-full">
+            {/* Logo Section - Left Column (cite: Video 0:01) */}
+            <div className="flex-1 flex justify-start items-center gap-4">
               {location.pathname !== '/dashboard' && (
                 <button
                   onClick={() => navigate(-1)}
-                  className="lg:hidden p-2 rounded-lg hover:bg-emerald-50 transition-colors"
+                  className="p-2 rounded-xl hover:bg-emerald-100/50 transition-colors"
                   aria-label="Go back"
                 >
-                  <ArrowLeft size={28} className="text-emerald-600" />
+                  <ArrowLeft size={24} className="text-emerald-700 font-bold" />
                 </button>
               )}
-              <Link to="/dashboard" className="flex items-center gap-3">
-                <div className="text-4xl">🌾</div>
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-emerald-700">KhetiBuddy</h1>
-                  <p className="text-sm text-gray-600 hidden sm:block">Smart Farming Assistant</p>
+              <div 
+                className="flex items-center gap-3 cursor-pointer" 
+                onClick={() => navigate('/dashboard')}
+              >
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 text-3xl">
+                  🌾
                 </div>
-              </Link>
+                <div className="flex flex-col">
+                  <span className="text-2xl font-[900] tracking-[-0.04em] text-emerald-900 leading-none">
+                    Kheti<span className="text-emerald-600">Buddy</span>
+                  </span>
+                </div>
+              </div>
             </div>
 
-            {/* Right: Menu button (mobile) */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg hover:bg-emerald-50 transition-colors"
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? (
-                <X size={32} className="text-emerald-600" />
-              ) : (
-                <Menu size={32} className="text-emerald-600" />
-              )}
-            </button>
-
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-2">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.path);
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-                      active
-                        ? 'bg-emerald-600 text-white shadow-md'
-                        : 'text-gray-700 hover:bg-emerald-50'
-                    }`}
-                  >
-                    <Icon size={20} />
-                    <span className="font-semibold">{item.label}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Mobile Dropdown Menu */}
-          {mobileMenuOpen && (
-            <div className="lg:hidden pb-4 pt-2 border-t border-emerald-100 mt-2">
-              <div className="grid grid-cols-2 gap-3">
+            {/* Desktop Navigation - Center Column */}
+            <div className="hidden lg:flex flex-[3] justify-center items-center">
+              <div className="flex items-center gap-6 px-4 py-2 rounded-full transition-all duration-500">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.path);
@@ -95,55 +81,92 @@ function AppLayout({ children }) {
                     <Link
                       key={item.path}
                       to={item.path}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`flex flex-col items-center gap-2 p-4 rounded-xl transition-all ${
-                        active
-                          ? 'bg-emerald-600 text-white shadow-lg'
-                          : 'bg-emerald-50 text-gray-700 hover:bg-emerald-100'
+                      className={`font-[900] text-[11px] uppercase tracking-[0.25em] transition-all hover:scale-110 relative group/link whitespace-nowrap ${
+                        active ? 'text-emerald-600' : 'text-emerald-900/60 hover:text-emerald-600'
                       }`}
                     >
-                      <Icon size={32} />
-                      <span className="font-semibold text-sm">{item.label}</span>
+                      <span className="flex items-center gap-2">
+                        <Icon size={14} strokeWidth={2.5} />
+                        {item.label}
+                      </span>
+                      <span className={`absolute -bottom-1 left-0 w-0 h-[2px] rounded-full transition-all duration-300 group-hover/link:w-full ${
+                        active ? 'w-full bg-emerald-600' : 'bg-emerald-600'
+                      }`} />
                     </Link>
                   );
                 })}
               </div>
             </div>
-          )}
-        </div>
-      </nav>
+            
+            {/* Right Column - Secondary Actions or Empty to balance */}
+            <div className="flex-1 flex justify-end items-center gap-4">
+              <button 
+                className="lg:hidden p-3 rounded-2xl transition-all text-emerald-900 bg-emerald-50 hover:bg-emerald-100 shadow-sm"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+              
+              {/* Optional Profile/Settings Button for Dashboard */}
+              <div className="hidden md:block w-11 h-11 rounded-full bg-emerald-100 border-2 border-white shadow-sm overflow-hidden cursor-pointer hover:border-emerald-500 transition-all">
+                <img src="/avatars/default.png" alt="Profile" className="w-full h-full object-cover" onError={(e) => e.target.src = "https://ui-avatars.com/api/?name=Farmer&background=10B981&color=fff"} />
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className="fixed inset-4 top-24 bg-white/95 backdrop-blur-3xl z-[150] rounded-[3.5rem] border border-emerald-100 flex flex-col items-center justify-center gap-6 lg:hidden shadow-[0_50px_100px_rgba(6,95,70,0.15)] overflow-y-auto"
+          >
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.path);
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex flex-col items-center gap-4 p-8 rounded-[2.5rem] transition-all w-[80%] max-w-[300px] ${
+                    active
+                      ? 'bg-emerald-600 text-white shadow-2xl shadow-emerald-700/20 scale-110'
+                      : 'bg-emerald-50/50 text-emerald-900 hover:bg-emerald-100'
+                  }`}
+                >
+                  <Icon size={48} strokeWidth={2} />
+                  <span className="text-2xl font-black uppercase tracking-tight">{item.label}</span>
+                </Link>
+              );
+            })}
+            <button 
+              onClick={() => setMobileMenuOpen(false)}
+              className="mt-8 p-6 rounded-full bg-red-50 text-red-600 shadow-sm"
+            >
+              <X size={32} />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Main Content Area */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {children}
+        </motion.div>
       </main>
 
-      {/* Bottom Navigation (Mobile Only) */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-emerald-100 shadow-lg z-40">
-        <div className="grid grid-cols-6 gap-1 px-2 py-3">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.path);
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex flex-col items-center gap-1 py-2 px-1 rounded-lg transition-all ${
-                  active
-                    ? 'bg-emerald-600 text-white'
-                    : 'text-gray-600 hover:bg-emerald-50'
-                }`}
-              >
-                <Icon size={24} />
-                <span className="text-xs font-semibold">{item.label}</span>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
-
-      {/* Bottom padding to prevent content from being hidden by bottom nav on mobile */}
-      <div className="h-24 lg:hidden"></div>
+      {/* Extra Bottom Padding for safety, although bottom nav is removed */}
+      <div className="h-8 lg:hidden"></div>
     </div>
   );
 }

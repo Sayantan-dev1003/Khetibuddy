@@ -5,7 +5,7 @@ import { ArrowRight, Sparkles, Leaf } from 'lucide-react';
 
 function Hero() {
   return (
-    <section className="relative min-h-screen pt-32 pb-20 px-6 bg-[#040705] overflow-hidden flex items-center">
+    <section id="hero" className="relative min-h-screen pt-32 pb-20 px-6 bg-[#040705] overflow-hidden flex items-center">
       {/* Background Decor - Video Style Glassmorphism */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-900/30 blur-[120px] rounded-full" />
