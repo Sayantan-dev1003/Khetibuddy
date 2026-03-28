@@ -15,6 +15,7 @@ const newsRoutes = require('./routes/news.routes');
 const authRoutes = require('./routes/auth.routes.js');
 const profileRoutes = require('./routes/profile.routes.js');
 const adminRoutes = require('./routes/admin.routes');
+const pestRoutes = require('./routes/pest.routes.js');
 const { apiLimiter, groqLimiter } = require('./middleware/rateLimiter');
 
 
@@ -73,6 +74,7 @@ app.use('/api/auth', authRoutes);
 
 app.use('/api/me', profileRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/pest', pestRoutes);
 
 
 // 404 handler

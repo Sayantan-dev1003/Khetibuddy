@@ -98,3 +98,22 @@ export async function del(url) {
     return { success: false, message: "Network error" };
   }
 }
+export async function postFile(url, formData) {
+  try {
+    const res = await fetch(`${API_BASE}${url}`, {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+      // Note: Don't set Content-Type header when using FormData
+    });
+
+    if (res.status === 401) {
+      return { success: false, message: "Unauthorized", status: 401 };
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("API POST FILE error:", error);
+    return { success: false, message: "Network error" };
+  }
+}

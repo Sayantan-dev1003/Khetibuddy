@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, MessageCircle, Leaf, Droplets, MapPin, Menu, X, ArrowLeft, Store, ArrowRight, LogOut, User, Clock } from 'lucide-react';
+import { Home, MessageCircle, Leaf, Droplets, MapPin, Menu, X, ArrowLeft, Store, ArrowRight, LogOut, User, Bug } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 
@@ -24,8 +24,9 @@ function AppLayout({ children }) {
     { path: '/dashboard', icon: Home, label: 'Home', color: 'emerald' },
     { path: '/dashboard/chatbot', icon: MessageCircle, label: 'Chatbot', color: 'blue' },
     { path: '/dashboard/disease-detection', icon: Leaf, label: 'Disease', color: 'green' },
+    { path: '/dashboard/pest-detection', icon: Bug, label: 'Pest Control', color: 'red' },
     { path: '/dashboard/fertilizer-advisory', icon: Droplets, label: 'Fertilizer', color: 'purple' },
-    { path: '/dashboard/nearby-market', icon: Store, label: 'Marketplace', color: 'red' },
+    { path: '/dashboard/nearby-market', icon: Store, label: 'Marketplace', color: 'blue' },
     { path: '/dashboard/nearby-map', icon: MapPin, label: 'Map View', color: 'orange' },
   ];
 
