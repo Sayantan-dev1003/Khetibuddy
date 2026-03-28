@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Store, Navigation, ListPlus, Package } from 'lucide-react';
+import { motion } from 'framer-motion';
 import PageHeader from '../components/ui/PageHeader';
 
 // Marketplace Components
@@ -100,84 +101,105 @@ export default function NearbyMarkets() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto pb-24">
-      {/* Header Area */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
-        <PageHeader
-          icon="🛒"
-          title="Smart Agri Marketplace"
-          subtitle="Buy, sell, and discover agricultural products near you."
-        />
-        
-        {/* Navigation Pills */}
-        <div className="flex gap-2 bg-white p-1.5 rounded-2xl shadow-sm border border-emerald-100 overflow-x-auto max-w-full hide-scrollbar snap-x">
-          {tabs.map(tab => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`snap-start flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 relative whitespace-nowrap ${
-                  isActive
-                    ? 'bg-emerald-600 text-white shadow-md'
-                    : 'text-gray-600 hover:bg-emerald-50 hover:text-emerald-700'
-                }`}
-              >
-                <Icon size={18} />
-                {tab.label}
-                {tab.badge > 0 && (
-                  <span className={`absolute -top-1.5 -right-1.5 w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold border-2 ${
-                    isActive ? 'bg-amber-400 text-amber-900 border-emerald-600' : 'bg-emerald-500 text-white border-white'
-                  }`}>
-                    {tab.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
+    <div className="min-h-screen pb-24 relative overflow-hidden font-sans">
+      {/* ATMOSPHERIC BACKGROUND */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[10%] right-[10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[150px] rounded-full" />
+        <div className="absolute bottom-[10%] left-[10%] w-[40%] h-[40%] bg-blue-500/5 blur-[120px] rounded-full" />
       </div>
 
-      {/* Main Content Area */}
-      <div className="min-h-[500px]">
-        {activeTab === 'shop' && (
-          <ProductList products={products} onAddToCart={handleAddToCart} />
-        )}
-        
-        {activeTab === 'sell' && (
-          <div className="animate-fade-in">
-             <SellProductForm onAddProduct={handleAddProduct} />
-          </div>
-        )}
-        
-        {activeTab === 'cart' && (
-          <div className="animate-fade-in">
-             <Cart 
-               items={cart} 
-               total={cartTotal} 
-               onRemove={handleRemoveFromCart}
-               onUpdateQuantity={handleUpdateCartQuantity}
-               onCheckout={() => setActiveTab('checkout')}
-             />
-          </div>
-        )}
-        
-        {activeTab === 'checkout' && (
-          <div className="animate-fade-in">
-            <CheckoutPayment 
-              cartTotal={cartTotal} 
-              onComplete={handleCheckoutComplete}
-              onCancel={() => setActiveTab('cart')}
+      <div className="max-w-[1600px] mx-auto px-6 relative z-10 pt-8">
+        {/* Header Area */}
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end mb-12 gap-8">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <PageHeader
+              icon="🛒"
+              title="Agri Marketplace"
+              subtitle="Buy seeds, sell your yield, and discover specialized farming equipment near you."
+              variant="cinematic"
+              className="mb-0 text-left"
             />
-          </div>
-        )}
-        
-        {activeTab === 'orders' && (
-          <div className="animate-fade-in max-w-3xl mx-auto">
-             <OrderHistory orders={orders} />
-          </div>
-        )}
+          </motion.div>
+          
+          {/* Navigation Pills */}
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex gap-2 bg-white/50 backdrop-blur-xl p-2 rounded-[2rem] shadow-2xl border border-emerald-100 overflow-x-auto max-w-full hide-scrollbar snap-x"
+          >
+            {tabs.map(tab => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`snap-start flex items-center gap-3 px-8 py-4 rounded-[1.5rem] font-black uppercase tracking-widest text-[11px] transition-all duration-500 relative whitespace-nowrap ${
+                    isActive
+                      ? 'bg-emerald-600 text-white shadow-xl shadow-emerald-500/30'
+                      : 'text-emerald-900/40 hover:bg-emerald-50 hover:text-emerald-700'
+                  }`}
+                >
+                  <Icon size={18} />
+                  {tab.label}
+                  {tab.badge > 0 && (
+                    <span className={`absolute -top-1 -right-1 w-6 h-6 flex items-center justify-center rounded-full text-[10px] font-black border-2 ${
+                      isActive ? 'bg-amber-400 text-amber-950 border-emerald-600' : 'bg-emerald-500 text-white border-white'
+                    }`}>
+                      {tab.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </motion.div>
+        </div>
+
+        {/* Main Content Area */}
+        <div className="min-h-[500px]">
+          {activeTab === 'shop' && (
+            <ProductList products={products} onAddToCart={handleAddToCart} />
+          )}
+          
+          {activeTab === 'sell' && (
+            <div className="animate-fade-in">
+               <SellProductForm onAddProduct={handleAddProduct} />
+            </div>
+          )}
+          
+          {activeTab === 'cart' && (
+            <div className="animate-fade-in">
+               <Cart 
+                 items={cart} 
+                 total={cartTotal} 
+                 onRemove={handleRemoveFromCart}
+                 onUpdateQuantity={handleUpdateCartQuantity}
+                 onCheckout={() => setActiveTab('checkout')}
+               />
+            </div>
+          )}
+          
+          {activeTab === 'checkout' && (
+            <div className="animate-fade-in">
+              <CheckoutPayment 
+                cartTotal={cartTotal} 
+                onComplete={handleCheckoutComplete}
+                onCancel={() => setActiveTab('cart')}
+              />
+            </div>
+          )}
+          
+          {activeTab === 'orders' && (
+            <div className="animate-fade-in max-w-3xl mx-auto">
+               <OrderHistory orders={orders} />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

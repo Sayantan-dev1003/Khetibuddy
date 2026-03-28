@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import PageHeader from '../components/ui/PageHeader';
 import NearbyMapView from './marketplace/NearbyMapView';
 
@@ -12,6 +13,21 @@ export default function NearbyMapPage() {
       </div>
 
       <div className="max-w-[1600px] mx-auto px-6 relative z-10 pt-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-8"
+        >
+          <PageHeader
+            icon="🗺️"
+            title="Interactive Map View"
+            subtitle="Visualize farming clusters, market locations, and supply chain logistics in real-time."
+            variant="cinematic"
+            className="text-left"
+          />
+        </motion.div>
+        
         <NearbyMapView />
       </div>
     </div>
