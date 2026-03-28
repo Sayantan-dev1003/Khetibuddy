@@ -34,12 +34,12 @@ const findBestMatch = (crop, soil) => {
     const data = loadCSV();
     if (!data.length) return null;
 
-    // Filter by crop (case insensitive)
-    let filtered = data.filter(r => r.Crop_Type && r.Crop_Type.toLowerCase() === crop.toLowerCase());
+    // Filter by crop (case insensitive), handling potential \r characters in CSV
+    let filtered = data.filter(r => r.Crop_Type && r.Crop_Type.replace(/\r/g, '').trim().toLowerCase() === crop.replace(/\r/g, '').trim().toLowerCase());
     
-    // If no crop matches exactly, use all data
+    // If no crop matches exactly, don't use all data to prevent wrong contextual hints
     if (filtered.length === 0) {
-        filtered = data;
+        return null;
     }
 
     // Evaluate distance based on N, P, K, pH
