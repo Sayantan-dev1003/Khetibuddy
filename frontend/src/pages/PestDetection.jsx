@@ -158,7 +158,13 @@ export default function PestDetection() {
                           <div className="flex justify-between items-start">
                              <div className="space-y-1">
                                 <p className="font-black text-[10px] uppercase tracking-[0.4em] text-emerald-400">Detection Confirmed</p>
-                                <h3 className="text-4xl md:text-6xl font-[950] tracking-tighter uppercase italic">{result.pestName}</h3>
+                                <h3 className="text-4xl md:text-6xl font-[950] tracking-tighter uppercase italic leading-none">{result.pestName}</h3>
+                                {result.reason && (
+                                  <div className="pt-2 flex items-center gap-2">
+                                     <Sparkles size={14} className="text-emerald-400" />
+                                     <p className="text-[10px] font-bold uppercase tracking-widest text-white/60 italic">{result.reason}</p>
+                                  </div>
+                                )}
                              </div>
                           </div>
                        </div>

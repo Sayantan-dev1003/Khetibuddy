@@ -114,28 +114,24 @@ exports.detectDiseaseFromImage = async (req, res) => {
       
       console.log('✓ ONNX detection successful');
       
-      // Clean up uploaded file
-      fs.unlink(imagePath, (err) => {
-        if (err) console.error('Failed to delete uploaded file:', err);
-      });
+      const topPrediction = result.possibleDiseases[0];
 
       // Save to database
       const savedScan = await DiseaseScan.create({
         userId: req.user.id,
-        crop: finalResult.crop,
+        crop: result.crop,
         imagePath: req.file.path,
         imageUrl: `/uploads/${req.file.filename}`,
         disease: topPrediction.name,
         confidence: topPrediction.probability,
-        treatmentTips: finalResult.treatment.organic.concat(finalResult.treatment.chemical),
-        preventionTips: finalResult.prevention
+        treatmentTips: result.treatment.organic.concat(result.treatment.chemical),
+        preventionTips: result.prevention
       });
-
 
       res.status(200).json({
         success: true,
         data: {
-          ...finalResult,
+          ...result,
           id: savedScan._id,
           validation: {
             isPlantImage: true,

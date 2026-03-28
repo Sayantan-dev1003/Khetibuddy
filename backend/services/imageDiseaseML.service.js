@@ -364,6 +364,8 @@ async function detectDiseaseWithLLM(imagePath, llmService) {
     const prompt = `
 You are an expert plant pathologist analyzing a plant disease image.
 
+CRITICAL: RESPOND IN ENGLISH ONLY. THIS IS FOR AN ENGLISH DASHBOARD.
+
 Image Information:
 - Resolution: ${metadata.width}x${metadata.height}
 - Format: ${metadata.format}

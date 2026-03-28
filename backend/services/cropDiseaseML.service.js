@@ -4,6 +4,8 @@ const detectCropDisease = async ({ crop, symptoms }) => {
   const prompt = `
 You are an agriculture plant pathology expert.
 
+CRITICAL: RESPOND IN ENGLISH ONLY. This is for an English-language dashboard. DO NOT use Hindi or any other language for the values in the JSON.
+
 Analyze crop disease based on symptoms.
 Return ONLY valid JSON.
 No explanations outside JSON.

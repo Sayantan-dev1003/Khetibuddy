@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, MessageCircle, Leaf, Droplets, MapPin, Menu, X, ArrowLeft, Store, ArrowRight, LogOut, User, Bug } from 'lucide-react';
+import { Home, MessageCircle, Leaf, Droplets, MapPin, Menu, X, ArrowLeft, Store, ArrowRight, LogOut, User, Bug, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 

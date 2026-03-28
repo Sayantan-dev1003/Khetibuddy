@@ -1,36 +1,28 @@
 import React, { useState } from 'react';
-import { Upload, AlertCircle, CheckCircle, Sparkles, RotateCcw, Leaf, Droplets, Shield, Zap, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Upload, AlertCircle, CheckCircle, Sparkles, RotateCcw, Leaf, Droplets, Shield, Zap, Info, Search, FlaskConical, Navigation, ChevronRight, Loader2 } from 'lucide-react';
 import PageHeader from '../components/ui/PageHeader';
 import Card from '../components/ui/Card';
-import PrimaryButton from '../components/ui/PrimaryButton';
+import { post, postFile, API_BASE } from '../services/api';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 const UNSPLASH_KEY = import.meta.env.VITE_UNSPLASH_KEY;
 
-function DiseaseDetection() {
+export default function DiseaseDetection() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
-
   const [crop, setCrop] = useState('');
   const [symptoms, setSymptoms] = useState('');
-
+  const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [diseaseImage, setDiseaseImage] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  /* ================= IMAGE FETCH ================= */
-
+  /* ================= IMAGE FETCH (UNSPLASH) ================= */
   const fetchDiseasedPlantImage = async (cropName, diseaseName) => {
     try {
       const res = await fetch(
         `https://api.unsplash.com/search/photos?query=${cropName} ${diseaseName} plant leaf disease&per_page=1`,
-        {
-          headers: {
-            Authorization: `Client-ID ${UNSPLASH_KEY}`,
-          },
-        }
+        { headers: { Authorization: `Client-ID ${UNSPLASH_KEY}` } }
       );
       const data = await res.json();
       return data.results?.[0]?.urls?.regular || null;
@@ -40,31 +32,28 @@ function DiseaseDetection() {
   };
 
   /* ================= FILE SELECT ================= */
-
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     if (file.size > 10 * 1024 * 1024) {
-      setError('File size must be less than 10MB');
+      setError('Visual payload exceeds 10MB limit.');
       return;
     }
 
     setSelectedFile(file);
     setError(null);
+    setResult(null);
 
     const reader = new FileReader();
     reader.onloadend = () => setPreview(reader.result);
     reader.readAsDataURL(file);
   };
 
-  /* ================= TEXT BASED DETECTION ================= */
-
-  const handlePredict = async () => {
-    if (selectedFile) return handleImagePredict();
-
+  /* ================= MANUAL DIAGNOSIS (TEXT) ================= */
+  const handleManualPredict = async () => {
     if (!crop.trim() || !symptoms.trim()) {
-      alert('Please enter crop name and symptoms, or upload an image');
+      setError('Please provide both crop name and symptom observations.');
       return;
     }
 
@@ -74,32 +63,28 @@ function DiseaseDetection() {
     setDiseaseImage(null);
 
     try {
-      const res = await fetch(`${API_BASE}/api/crop-disease/detect`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ crop, symptoms }),
-      });
+      const res = await post('/api/crop-disease/detect', { crop, symptoms });
 
-      const data = await res.json();
-      if (!data.success) throw new Error(data.message);
+      if (!res.success) throw new Error(res.message);
 
-      setResult(data.data);
+      setResult(res.data);
 
-      const topDisease = data.data.possibleDiseases?.[0];
+      const topDisease = res.data.possibleDiseases?.[0];
       if (topDisease) {
         const img = await fetchDiseasedPlantImage(crop, topDisease.name);
         setDiseaseImage(img);
       }
-    } catch {
-      setError('Failed to detect disease. Please try again.');
+    } catch (err) {
+      setError(err.message || 'Manual diagnosis engine offline.');
     } finally {
       setLoading(false);
     }
   };
 
-  /* ================= IMAGE BASED DETECTION ================= */
+  /* ================= VISUAL ANALYSIS (IMAGE) ================= */
+  const handleVisualPredict = async () => {
+    if (!selectedFile) return;
 
-  const handleImagePredict = async () => {
     setLoading(true);
     setError(null);
     setResult(null);
@@ -109,26 +94,19 @@ function DiseaseDetection() {
       const formData = new FormData();
       formData.append('image', selectedFile);
 
-      const res = await fetch(`${API_BASE}/api/crop-disease/detect-image`, {
-        method: 'POST',
-        body: formData,
-      });
+      const res = await postFile('/api/crop-disease/detect-image', formData);
 
-      const data = await res.json();
-      if (!data.success) throw new Error(data.message);
+      if (!res.success) throw new Error(res.message);
 
-      setResult(data.data);
+      setResult(res.data);
 
-      const topDisease = data.data.possibleDiseases?.[0];
-      if (topDisease && data.data.crop) {
-        const img = await fetchDiseasedPlantImage(
-          data.data.crop,
-          topDisease.name
-        );
+      const topDisease = res.data.possibleDiseases?.[0];
+      if (topDisease && res.data.crop) {
+        const img = await fetchDiseasedPlantImage(res.data.crop, topDisease.name);
         setDiseaseImage(img);
       }
     } catch (err) {
-      setError(err.message || 'Failed to detect disease from image.');
+      setError(err.message || 'Visual analysis engine offline.');
     } finally {
       setLoading(false);
     }
@@ -148,295 +126,221 @@ function DiseaseDetection() {
 
   return (
     <div className="min-h-screen pb-24 relative overflow-hidden font-sans">
-      
       {/* ATMOSPHERIC BACKGROUND */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[10%] right-[10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[150px] rounded-full" />
-        <div className="absolute bottom-[10%] left-[10%] w-[40%] h-[40%] bg-lime-500/5 blur-[120px] rounded-full" />
+        <div className="absolute top-[10%] left-[10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[150px] rounded-full" />
+        <div className="absolute bottom-[10%] right-[10%] w-[40%] h-[40%] bg-blue-500/5 blur-[120px] rounded-full" />
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 relative z-10 pt-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <PageHeader
-            icon="🌿"
-            title="Disease Detection"
-            subtitle="Harness deep learning to identify crop illnesses and get instantly actionable treatment protocols."
-            variant="cinematic"
-          />
-        </motion.div>
+      <div className="max-w-[1200px] mx-auto px-6 relative z-10 pt-8 space-y-12">
+        <PageHeader 
+          icon="🌿"
+          title="DISEASE DETECTION"
+          subtitle="AUTONOMOUS PATHOLOGY: DESCRIBE OBSERVATIONS OR UPLOAD SCANS FOR INSTANT DIAGNOSIS."
+          variant="cinematic"
+        />
 
-        <div className="grid lg:grid-cols-12 gap-8">
-          {/* INPUT FORM SIDE */}
-          <div className="lg:col-span-12 space-y-8">
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* TEXT INPUT */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <Card className="h-full border border-emerald-100 shadow-sm rounded-[2.5rem] bg-white/70 backdrop-blur-md">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
-                      <Zap size={20} />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-black text-emerald-950 uppercase tracking-tight">Manual Diagnosis</h3>
-                      <p className="text-emerald-900/40 font-bold text-[11px] uppercase tracking-widest leading-none">Describe observations</p>
-                    </div>
+        <div className="grid lg:grid-cols-2 gap-8 items-start">
+          {/* OPTION 1: MANUAL DIAGNOSIS */}
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
+            <div className="bg-white/60 backdrop-blur-3xl border border-white rounded-[3.5rem] p-10 shadow-sm space-y-8">
+               <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm">
+                    <FlaskConical size={24} />
                   </div>
-
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block font-black uppercase tracking-widest text-[11px] text-emerald-900/40 mb-2 ml-1">Crop Variety</label>
-                      <input
-                        value={crop}
-                        onChange={(e) => setCrop(e.target.value)}
-                        className="w-full px-5 py-4 bg-emerald-50/30 border border-emerald-100 rounded-2xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all outline-none font-medium placeholder:text-emerald-900/20"
-                        placeholder="e.g. Tomato, Rice"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block font-black uppercase tracking-widest text-[11px] text-emerald-900/40 mb-2 ml-1">Observed Symptoms</label>
-                      <textarea
-                        value={symptoms}
-                        onChange={(e) => setSymptoms(e.target.value)}
-                        rows={4}
-                        className="w-full px-5 py-4 bg-emerald-50/30 border border-emerald-100 rounded-2xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all outline-none font-medium placeholder:text-emerald-900/20 resize-none"
-                        placeholder="e.g. Yellow spots, leaf curling, fungal patches"
-                      />
-                    </div>
+                  <div>
+                    <h3 className="text-2xl font-[950] text-[#020503] tracking-tight uppercase">Manual Diagnosis</h3>
+                    <p className="text-emerald-900/40 font-black text-[11px] uppercase tracking-[0.25em]">Describe observations</p>
                   </div>
-                </Card>
-              </motion.div>
+               </div>
 
-              {/* IMAGE UPLOAD */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <Card className="h-full border border-emerald-100 shadow-sm rounded-[2.5rem] bg-white/70 backdrop-blur-md">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
-                      <Upload size={20} />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-black text-emerald-950 uppercase tracking-tight">Visual Analysis</h3>
-                      <p className="text-emerald-900/40 font-bold text-[11px] uppercase tracking-widest leading-none">Upload scan image</p>
-                    </div>
+               <div className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-emerald-900/40 ml-4">Target Crop</label>
+                    <input 
+                      value={crop}
+                      onChange={(e) => setCrop(e.target.value)}
+                      className="w-full px-8 py-5 bg-white border border-emerald-100 rounded-[2rem] font-bold text-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-sm"
+                      placeholder="e.g. Tomato, Rice"
+                    />
                   </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-emerald-900/40 ml-4">Observed Symptoms</label>
+                    <textarea 
+                      value={symptoms}
+                      onChange={(e) => setSymptoms(e.target.value)}
+                      rows={4}
+                      className="w-full px-8 py-5 bg-white border border-emerald-100 rounded-[2rem] font-bold text-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-sm"
+                      placeholder="e.g. Yellow spots on lower leaves, curling stem..."
+                    />
+                  </div>
+               </div>
 
-                  <input type="file" hidden id="file" onChange={handleFileSelect} />
-                  <label
-                    htmlFor="file"
-                    className="block border-2 border-dashed border-emerald-100 rounded-[2rem] min-h-[220px] cursor-pointer hover:bg-emerald-50/50 hover:border-emerald-300 transition-all group overflow-hidden relative"
+               <button 
+                  onClick={handleManualPredict}
+                  disabled={loading}
+                  className="w-full py-5 bg-emerald-900 text-white rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-black transition-all shadow-xl flex items-center justify-center gap-3 disabled:opacity-50"
+               >
+                  {loading ? <Loader2 size={18} className="animate-spin" /> : <Zap size={18} fill="white" className="text-emerald-400" />}
+                  {loading ? 'Analyzing Data...' : 'Analyze Symptoms'}
+               </button>
+            </div>
+          </motion.div>
+
+          {/* OPTION 2: VISUAL ANALYSIS */}
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
+            <div className="bg-[#020503] border border-white/10 rounded-[3.5rem] p-10 shadow-2xl space-y-8">
+               <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                    <Navigation size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-[950] text-white tracking-tight uppercase">Visual Analysis</h3>
+                    <p className="text-white/40 font-black text-[11px] uppercase tracking-[0.25em]">Upload scan image</p>
+                  </div>
+               </div>
+
+               <div className="relative">
+                  <input type="file" id="diseaseFile" hidden onChange={handleFileSelect} accept="image/*" />
+                  <label 
+                    htmlFor="diseaseFile"
+                    className="block border-4 border-dashed border-white/5 rounded-[2.5rem] min-h-[300px] cursor-pointer group hover:border-emerald-500/50 transition-all overflow-hidden bg-white/5"
                   >
                     {preview ? (
-                      <div className="relative h-[220px]">
-                        <img
-                          src={preview}
-                          className="h-full w-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                          <button className="bg-white/90 backdrop-blur text-emerald-600 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-xl">
-                            Change Image
-                          </button>
-                        </div>
-                        <div className="absolute top-4 right-4 bg-emerald-500 text-white px-3 py-1 rounded-lg shadow-lg flex items-center gap-2">
-                          <CheckCircle size={14} />
-                          <span className="text-[10px] font-black uppercase tracking-widest">Selected</span>
+                      <div className="relative h-full">
+                        <img src={preview} className="w-full h-[300px] object-cover" alt="Preview" />
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 font-black text-white uppercase tracking-widest text-sm transition-opacity">
+                           Change Image
                         </div>
                       </div>
                     ) : (
-                      <div className="h-[220px] flex flex-col justify-center items-center text-emerald-900/30">
-                        <div className="w-16 h-16 rounded-3xl bg-emerald-50 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                          <Upload size={32} />
-                        </div>
-                        <p className="font-black uppercase tracking-[0.2em] text-[10px]">Drop scan here or tap to upload</p>
-                        <p className="text-[9px] mt-1 font-bold opacity-60">Max size 10MB • JPG/PNG</p>
+                      <div className="h-[300px] flex flex-col items-center justify-center text-white/10 group-hover:text-emerald-500 transition-colors">
+                         <Upload size={64} className="mb-4" />
+                         <p className="font-black uppercase tracking-[0.2em] text-sm text-white/40">Drop Visual Node</p>
                       </div>
                     )}
                   </label>
-                </Card>
-              </motion.div>
-            </div>
+               </div>
 
-            {/* ACTION BUTTONS */}
-            <motion.div 
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <PrimaryButton 
-                variant="outline" 
-                onClick={handleReset}
-                className="rounded-2xl border-emerald-100 text-emerald-900/60 hover:text-emerald-600 px-10"
-                icon={<RotateCcw size={18} />}
-              >
-                Reset Workshop
-              </PrimaryButton>
-              <PrimaryButton 
-                loading={loading} 
-                onClick={handlePredict}
-                className="rounded-2xl bg-emerald-600 hover:bg-emerald-700 shadow-xl shadow-emerald-600/20 px-12"
-                icon={<Sparkles size={18} />}
-              >
-                Initiate Diagnosis
-              </PrimaryButton>
-            </motion.div>
-          </div>
+               <button 
+                  onClick={handleVisualPredict}
+                  disabled={!selectedFile || loading}
+                  className="w-full py-5 bg-emerald-500 text-[#020503] rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-white transition-all shadow-xl flex items-center justify-center gap-3 disabled:opacity-50"
+               >
+                  {loading ? <Loader2 size={18} className="animate-spin text-[#020503]" /> : <Search size={18} strokeWidth={3} />}
+                  {loading ? 'Processing Scan...' : 'Execute Scan'}
+               </button>
+            </div>
+          </motion.div>
         </div>
 
+        {/* ERROR MESSAGE */}
         <AnimatePresence>
-          {/* ERROR */}
           {error && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="mt-8"
-            >
-              <Card className="bg-red-50 border border-red-100 rounded-3xl py-6 flex items-center gap-4 text-red-900">
-                <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-600">
-                  <AlertCircle size={20} />
-                </div>
-                <div>
-                  <h4 className="font-black uppercase tracking-tight leading-none text-red-950 mb-1">Detection Aborted</h4>
-                  <p className="text-xs font-bold opacity-70">{error}</p>
-                </div>
-              </Card>
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full p-6 bg-red-50 border border-red-100 rounded-[2.5rem] text-red-600 flex items-center gap-4 font-bold">
+              <AlertCircle size={24} />
+              {error}
             </motion.div>
           )}
+        </AnimatePresence>
 
-          {/* 🌿 PLANT WITH DISEASE IMAGE */}
+        {/* 📋 CINEMATIC RESULTS */}
+        <AnimatePresence mode="wait">
           {result && (
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-12 space-y-8"
-            >
-              {diseaseImage && mainDisease && (
-                <Card className="overflow-hidden border border-emerald-100 shadow-2xl rounded-[3rem] p-0 bg-white">
-                  <div className="grid md:grid-cols-2">
-                    <div className="relative h-[300px] md:h-auto overflow-hidden">
-                      <img
-                        src={diseaseImage}
-                        alt="Diseased plant"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                      <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end">
-                        <div className="bg-white/20 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-white/70 mb-1">Confidence Score</p>
-                          <p className="text-xl font-black text-white">{mainDisease.confidence}</p>
+            <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} className="space-y-12">
+               {/* MAIN RESULT CARD */}
+               <div className="bg-white/60 backdrop-blur-3xl border border-white rounded-[4rem] p-12 shadow-sm grid lg:grid-cols-2 gap-12 overflow-hidden relative">
+                  <div className="space-y-8 relative z-10">
+                     <div className="space-y-2">
+                        <p className="font-black text-[12px] uppercase tracking-[0.4em] text-emerald-500">Diagnosis Confirmed</p>
+                        <h2 className="text-5xl lg:text-7xl font-[1000] text-[#020503] tracking-tighter uppercase italic leading-none">{mainDisease?.name}</h2>
+                        <div className="flex items-center gap-3 pt-4">
+                           <span className="bg-emerald-100 text-emerald-600 px-5 py-2 rounded-full font-black text-[10px] uppercase tracking-widest border border-emerald-200">Confidence: {mainDisease?.confidence || 'High'}</span>
                         </div>
-                      </div>
-                    </div>
-                    
-                    <div className="p-8 md:p-12 flex flex-col justify-center">
-                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 text-red-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
-                        <AlertCircle size={12} />
-                        Active Pathology Detected
-                      </div>
-                      <h3 className="text-4xl md:text-5xl font-black text-emerald-950 uppercase tracking-tighter leading-[0.9] mb-4">
-                        {mainDisease.name}
-                      </h3>
-                      <p className="text-emerald-900/60 font-medium text-lg leading-relaxed mb-8">
-                        {mainDisease.cause}
-                      </p>
-                      
-                      <div className="p-6 rounded-3xl bg-emerald-50 border border-emerald-100">
-                        <div className="flex items-center gap-3 mb-2">
-                          <Info size={16} className="text-emerald-600" />
-                          <span className="text-[11px] font-black text-emerald-900/40 uppercase tracking-widest">Expert Note</span>
-                        </div>
-                        <p className="text-sm font-bold text-emerald-950 tracking-tight">
-                          Immediate isolation of the affected plants is recommended to prevent horizontal transmission within the crop zone.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              )}
+                     </div>
 
-              {/* 📋 DETAILS GRID */}
-              <div className="grid lg:grid-cols-3 gap-6">
-                {/* CHEMICAL */}
-                <Card className="rounded-[2.5rem] border border-blue-100 bg-white shadow-sm flex flex-col h-full">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
-                      <Droplets size={24} />
-                    </div>
-                    <div>
-                      <h4 className="font-black text-emerald-950 uppercase tracking-tight">Chemical Remediation</h4>
-                      <p className="text-emerald-900/40 font-bold text-[10px] uppercase tracking-widest">Protocol C-1</p>
-                    </div>
-                  </div>
-                  <ul className="space-y-3 flex-1">
-                    {result.treatment?.chemical?.map((c, i) => (
-                      <li key={i} className="flex gap-3 text-sm font-bold text-slate-700">
-                        <div className="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex-shrink-0 flex items-center justify-center text-[10px]">
-                          {i + 1}
+                     <div className="p-8 bg-emerald-50 rounded-[2.5rem] border border-emerald-100/50 space-y-4">
+                        <div className="flex items-center gap-3 text-emerald-900">
+                           <Info size={20} />
+                           <h4 className="font-black uppercase tracking-widest text-sm">Case Summary</h4>
                         </div>
-                        {c}
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
+                        <p className="text-emerald-900/60 font-medium leading-relaxed italic">{mainDisease?.cause}</p>
+                     </div>
+                  </div>
 
-                {/* ORGANIC */}
-                <Card className="rounded-[2.5rem] border border-emerald-100 bg-white shadow-sm flex flex-col h-full">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center">
-                      <Leaf size={24} />
-                    </div>
-                    <div>
-                      <h4 className="font-black text-emerald-950 uppercase tracking-tight">Organic Defense</h4>
-                      <p className="text-emerald-900/40 font-bold text-[10px] uppercase tracking-widest">Biological Plan</p>
-                    </div>
-                  </div>
-                  <ul className="space-y-3 flex-1">
-                    {result.treatment?.organic?.map((o, i) => (
-                      <li key={i} className="flex gap-3 text-sm font-bold text-slate-700">
-                        <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex-shrink-0 flex items-center justify-center text-[10px]">
-                          {i + 1}
+                  <div className="relative h-[400px] lg:h-auto rounded-[3.5rem] overflow-hidden border-8 border-white shadow-2xl">
+                     {diseaseImage ? (
+                        <img src={diseaseImage} className="w-full h-full object-cover" alt="Disease" />
+                     ) : (
+                        <div className="w-full h-full bg-emerald-50 flex flex-col items-center justify-center text-emerald-900/10">
+                           <Leaf size={120} />
+                           <p className="font-black uppercase tracking-widest text-[10px]">Reference Image Unavailable</p>
                         </div>
-                        {o}
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
+                     )}
+                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                  </div>
+               </div>
 
-                {/* PREVENTION */}
-                <Card className="rounded-[2.5rem] border border-orange-100 bg-white shadow-sm flex flex-col h-full">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center">
-                      <Shield size={24} />
-                    </div>
-                    <div>
-                      <h4 className="font-black text-emerald-950 uppercase tracking-tight">Future Mitigation</h4>
-                      <p className="text-emerald-900/40 font-bold text-[10px] uppercase tracking-widest">Prevention Strategy</p>
-                    </div>
-                  </div>
-                  <ul className="space-y-3 flex-1">
-                    {result.prevention?.map((p, i) => (
-                      <li key={i} className="flex gap-3 text-sm font-bold text-slate-700">
-                        <div className="w-5 h-5 rounded-full bg-orange-50 text-orange-600 flex-shrink-0 flex items-center justify-center text-[10px]">
-                          <CheckCircle size={10} />
+               {/* TREATMENT TILES */}
+               <div className="grid lg:grid-cols-3 gap-8">
+                  <Card className="rounded-[3rem] p-10 space-y-6 bg-white/60">
+                     <div className="flex items-center gap-4 text-emerald-600">
+                        <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center">
+                           <Zap size={20} />
                         </div>
-                        {p}
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
-              </div>
+                        <h4 className="font-black uppercase tracking-widest text-sm">Chemical Control</h4>
+                     </div>
+                     <ul className="space-y-4">
+                        {result.treatment?.chemical?.map((item, i) => (
+                           <li key={i} className="flex items-start gap-4 p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100/50 text-emerald-900 text-xs font-black uppercase tracking-tight italic">
+                              <Navigation size={14} className="mt-0.5 text-emerald-500 rotate-45 shrink-0" />
+                              {item}
+                           </li>
+                        ))}
+                     </ul>
+                  </Card>
+
+                  <Card className="rounded-[3rem] p-10 space-y-6 bg-white/60">
+                     <div className="flex items-center gap-4 text-emerald-500">
+                        <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center">
+                           <Leaf size={20} />
+                        </div>
+                        <h4 className="font-black uppercase tracking-widest text-sm">Organic Therapy</h4>
+                     </div>
+                     <ul className="space-y-4">
+                        {result.treatment?.organic?.map((item, i) => (
+                           <li key={i} className="flex items-start gap-4 p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100/50 text-emerald-900 text-xs font-black uppercase tracking-tight italic">
+                              <ChevronRight size={14} className="mt-0.5 text-emerald-500 shrink-0" />
+                              {item}
+                           </li>
+                        ))}
+                     </ul>
+                  </Card>
+
+                  <Card className="rounded-[3rem] p-10 space-y-6 bg-white border border-emerald-100">
+                     <div className="flex items-center gap-4 text-emerald-600">
+                        <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                           <Shield size={20} />
+                        </div>
+                        <h4 className="font-black uppercase tracking-widest text-sm">Global Prevention</h4>
+                     </div>
+                     <ul className="space-y-4">
+                        {result.prevention?.map((item, i) => (
+                           <li key={i} className="flex items-start gap-4 p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100/50 text-emerald-900 text-xs font-black uppercase tracking-tight italic">
+                              <Sparkles size={14} className="mt-0.5 text-emerald-500 shrink-0" />
+                              {item}
+                           </li>
+                        ))}
+                     </ul>
+                  </Card>
+               </div>
+
+               <div className="flex justify-center pt-8">
+                  <button onClick={handleReset} className="flex items-center gap-3 px-12 py-6 bg-white rounded-full font-black uppercase tracking-widest text-xs shadow-xl border border-emerald-100 hover:bg-emerald-50 transition-all text-emerald-900">
+                     <RotateCcw size={16} />
+                     Reset Intelligence Node
+                  </button>
+               </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -444,5 +348,3 @@ function DiseaseDetection() {
     </div>
   );
 }
-
-export default DiseaseDetection;
