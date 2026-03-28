@@ -7,6 +7,7 @@ import Chatbot from './pages/Chatbot.jsx';
 import DiseaseDetection from './pages/DiseaseDetection.jsx';
 import FertilizerAdvisor from './pages/FertilizerAdvisor.jsx';
 import NearbyMarkets from './pages/NearbyMarkets.jsx';
+import NearbyMapPage from './pages/NearbyMapPage.jsx';
 import Login from './pages/Login.jsx';
 import Signup from './pages/Signup.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
@@ -37,6 +38,7 @@ function App() {
                 <Route path="disease-detection" element={<DiseaseDetection apiUrl={API_URL} />} />
                 <Route path="fertilizer-advisory" element={<FertilizerAdvisor apiUrl={API_URL} />} />
                 <Route path="nearby-market" element={<NearbyMarkets />} />
+                <Route path="nearby-map" element={<NearbyMapPage />} />
               </Routes>
             </AppLayout>
           </ProtectedRoute>

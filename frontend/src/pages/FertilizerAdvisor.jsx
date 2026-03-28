@@ -24,7 +24,7 @@ function FertilizerAdvisor() {
     // 🌾 Cereals
     { value: 'rice', label: '🌾 Rice' },
     { value: 'wheat', label: '🌾 Wheat' },
-    { value: 'corn', label: '🌽 Maize (Corn)' },
+    { value: 'maize', label: '🌽 Maize (Corn)' },
     { value: 'barley', label: '🌾 Barley' },
     { value: 'sorghum', label: '🌾 Sorghum (Jowar)' },
     { value: 'millet', label: '🌾 Millet (Bajra)' },
@@ -78,6 +78,11 @@ function FertilizerAdvisor() {
 
   // 🔹 Crop images (multiple)
   const fetchCropImages = async (crop) => {
+    if (!UNSPLASH_KEY) {
+      console.error("Missing VITE_UNSPLASH_KEY in .env");
+      setImages([]);
+      return;
+    }
     try {
       const res = await fetch(
         `https://api.unsplash.com/search/photos?query=${crop} farming agriculture&per_page=3`,
@@ -94,6 +99,10 @@ function FertilizerAdvisor() {
 
   // 🔹 Single image for fertilizer / alternative
   const fetchSingleImage = async (query) => {
+    if (!UNSPLASH_KEY) {
+      console.error("Missing VITE_UNSPLASH_KEY in .env");
+      return null;
+    }
     try {
       const res = await fetch(
         `https://api.unsplash.com/search/photos?query=${query}&per_page=1`,
@@ -125,6 +134,7 @@ function FertilizerAdvisor() {
       const res = await fetch(`${API_BASE}/api/fertilizer/recommend`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(formData),
       });
 
@@ -139,7 +149,7 @@ function FertilizerAdvisor() {
       const fertilizersWithImages = await Promise.all(
         (payload.primaryFertilizers || []).map(async (fert) => ({
           ...fert,
-          image: await fetchSingleImage(`${fert.name} fertilizer agriculture`),
+          image: await fetchSingleImage(`${fert.name} fertilizer`),
         }))
       );
 

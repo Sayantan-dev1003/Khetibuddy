@@ -4,7 +4,7 @@ const { hashPassword, comparePassword } = require('../Methods/bcryptPassword.js'
 
 // Register a new user
 const registerUser = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, userType } = req.body;
 
   try {
     // 1. Check if user already exists
@@ -22,11 +22,12 @@ const registerUser = async (req, res) => {
       email,
       password: hashedPassword,
       role: role || 'user',
+      userType: userType || 'buyer',
     });
 
     // 4. Generate JWT
     const token = jwt.sign(
-      { id: newUser._id, role: newUser.role },
+      { id: newUser._id, role: newUser.role, userType: newUser.userType },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRE || '7d' }
     );
@@ -48,6 +49,7 @@ const registerUser = async (req, res) => {
         name: newUser.name,
         email: newUser.email,
         role: newUser.role,
+        userType: newUser.userType,
       },
     });
 
@@ -76,7 +78,7 @@ const loginUser = async (req, res) => {
 
     // 3. Generate JWT
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: user._id, role: user.role, userType: user.userType },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRE || '7d' }
     );
@@ -98,6 +100,7 @@ const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        userType: user.userType,
       },
     });
 
