@@ -114,7 +114,7 @@ function Chatbot() {
   const createNewSession = async () => {
     try {
       console.log('[Chatbot] Creating new session...');
-      const res = await fetch(`${API_BASE}/api/chat/session`, { method: 'POST' });
+      const res = await fetch(`${API_BASE}/api/chat/session`, { method: 'POST', credentials: 'include' });
       const data = await res.json();
       
       if (data.success) {
@@ -133,7 +133,7 @@ function Chatbot() {
   const loadSession = async (loadSessionId) => {
     try {
       console.log('[Chatbot] Loading session:', loadSessionId);
-      const res = await fetch(`${API_BASE}/api/chat/messages/${loadSessionId}`);
+      const res = await fetch(`${API_BASE}/api/chat/messages/${loadSessionId}`, { credentials: 'include' });
       const data = await res.json();
       
       if (data.success) {
@@ -262,6 +262,7 @@ function Chatbot() {
       const res = await fetch(`${API_BASE}/api/chat/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ sessionId, message: currentQuestion }),
       });
 

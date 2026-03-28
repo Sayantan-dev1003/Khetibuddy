@@ -12,7 +12,7 @@ function ChatHistory({ currentSessionId, onLoadSession, onNewChat, isOpen, onTog
   const fetchSessions = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/chat/sessions`);
+      const res = await fetch(`${API_BASE}/api/chat/sessions`, { credentials: 'include' });
       const data = await res.json();
       
       if (data.success) {
@@ -36,7 +36,8 @@ function ChatHistory({ currentSessionId, onLoadSession, onNewChat, isOpen, onTog
     setDeleting(sessionId);
     try {
       const res = await fetch(`${API_BASE}/api/chat/sessions/${sessionId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        credentials: 'include'
       });
       
       const data = await res.json();
