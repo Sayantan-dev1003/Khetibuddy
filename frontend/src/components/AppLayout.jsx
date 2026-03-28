@@ -46,15 +46,6 @@ function AppLayout({ children }) {
           <div className="flex items-center justify-between w-full">
             {/* Logo Section - Left Column (cite: Video 0:01) */}
             <div className="flex-1 flex justify-start items-center gap-4">
-              {location.pathname !== '/dashboard' && (
-                <button
-                  onClick={() => navigate(-1)}
-                  className="p-2 rounded-xl hover:bg-emerald-100/50 transition-colors"
-                  aria-label="Go back"
-                >
-                  <ArrowLeft size={24} className="text-emerald-700 font-bold" />
-                </button>
-              )}
               <div
                 className="flex items-center gap-3 cursor-pointer"
                 onClick={() => navigate('/dashboard')}
